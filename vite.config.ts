@@ -23,7 +23,11 @@ export default defineConfig({
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
-			emitTsDeclarations: true
+			emitTsDeclarations: true,
+			// Prefix-based locale routing: `/` -> vi (base), `/en/...` -> en.
+			// `url` first keeps URLs authoritative (good for SEO); `cookie`
+			// remembers the visitor's choice; `baseLocale` is the fallback.
+			strategy: ['url', 'cookie', 'baseLocale']
 		})
 	]
 });
