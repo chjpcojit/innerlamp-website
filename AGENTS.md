@@ -260,19 +260,22 @@ All three must pass with zero errors.
 ## 9. Optional: Svelte AI tooling
 
 The Svelte team ships an MCP server, skills and subagents that improve generated
-Svelte code. It is **not enabled** in this repo yet.
+Svelte code. **Enabled in this repo** through the OpenCode plugin:
 
-OpenCode is a **plugin-only** client for this add-on: do **not** pass a `delivery`
-or `tools` option — the CLI rejects them as incompatible. Enable it with:
-
-```sh
-npx sv add ai-tools="ide:opencode"
+```json
+// .opencode/opencode.json
+{ "plugin": ["@sveltejs/opencode"] }
 ```
 
-That writes `.opencode/opencode.json` (`"plugin": ["@sveltejs/opencode"]`) and
-`.opencode/svelte.json`. Because `AGENTS.md` already exists, the CLI will **not**
-touch it (it warns and skips), so keep the tool-usage rules below in this file.
-The plugin bundles and self-updates the MCP server, skills and subagents.
+The plugin bundles the MCP server, skills and the `svelte-file-editor` subagent,
+and self-updates. Toggle features in `.opencode/svelte.json` (all enabled by
+default) or interactively with the `/svelte-plugin` command after restarting
+OpenCode.
+
+OpenCode is a **plugin-only** client for the `ai-tools` add-on: do **not** pass a
+`delivery` or `tools` option — the CLI rejects them as incompatible. Reinstall
+with `npx sv add ai-tools="ide:opencode"`; because `AGENTS.md` already exists, that
+command will not touch it.
 
 Once the Svelte MCP server is available to the agent, use it as follows:
 
