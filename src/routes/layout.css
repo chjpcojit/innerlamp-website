@@ -1,2 +1,177 @@
 @import 'tailwindcss';
+@import '../lib/styles/fonts.css';
 @plugin '@tailwindcss/typography';
+
+@theme {
+	--font-serif: 'Cormorant Garamond', Georgia, serif;
+	--font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+	--color-ink: #221e19;
+	--color-paper: #fffdf8;
+	--color-gold: #b8862f;
+	--color-gold-deep: #8a5a18;
+	--color-sage: #4e6c59;
+	--color-cream: #f7f2e8;
+	--color-cream-soft: #fbf7ef;
+	--color-sand: #efe6d5;
+	--color-sand-deep: #e2d4bb;
+	--color-amber: #d9963c;
+	--color-amber-light: #f3c673;
+	--color-night: #161310;
+}
+
+body {
+	font-variant-numeric: lining-nums;
+}
+
+/*
+ * Dark mode: invert the whole page, then re-invert media so photos keep their colours.
+ * `data-keep-dark` blocks are authored dark: they are inverted in light mode (so they read
+ * light) and, being inverted twice, stay dark in dark mode. Same behaviour as the prototype.
+ */
+html.il-dark {
+	background: #0b0906;
+	filter: invert(1) hue-rotate(180deg);
+}
+
+html.il-dark img,
+html.il-dark video,
+[data-keep-dark],
+[data-keep-dark] img,
+[data-keep-dark] video {
+	filter: invert(1) hue-rotate(180deg);
+}
+
+html.il-dark [data-keep-dark] [data-keep-dark],
+html.il-dark [data-keep-dark] img,
+html.il-dark [data-keep-dark] video {
+	filter: none;
+}
+
+/* `fixed`: dark in both themes (celebration dialog), not inverted in light mode. */
+[data-keep-dark='fixed'] {
+	filter: none;
+}
+
+html.il-dark [data-keep-dark='fixed'] {
+	filter: invert(1) hue-rotate(180deg);
+}
+
+/* Lamp offering animations (prototype keyframes). Elements opt out of motion with `.il-motion`. */
+@keyframes il-flick {
+	0%,
+	100% {
+		transform: scaleY(1) skewX(0);
+	}
+	25% {
+		transform: scaleY(1.08) skewX(-2deg);
+	}
+	50% {
+		transform: scaleY(0.94) skewX(2deg);
+	}
+	75% {
+		transform: scaleY(1.04) skewX(-1deg);
+	}
+}
+
+@keyframes il-glow {
+	0%,
+	100% {
+		opacity: 0.85;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes il-ignite {
+	0% {
+		transform: scale(0.06);
+		opacity: 0;
+		filter: brightness(2.2);
+	}
+	25% {
+		transform: scale(0.22);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+		filter: brightness(1);
+	}
+}
+
+@keyframes il-glowin {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.2);
+	}
+	100% {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+@keyframes il-rise1 {
+	from {
+		opacity: 0;
+		transform: translateY(22px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes il-rise2 {
+	from {
+		opacity: 0;
+		transform: translateY(40px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes il-rise3 {
+	from {
+		opacity: 0;
+		transform: translateY(60px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.il-motion,
+	.il-motion * {
+		animation: none !important;
+	}
+}
+
+/* Default page transition: crossfade between routes (see onNavigate in +layout.svelte). */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in-out;
+}
+
+/*
+ * The header and the bottom bar stay out of the page crossfade: otherwise the active-link pill
+ * slides inside a frozen snapshot that is being faded, which reads as stutter.
+ */
+.il-site-header {
+	view-transition-name: il-site-header;
+}
+
+::view-transition-group(il-site-header),
+::view-transition-old(il-site-header),
+::view-transition-new(il-site-header) {
+	animation: none;
+}
+
+::view-transition-old(il-site-header) {
+	display: none;
+}

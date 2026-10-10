@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Be+Vietnam+Pro:wght@400;500;600&display=swap&subset=vietnamese" rel="stylesheet">
+<style>html{scroll-behavior:smooth}body{margin:0;background:#0E0C09;color:var(--fg)}*{font-variant-numeric:lining-nums}a{color:var(--acc2);text-decoration:none}@keyframes il-ember{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-140px);opacity:0}}@keyframes il-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}a:hover{color:var(--acc)}</style>
+</helmet>
+<div style="position:relative;{{ themeVars }}background:var(--page);color:var(--fg);transition:background .4s ease,color .4s ease">
+  <div style="position:fixed;left:0;right:0;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px clamp(18px,4vw,40px);background:{{ hdrBg }};transition:background .3s ease">
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;border:1.5px solid #D9963C;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;box-sizing:border-box"><svg viewBox="0 0 40 56" width="9" height="13" style="display:block;overflow:visible"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path><path d="M21 30c2 5 5 8 5 12a6 6 0 0 1-12 0c0-3 2-5 3-8 1 2 2 3 3 3-1-2-1-4 1-7z" fill="#FFF1CC"></path></svg></div><div style="font:600 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em">INNERLAMP</div></div>
+    <div style="display:flex;align-items:center;gap:6px"><div onClick="{{ toggleTheme }}" title="Đổi giao diện sáng / tối" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none"><sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><div style="width:9px;height:9px;border-radius:50%;background:var(--fg);box-shadow:0 -7px 0 -3px var(--fg),0 7px 0 -3px var(--fg),7px 0 0 -3px var(--fg),-7px 0 0 -3px var(--fg),5px 5px 0 -3px var(--fg),-5px -5px 0 -3px var(--fg),5px -5px 0 -3px var(--fg),-5px 5px 0 -3px var(--fg)"></div></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><div style="width:14px;height:14px;border-radius:50%;box-shadow:inset -4px -3px 0 0 var(--fg);transform:rotate(-20deg)"></div></sc-if></div><a onClick="{{ goLogin }}" style="font:500 13px 'Be Vietnam Pro',sans-serif;padding:8px 12px;cursor:pointer;white-space:nowrap">Đăng nhập</a><div onClick="{{ goHome }}" style="padding:8px 16px;border-radius:999px;border:1px solid var(--line);font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer;white-space:nowrap" style-hover="background:var(--line)">Bỏ qua, vào trang chủ</div></div>
+  </div>
+
+  <section ref="{{ r1 }}" data-screen-label="01 Thắp đèn" style="height:320vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;background:var(--hero)">
+      <div style="position:absolute;left:50%;top:50%;width:900px;height:900px;margin:-450px 0 0 -450px;border-radius:50%;background:radial-gradient(circle,rgba(243,198,115,.32),rgba(217,150,60,.08) 40%,transparent 66%);transform:scale({{ h.gs }});opacity:{{ h.go }}"></div>
+      <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ h.emb }}"><div style="position:absolute;left:8%;top:55%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 5s ease-in 0s infinite"></div><div style="position:absolute;left:61%;top:84%;width:3px;height:3px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 6s ease-in 0.7s infinite"></div><div style="position:absolute;left:30%;top:73%;width:4px;height:4px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 7s ease-in 1.4s infinite"></div><div style="position:absolute;left:83%;top:62%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 8s ease-in 2.0999999999999996s infinite"></div><div style="position:absolute;left:52%;top:91%;width:3px;height:3px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 9s ease-in 2.8s infinite"></div><div style="position:absolute;left:21%;top:80%;width:4px;height:4px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 5s ease-in 3.5s infinite"></div><div style="position:absolute;left:74%;top:69%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 6s ease-in 4.199999999999999s infinite"></div><div style="position:absolute;left:43%;top:58%;width:3px;height:3px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 7s ease-in 4.8999999999999995s infinite"></div><div style="position:absolute;left:12%;top:87%;width:4px;height:4px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 8s ease-in 5.6s infinite"></div><div style="position:absolute;left:65%;top:76%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 9s ease-in 0.2999999999999998s infinite"></div><div style="position:absolute;left:34%;top:65%;width:3px;height:3px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 5s ease-in 1s infinite"></div><div style="position:absolute;left:87%;top:94%;width:4px;height:4px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 6s ease-in 1.6999999999999993s infinite"></div><div style="position:absolute;left:56%;top:83%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 7s ease-in 2.3999999999999986s infinite"></div><div style="position:absolute;left:25%;top:72%;width:3px;height:3px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 8s ease-in 3.0999999999999996s infinite"></div><div style="position:absolute;left:78%;top:61%;width:4px;height:4px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 9s ease-in 3.799999999999999s infinite"></div><div style="position:absolute;left:47%;top:90%;width:2px;height:2px;border-radius:50%;background:#F3C673;box-shadow:0 0 6px rgba(243,198,115,.9);animation:il-ember 5s ease-in 4.5s infinite"></div></div>
+      
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;transform:translateY({{ h.lift }})">
+        
+        <div style="position:relative;width:200px;height:200px">
+          <svg viewBox="0 0 200 200" width="200" height="200" style="position:absolute;inset:0;transform:rotate(-90deg)"><circle cx="100" cy="100" r="92" fill="none" stroke="rgba(217,150,60,.18)" stroke-width="1.2"></circle><circle cx="100" cy="100" r="92" fill="none" stroke="#D9963C" stroke-width="1.6" stroke-dasharray="578" stroke-dashoffset="{{ h.dash }}" stroke-linecap="round"></circle></svg>
+          <div style="position:absolute;left:50%;bottom:44px;transform:translateX(-50%) scale({{ h.fs }});transform-origin:50% 100%;opacity:{{ h.fo }};filter:drop-shadow(0 0 18px rgba(243,198,115,.85))"><svg viewBox="0 0 40 56" width="44" height="62" style="display:block;overflow:visible"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path><path d="M21 30c2 5 5 8 5 12a6 6 0 0 1-12 0c0-3 2-5 3-8 1 2 2 3 3 3-1-2-1-4 1-7z" fill="#FFF1CC"></path></svg></div>
+        </div>
+        <div style="margin-top:56px;text-align:center">
+          <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;opacity:{{ h.t1 }};transform:translateY({{ h.t1y }})">Tự thắp đèn tâm.</div>
+          <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;color:var(--acc);opacity:{{ h.t2 }};transform:translateY({{ h.t2y }})">Tự soi lối về.</div>
+        </div>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:32px;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:{{ h.hint }}"><div style="font:500 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:var(--mut)">CUỘN XUỐNG ĐỂ THẮP ĐÈN</div><div style="width:22px;height:34px;border-radius:12px;border:1.5px solid var(--line);display:flex;justify-content:center;padding-top:6px;box-sizing:border-box"><div style="width:3px;height:7px;border-radius:2px;background:#F3C673;animation:il-bob 1.6s ease-in-out infinite"></div></div></div>
+    </div>
+  </section>
+
+  <section ref="{{ r2 }}" data-screen-label="02 Lời mở" style="height:200vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;padding:0 clamp(24px,8vw,120px)">
+      <div style="max-width:1000px;font:500 clamp(30px,4.6vw,60px)/1.25 'Cormorant Garamond',Georgia,serif;text-wrap:pretty;display:flex;flex-wrap:wrap;column-gap:.28em">
+        <sc-for list="{{ words }}" as="w" hint-placeholder-count="20"><span style="opacity:{{ w.o }};color:{{ w.c }};transition:opacity .15s linear">{{ w.t }}</span></sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section ref="{{ r3 }}" data-screen-label="03 Lịch âm" style="height:260vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;padding:0 clamp(24px,6vw,96px);gap:clamp(32px,6vw,96px);flex-wrap:wrap">
+      <div style="flex:1 1 360px;max-width:480px">
+        <div style="font:600 11px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:var(--acc2)">LỊCH ÂM · XEM NGÀY</div>
+        <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;font-size:clamp(32px,min(5.6vw,7.6vh),72px);margin-top:clamp(8px,2vh,14px)">Biết hôm nay<br>là ngày gì.</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:28px">
+          <sc-for list="{{ m.items }}" as="x" hint-placeholder-count="3"><div style="display:flex;gap:14px;align-items:baseline;opacity:{{ x.o }};transform:translateY({{ x.y }});transition:opacity .4s ease,transform .5s cubic-bezier(.2,.8,.2,1)"><div style="font:500 13px 'Be Vietnam Pro',sans-serif;color:var(--acc2);min-width:24px">{{ x.n }}</div><div><div style="font:500 17px 'Be Vietnam Pro',sans-serif">{{ x.t }}</div><div style="font:400 14px/1.55 'Be Vietnam Pro',sans-serif;color:var(--mut);margin-top:3px">{{ x.s }}</div></div></div></sc-for>
+        </div>
+      </div>
+      <div style="flex:0 1 360px;display:flex;flex-direction:column;align-items:center">
+        <div style="position:relative;width:min(70vw,320px,42vh);height:min(70vw,320px,42vh);border-radius:50%;overflow:hidden;background:radial-gradient(circle at 42% 38%,#FFF6DF,#F3D08C 45%,#C99A4A 82%);box-shadow:0 0 120px rgba(243,198,115,{{ m.glow }})">
+          <div style="position:absolute;inset:-2px;border-radius:50%;background:var(--page);transform:translateX({{ m.sx }})"></div>
+        </div>
+        <div style="font:500 clamp(48px,min(9vw,12vh),112px)/1 'Cormorant Garamond',Georgia,serif;color:var(--acc);margin-top:clamp(12px,3vh,28px)">{{ m.day }}</div>
+        <div style="font:600 11px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:var(--mut);margin-top:8px">{{ m.label }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section ref="{{ r4 }}" data-screen-label="04 Tràng hạt" style="height:260vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;flex-direction:column;text-align:center;padding:0 24px">
+      <div style="position:relative;width:min(78vw,380px,44vh);height:min(78vw,380px,44vh)">
+        <sc-for list="{{ b.beads }}" as="x" hint-placeholder-count="54"><div style="position:absolute;left:{{ x.l }};top:{{ x.t }};width:{{ x.s }};height:{{ x.s }};margin:{{ x.m }};border-radius:50%;background:{{ x.bg }};box-shadow:{{ x.sh }};transition:background .25s ease,box-shadow .25s ease"></div></sc-for>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:500 clamp(48px,min(12vw,13vh),128px)/1 'Cormorant Garamond',Georgia,serif;color:var(--acc)">{{ b.n }}</div><div style="font:400 14px 'Be Vietnam Pro',sans-serif;color:var(--mut);margin-top:6px">/ 108 biến</div></div>
+      </div>
+      <div style="font:600 11px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:var(--acc2);margin-top:clamp(14px,4vh,40px)">THỰC HÀNH MỖI NGÀY</div>
+      <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;font-size:clamp(29px,min(5vw,6.8vh),64px);margin-top:clamp(8px,2vh,12px)">Một hơi thở, một hạt.</div>
+      <div style="font:400 clamp(16px,1.6vw,19px)/1.65 'Be Vietnam Pro',sans-serif;color:var(--mut);text-wrap:pretty;max-width:520px;margin-top:14px">Lần tràng hạt 108 biến, ngồi thiền với chuông khánh, tụng kinh theo audio. Mỗi ngày nhỏ thôi, nhưng đều đặn.</div>
+    </div>
+  </section>
+
+  <section ref="{{ r5 }}" data-screen-label="05 Vườn đèn" style="height:260vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;flex-direction:column;text-align:center;padding:0 24px">
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(6px,1.6vw,22px);width:min(92vw,820px,calc((100vh - 330px) * 2.2))">
+        <sc-for list="{{ lamps }}" as="x" hint-placeholder-count="60"><div style="aspect-ratio:1;display:flex;align-items:flex-end;justify-content:center;opacity:{{ x.o }};transform:scale({{ x.s }});transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)"><div style="width:42%;filter:drop-shadow(0 0 8px rgba(243,198,115,.8))"><svg viewBox="0 0 40 56" width="100%" height="100%" style="display:block;overflow:visible"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path><path d="M21 30c2 5 5 8 5 12a6 6 0 0 1-12 0c0-3 2-5 3-8 1 2 2 3 3 3-1-2-1-4 1-7z" fill="#FFF1CC"></path></svg></div></div></sc-for>
+      </div>
+      <div style="font:500 clamp(40px,min(7vw,9vh),88px)/1 'Cormorant Garamond',Georgia,serif;color:var(--acc);margin-top:clamp(14px,4vh,44px)">{{ lampCount }}</div>
+      <div style="font:400 14px 'Be Vietnam Pro',sans-serif;color:var(--mut);margin-top:6px">ngọn đèn đang sáng trong vườn đèn</div>
+      <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;font-size:clamp(27px,min(4.6vw,6.2vh),60px);margin-top:clamp(8px,2vh,28px)">Gần chùa hơn, dù ở xa.</div>
+      <div style="font:400 clamp(16px,1.6vw,19px)/1.65 'Be Vietnam Pro',sans-serif;color:var(--mut);text-wrap:pretty;max-width:560px;margin-top:10px">Thắp đèn hồi hướng cho người thương, thỉnh đèn tại chánh điện, cúng dường thẳng vào tài khoản của chùa.</div>
+    </div>
+  </section>
+
+  <section ref="{{ r6 }}" data-screen-label="06 Gia phả" style="height:240vh;position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding-top:64px;box-sizing:border-box;flex-direction:column;text-align:center;padding:0 24px">
+      <div style="font:600 11px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:var(--acc2)">GIA ĐÌNH · NGUỒN CỘI</div>
+      <div style="font:500 clamp(40px,7vw,92px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;text-wrap:balance;font-size:clamp(29px,min(5vw,6.8vh),64px);margin-top:clamp(8px,2vh,12px)">Nhớ ngày giỗ, giữ gia phả.</div>
+      <div data-comment-anchor="9e262ab22a-div" style="position:relative;width:min(90vw,600px,72vh);aspect-ratio:600/300;margin-top:clamp(16px,4vh,40px)">
+        <svg viewBox="0 0 600 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;overflow:visible"><sc-for list="{{ tPaths }}" as="x" hint-placeholder-count="6"><path d="{{ x.d }}" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="{{ x.off }}" opacity=".7"></path></sc-for></svg>
+        <sc-for list="{{ tNodes }}" as="x" hint-placeholder-count="7"><div style="position:absolute;left:{{ x.l }};top:{{ x.t }};transform:translate(-50%,-50%) scale({{ x.sc }});opacity:{{ x.k }};display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s ease">
+          <div style="position:relative;width:{{ x.s }};height:{{ x.s }};border-radius:50%;background:{{ x.bg }};border:1.5px solid {{ x.bd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:500 {{ x.fs }} 'Cormorant Garamond',Georgia,serif;color:{{ x.fg }};box-shadow:{{ x.sh }}">{{ x.init }}<sc-if value="{{ x.lamp }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:-4px;top:-6px;width:16px;height:16px;border-radius:50%;background:var(--page);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 40 56" width="8" height="11"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path></svg></div></sc-if></div>
+          <div style="text-align:center;line-height:1.25"><div style="font:500 13px 'Be Vietnam Pro',sans-serif;white-space:nowrap">{{ x.n }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:var(--mut);white-space:nowrap">{{ x.sub }}</div></div>
+        </div></sc-for>
+      </div>
+      <div style="font:400 clamp(16px,1.6vw,19px)/1.65 'Be Vietnam Pro',sans-serif;color:var(--mut);text-wrap:pretty;max-width:520px;margin-top:20px">Sổ giỗ nhắc theo âm lịch cho cả nhà. Cây gia phả lưu nhiều đời, chia sẻ được với người thân ở xa.</div>
+    </div>
+  </section>
+
+  <section data-screen-label="07 Bắt đầu" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#FFFDF8,#F1E8D8 80%);color:#221E19;padding:80px 24px;box-sizing:border-box">
+    <div style="max-width:560px;text-align:center;display:flex;flex-direction:column;align-items:center">
+      <div style="width:84px;height:84px;border-radius:50%;border:1.5px solid #B8862F;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;box-sizing:border-box;filter:drop-shadow(0 0 16px rgba(217,150,60,.4))"><svg viewBox="0 0 40 56" width="24" height="34" style="display:block;overflow:visible"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path><path d="M21 30c2 5 5 8 5 12a6 6 0 0 1-12 0c0-3 2-5 3-8 1 2 2 3 3 3-1-2-1-4 1-7z" fill="#FFF1CC"></path></svg></div>
+      <div style="font:500 clamp(44px,6.4vw,80px)/1.05 'Cormorant Garamond',Georgia,serif;margin-top:28px;text-wrap:balance">Bắt đầu từ một ngọn đèn.</div>
+      <div style="font:400 16px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.62);margin-top:16px;text-wrap:pretty">Tạo tài khoản để lưu nhật ký tu tập, sổ giỗ và gia phả. Hoặc vào xem trước, không cần đăng ký.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;width:min(100%,380px);margin-top:32px">
+        <div onClick="{{ goSignup }}" style="padding:16px 0;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#3A342C">Tạo tài khoản miễn phí</div>
+        <div style="display:flex;gap:10px"><div onClick="{{ goLogin }}" style="flex:1;padding:14px 0;border-radius:999px;border:1px solid rgba(34,30,25,.2);font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#F3ECDE">Đăng nhập</div><div onClick="{{ goHome }}" style="flex:1;padding:14px 0;border-radius:999px;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer;color:#8A5A18" style-hover="background:#F3ECDE">Vào trang chủ</div></div>
+      </div>
+      <div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:16px">Lịch âm, kinh sách và chuông mõ dùng được ngay.</div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { p: [0, 0, 0, 0, 0, 0], sy: 0, dark: (() => { try { const s = JSON.parse(localStorage.getItem('il-web-set') || 'null'); const th = s ? s.theme : 0; return th === 1 || (th === 2 && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); } catch (e) { return false; } })() };
+  refs6 = [0, 1, 2, 3, 4, 5].map(() => React.createRef());
+  componentDidMount() {
+    this._on = () => { if (this._raf) return; this._raf = requestAnimationFrame(() => { this._raf = null; const vh = window.innerHeight; const p = this.refs6.map(r => { const el = r.current; if (!el) return 0; const b = el.getBoundingClientRect(), span = Math.max(1, b.height - vh); return Math.max(0, Math.min(1, -b.top / span)); }); this.setState({ p, sy: window.scrollY }); }); };
+    window.addEventListener('scroll', this._on, { passive: true }); window.addEventListener('resize', this._on); this._on();
+  }
+  componentWillUnmount() { window.removeEventListener('scroll', this._on); window.removeEventListener('resize', this._on); }
+  open(page) { try { localStorage.setItem('il-web-page', page); localStorage.setItem('il-web-intro', '1'); if (page === 'home') localStorage.setItem('il-web-auth', '0'); } catch (e) {} location.href = encodeURI('InnerLamp Web App.dc.html'); }
+  renderVals() {
+    const [p1, p2, p3, p4, p5, p6] = this.state.p, cl = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a))), ease = t => 1 - Math.pow(1 - t, 3);
+    const ig = ease(cl(p1, .05, .45)), t1 = ease(cl(p1, .4, .6)), t2 = ease(cl(p1, .58, .78)), out = cl(p1, .88, 1);
+    const h = { dash: (578 * (1 - ease(cl(p1, 0, .5)))).toFixed(1), fs: (0.22 + .78 * ig).toFixed(3), fo: (0.55 + .45 * Math.min(1, ig * 3)).toFixed(3), intro: (1 - cl(p1, .02, .2)).toFixed(3), introY: (-20 * cl(p1, .02, .2)) + 'px', emb: (0.6 + .4 * ig) * (1 - out) + '', gs: (0.35 + 0.95 * ig).toFixed(3), go: ((0.25 + .75 * ig) * (1 - out * .6)).toFixed(3), t1: t1.toFixed(3), t1y: (24 * (1 - t1)) + 'px', t2: t2.toFixed(3), t2y: (24 * (1 - t2)) + 'px', hint: (1 - cl(p1, 0, .08)).toFixed(3), lift: (-40 * out) + 'px' };
+    const W = 'Giữa một ngày bận rộn, InnerLamp nhắc bạn dừng lại, thở, và trở về với chính mình. Một ngọn đèn nhỏ, sáng ở bên trong.'.split(' ');
+    const words = W.map((t, i) => { const a = i / W.length * .85, o = .18 + .82 * cl(p2, a, a + .12); return { t, o: o.toFixed(3), c: i >= W.length - 7 ? 'var(--acc)' : 'var(--fg)' }; });
+    const d = Math.max(1, Math.min(15, Math.round(1 + 14 * cl(p3, .1, .8)))), ph = cl(p3, .1, .8);
+    const m = { day: String(d).padStart(2, '0'), label: d === 15 ? 'RẰM THÁNG CHÍN' : d === 1 ? 'MÙNG MỘT' : 'THÁNG CHÍN ÂM LỊCH', sx: (100 * ph + 4) + '%', glow: (.08 + .32 * ph).toFixed(2),
+      items: [['01', 'Rằm và mùng Một', 'Nhắc trước một ngày để giữ chay, tụng kinh.'], ['02', 'Giờ hoàng đạo, hướng xuất hành', 'Hỷ thần, Tài thần, Hạc thần cho từng ngày.'], ['03', 'Ngày giỗ trong gia đình', 'Tính đúng theo âm lịch, kể cả tháng thiếu.']].map(([n, t, s], i) => { const v = cl(p3, .2 + i * .18, .3 + i * .18); return { n, t, s, o: v.toFixed(2), y: (16 * (1 - v)) + 'px' }; }) };
+    const bn = Math.round(108 * ease(cl(p4, .08, .85))), N = 54, filled = Math.round(bn / 2), beads = [];
+    for (let i = 0; i < N; i++) { const a = Math.PI / 2 + ((i + 1) / (N + 1)) * Math.PI * 2, on = i < filled, cur = i === filled - 1; beads.push({ l: (50 + 45 * Math.cos(a)).toFixed(2) + '%', t: (50 + 45 * Math.sin(a)).toFixed(2) + '%', s: cur ? '18px' : '13px', m: cur ? '-9px 0 0 -9px' : '-6.5px 0 0 -6.5px', bg: on ? 'radial-gradient(circle at 35% 30%,#F3D08C,#C99A4A 55%,#7A5320)' : 'radial-gradient(circle at 35% 30%,#5A4634,#2E2216 70%)', sh: cur ? '0 0 0 5px rgba(243,198,115,.18),0 0 22px rgba(243,198,115,.7)' : '0 2px 4px rgba(0,0,0,.5)' }); }
+    const lit = ease(cl(p5, .05, .75));
+    const order = Array.from({ length: 60 }, (_, i) => ((i * 37) % 60) / 60);
+    const lamps = order.map(r => { const v = cl(lit, r * .9, r * .9 + .1); return { o: (.12 + .88 * v).toFixed(2), s: (.6 + .4 * v).toFixed(2) }; });
+    const tk = i => ease(cl(p6, .1 + i * .1, .25 + i * .1)).toFixed(3);
+    const TN = [[300, 44, 'Ông bà', 'Ô', 'Giỗ 23/8 âm', 0, 56, true], [160, 150, 'Cha', 'C', 'Giỗ 14/12', 1, 48, true], [440, 150, 'Chú', 'C', '1958', 1, 48, false], [80, 258, 'Anh', 'A', '1982', 2, 42, false], [230, 258, 'Bạn', 'B', 'Diệu Tâm', 2, 46, false], [370, 258, 'Em họ', 'E', '1990', 3, 42, false], [520, 258, 'Cháu', 'C', '2015', 3, 42, false]];
+    const tNodes = TN.map(([x, y, n, init, sub, g, sz, lamp]) => { const k = +tk(g); const me = n === 'Bạn'; return { l: (x / 6).toFixed(2) + '%', t: (y / 3).toFixed(2) + '%', n, init, sub, lamp, k: k.toFixed(3), sc: (0.7 + 0.3 * k).toFixed(3), s: sz + 'px', fs: Math.round(sz * .44) + 'px', bg: me ? 'var(--acc)' : 'var(--node)', fg: me ? 'var(--page)' : 'var(--fg)', bd: me ? 'var(--acc)' : 'var(--line)', sh: me ? '0 0 0 6px rgba(217,150,60,.18)' : 'none' }; });
+    const curve = (x1, y1, x2, y2) => 'M' + x1 + ' ' + y1 + 'C' + x1 + ' ' + ((y1 + y2) / 2) + ',' + x2 + ' ' + ((y1 + y2) / 2) + ',' + x2 + ' ' + y2;
+    const tPaths = [[300, 72, 160, 126, .5], [300, 72, 440, 126, .5], [160, 174, 80, 237, 1.5], [160, 174, 230, 235, 1.5], [440, 174, 370, 237, 2.5], [440, 174, 520, 237, 2.5]].map(([a1, b1, a2, b2, g]) => ({ d: curve(a1, b1, a2, b2), off: (1 - +tk(g)).toFixed(3) }));
+    const tLines = [];
+    return { r1: this.refs6[0], r2: this.refs6[1], r3: this.refs6[2], r4: this.refs6[3], r5: this.refs6[4], r6: this.refs6[5], h, words, m, b: { n: String(bn), beads }, lamps, lampCount: Math.round(1284 * lit).toLocaleString('vi-VN'), tNodes, tLines, tPaths,
+      isDark: this.state.dark, isLight: !this.state.dark,
+      themeVars: this.state.dark ? '--page:#0E0C09;--hero:radial-gradient(ellipse at 50% 55%,#231D15,#0E0C09 70%);--fg:#F5EEE0;--mut:rgba(242,235,221,.66);--line:rgba(242,235,221,.22);--acc:#F3C673;--acc2:#E8B061;--node:#1E1913;' : '--page:#F7F2E8;--hero:radial-gradient(ellipse at 50% 55%,#FFFDF8,#F1E8D8 70%);--fg:#221E19;--mut:rgba(34,30,25,.62);--line:rgba(34,30,25,.16);--acc:#B8862F;--acc2:#8A5A18;--node:#FFFDF8;',
+      hdrBg: this.state.sy > 20 ? (this.state.dark ? 'linear-gradient(180deg,rgba(14,12,9,.85),rgba(14,12,9,0))' : 'linear-gradient(180deg,rgba(247,242,232,.92),rgba(247,242,232,0))') : 'transparent',
+      toggleTheme: () => { const nd = !this.state.dark; this.setState({ dark: nd }); try { const s = JSON.parse(localStorage.getItem('il-web-set') || '{}'); s.theme = nd ? 1 : 0; localStorage.setItem('il-web-set', JSON.stringify(s)); } catch (e) {} }, goHome: () => this.open('home'), goLogin: () => this.open('login'), goSignup: () => this.open('signup') };
+  }
+}
+</script>
+</body>
+</html>

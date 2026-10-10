@@ -6,6 +6,17 @@ This file is the source of truth for architecture and conventions. If code and t
 document disagree, treat the code as a bug to fix or update this file — do not
 silently diverge. Keep it short, current, and actionable.
 
+> **Golden rules (non-negotiable):**
+>
+> 1. **Never hardcode user-facing text in the UI.** All copy lives in
+>    `messages/{vi,en}.json` and is rendered through Paraglide `m.*` (§4). This
+>    includes headings, buttons, placeholders, `alt`/`aria-label`, `<title>`,
+>    meta descriptions, and any error shown to users.
+> 2. **Never commit on your own.** Do not run `git commit`, `git push`, `git tag`,
+>    `git rebase`, `git reset`, `--amend`, or create/delete branches unless the user
+>    explicitly asks for it in that turn. Read-only git commands (`status`, `diff`,
+>    `log`, `show`) are fine. Leave changes uncommitted and tell the user what changed.
+
 ---
 
 ## 1. Project overview
@@ -69,7 +80,7 @@ innerlamp/
 │  │  │  ├─ layout/          # app shell: Header, Footer, Nav, ThemeToggle
 │  │  │  └─ sections/        # reusable page sections: Hero, FeatureGrid, CTA
 │  │  ├─ features/           # feature-first modules (see §5)
-│  │  ├─ server/             # SERVER-ONLY ($lib/server): db/, auth/, services/
+│  │  ├─ server/             # SERVER-ONLY ($lib/server): api/ (backend client), auth/
 │  │  ├─ state/              # cross-cutting client state (*.svelte.ts, runes)
 │  │  ├─ utils/              # pure, framework-agnostic helpers
 │  │  ├─ config/             # site config, nav maps, constants
@@ -96,15 +107,15 @@ innerlamp/
 
 ### Route files (SvelteKit semantics)
 
-| File                               | Runs            | Use for                                   |
-| ---------------------------------- | --------------- | ----------------------------------------- |
-| `+page.svelte`                     | server + client | the page markup                           |
-| `+page.ts`                         | server + client | universal `load` (runs on navigation too) |
-| `+page.server.ts`                  | server only     | DB/secret access, **form actions**        |
-| `+layout.svelte`                   | server + client | shared chrome for a subtree               |
-| `+layout.ts` / `+layout.server.ts` | as above        | layout data / page-option defaults        |
-| `+error.svelte`                    | server + client | nearest error boundary                    |
-| `+server.ts`                       | server only     | REST/JSON endpoints (GET/POST/…)          |
+| File                               | Runs            | Use for                                      |
+| ---------------------------------- | --------------- | -------------------------------------------- |
+| `+page.svelte`                     | server + client | the page markup                              |
+| `+page.ts`                         | server + client | universal `load` (runs on navigation too)    |
+| `+page.server.ts`                  | server only     | backend API calls, secrets, **form actions** |
+| `+layout.svelte`                   | server + client | shared chrome for a subtree                  |
+| `+layout.ts` / `+layout.server.ts` | as above        | layout data / page-option defaults           |
+| `+error.svelte`                    | server + client | nearest error boundary                       |
+| `+server.ts`                       | server only     | REST/JSON endpoints (GET/POST/…)             |
 
 - **Route groups** `(name)` organise files and layouts without adding a URL segment.
   `(site)` is the public site; `(app)` is reserved for a future private area.
@@ -137,6 +148,41 @@ innerlamp/
 - Prefer `redirect()`, `error()` and `fail()` from `@sveltejs/kit` over manual
   responses.
 
+### Data layer (backend API via the SvelteKit server)
+
+This site has **no database of its own**. All data comes from a separate backend
+REST API, and **only the SvelteKit server talks to it** (never the browser by
+default):
+
+```
+Browser → SvelteKit server (+page.server.ts → $lib/server/api/*) → Backend API
+```
+
+- **UI layer**: `+page.svelte` and `$lib/components/**` only receive data via
+  `data` / props. They never call the backend, never import `$lib/server/**`.
+- **Data layer**: `src/lib/server/api/`. `client.ts` is the single fetch wrapper
+  (base URL, timeout, error mapping). One file per resource
+  (`posts.ts`, `contact.ts`, …) exports typed functions that take SvelteKit's
+  `event.fetch` as first argument.
+- **Types**: response/request DTOs live in `$lib/types` so UI and API layer share
+  them.
+- **Reads** happen in `load` (`+page.server.ts`); **writes** (e.g. contact form)
+  go through form actions that forward to the backend API.
+- **Browser-side calls** are the exception, only for genuinely interactive features
+  (live search, "load more"). Route them through `src/routes/api/<name>/+server.ts`
+  so the backend URL and any future credentials stay on the server. Call a public
+  backend endpoint directly from the browser only if it needs no secret and CORS is
+  configured.
+- **Auth has two independent credentials**:
+  - **Website API key** (`API_KEY`, sent as `x-api-key` on every call): identifies
+    this site to the backend's shared services. One per site, env only.
+  - **User token** (sent as `Authorization: Bearer`): identifies the logged-in
+    visitor. One per user, issued by the backend on login. Store it in an
+    `httpOnly` cookie, read it in `+page.server.ts` / hooks and pass it as the
+    `token` option of `apiRequest`. Never expose it to browser JS.
+- Config: `API_BASE_URL` and `API_KEY` via `$env/dynamic/private`; document them in
+  `.env.example`.
+
 ### Server-only code
 
 - Anything under `src/lib/server/**` is server-only (`$lib/server`). SvelteKit
@@ -153,6 +199,12 @@ innerlamp/
   layer, and share repeated multi-utility patterns as components in
   `$lib/components/ui` rather than long `@apply` chains.
 - Use `@tailwindcss/typography` (`prose`) for long-form content (blog, legal).
+- Fonts are **self-hosted** via Fontsource (free Google fonts, no CDN): Cormorant
+  Garamond 500/600 + 500 italic (`font-serif`: headings, big numbers, verses) and
+  Be Vietnam Pro 400/500/600 (`font-sans`: UI). @font-face rules live in
+  `src/lib/styles/fonts.css` (`font-display: block` to avoid a fallback-font jump; main files
+  are also preloaded in the root layout), set in `@theme`; lining numerals are on globally. Add a font = `npm i @fontsource/<name>`
+  - copy only the weights used into `fonts.css`. Spec: `Docs/.../Typography.dc.html`.
 - Class ordering is enforced by `prettier-plugin-tailwindcss` — just run format.
 
 ### Internationalisation (mandatory)
@@ -206,7 +258,7 @@ When a concern grows beyond a couple of files, give it a folder under
 ```
 src/lib/features/<feature>/
 ├─ components/     # feature UI (imports from $lib/components/ui for primitives)
-├─ server/         # server-only logic (DB queries, external calls)
+├─ server/         # server-only logic (backend API calls via $lib/server/api)
 ├─ state/          # *.svelte.ts runes stores scoped to the feature
 ├─ schemas/        # input validation (zod/valibot/…)
 └─ types.ts
@@ -237,6 +289,8 @@ import from another feature's internals.
 
 ## 7. Guardrails — do NOT
 
+- **Commit on your own.** No `git commit`/`push`/`tag`/`rebase`/`reset`/`--amend`
+  or branch changes unless explicitly requested. Leave changes uncommitted.
 - Edit generated output: `src/lib/paraglide/**`, `.svelte-kit/**`.
 - Import `$lib/server/**` into client/universal code.
 - Hardcode user-visible text or use classic stores / legacy Svelte syntax.
@@ -260,22 +314,13 @@ All three must pass with zero errors.
 ## 9. Optional: Svelte AI tooling
 
 The Svelte team ships an MCP server, skills and subagents that improve generated
-Svelte code. **Enabled in this repo** through the OpenCode plugin:
+Svelte code. The primary agent for this repo is **Claude Code**, which reads
+`CLAUDE.md` (it imports this file via `@AGENTS.md`, so this file stays the single
+source of truth). Add the Svelte MCP server to Claude Code once per machine:
 
-```json
-// .opencode/opencode.json
-{ "plugin": ["@sveltejs/opencode"] }
+```sh
+claude mcp add --scope project --transport http svelte https://mcp.svelte.dev/mcp
 ```
-
-The plugin bundles the MCP server, skills and the `svelte-file-editor` subagent,
-and self-updates. Toggle features in `.opencode/svelte.json` (all enabled by
-default) or interactively with the `/svelte-plugin` command after restarting
-OpenCode.
-
-OpenCode is a **plugin-only** client for the `ai-tools` add-on: do **not** pass a
-`delivery` or `tools` option — the CLI rejects them as incompatible. Reinstall
-with `npx sv add ai-tools="ide:opencode"`; because `AGENTS.md` already exists, that
-command will not touch it.
 
 Once the Svelte MCP server is available to the agent, use it as follows:
 

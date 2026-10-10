@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Be+Vietnam+Pro:wght@400;500;600&display=swap&subset=vietnamese" rel="stylesheet">
+<style>body{margin:0;background:#E6DED0;color:#221E19}*{font-variant-numeric:lining-nums}a{color:#8A5A18;text-decoration:none}a:hover{color:#B8862F}</style>
+</helmet>
+<section style="padding:48px 48px 0;display:flex;flex-direction:column;gap:24px">
+  <div style="font:600 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#8A5A18">LƯỢT 3 · LẦN CHUỖI NHƯ CẦM THẬT · kéo hạt xuống qua vòng sáng, hoặc chạm · bật âm thanh</div>
+  <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+    <div id="3a" style="width:440px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="padding:4px 10px;border-radius:8px;background:#221E19;color:#F7F2E8;font:700 13px 'Be Vietnam Pro',sans-serif">3a</div><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Chuỗi bồ đề</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">kéo theo tay, hạt dồn xuống, tiếng gỗ chạm</div></div>
+      <div ref="{{ rRef }}" onPointerDown="{{ rDown }}" onPointerMove="{{ rMove }}" onPointerUp="{{ rUp }}" onPointerCancel="{{ rUp }}" style="height:640px;border-radius:28px;background:radial-gradient(ellipse at 50% 45%,#2B241B,#0E0C09 72%);color:#F5EEE0;position:relative;overflow:hidden;cursor:grab;user-select:none;touch-action:none">
+        <div style="position:absolute;left:28px;top:26px;pointer-events:none"><div style="font:500 72px/1 'Cormorant Garamond',serif;color:#F3C673">{{ r.n }}</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.55);margin-top:4px">{{ r.sub }}</div></div>
+        <div style="position:absolute;right:28px;top:34px;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none"><div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:#E8B061">{{ r.round }}</div><div style="width:110px;height:3px;border-radius:2px;background:rgba(242,235,221,.12);overflow:hidden"><div style="height:100%;background:#D9963C;width:{{ r.pct }}"></div></div></div>
+        <svg style="position:absolute;left:0;top:0;pointer-events:none" width="440" height="640" viewBox="0 0 440 640"><path d="{{ r.path }}" fill="none" stroke="#7A5A34" stroke-width="2" stroke-linecap="round" opacity=".8"></path></svg>
+        <div style="position:absolute;left:{{ r.thumbX }};top:330px;width:96px;height:96px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(243,198,115,.16),transparent 66%);border:1px solid rgba(243,198,115,{{ r.thumbA }});pointer-events:none"></div>
+        <sc-for list="{{ r.beads }}" as="x" hint-placeholder-count="18"><div style="position:absolute;left:0;top:0;width:{{ x.s }};height:{{ x.s }};border-radius:50%;transform:{{ x.t }};opacity:{{ x.o }};background:radial-gradient(circle at 34% 28%,rgba(255,236,200,.55),rgba(255,236,200,0) 28%),radial-gradient(circle at 50% 50%,#8C5A2E,#5E3818 62%,#341E0B);box-shadow:0 7px 12px rgba(0,0,0,.6),inset -3px -4px 6px rgba(20,10,2,.55),inset 2px 2px 3px rgba(255,220,170,.12);pointer-events:none"><div style="position:absolute;inset:18%;border-radius:50%;background:repeating-radial-gradient(circle at 60% 60%,rgba(40,20,6,.0) 0 2px,rgba(40,20,6,.18) 2px 3px)"></div></div></sc-for>
+        <div style="position:absolute;left:0;right:0;bottom:40px;text-align:center;pointer-events:none"><div style="font:italic 500 27px/1.3 'Cormorant Garamond',serif;color:rgba(245,238,224,.92)">Nam mô A Di Đà Phật</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.48);margin-top:10px">Kéo hạt xuống bằng ngón cái · chạm · phím cách</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="padding:48px;display:flex;flex-direction:column;gap:24px">
+  <div style="font:600 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#8A5A18">LƯỢT 2 · TRÀNG HẠT TOÀN MÀN HÌNH · chạm vào khung để lần hạt</div>
+  <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+
+    <div id="2a" style="width:440px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="padding:4px 10px;border-radius:8px;background:#221E19;color:#F7F2E8;font:700 13px 'Be Vietnam Pro',sans-serif">2a</div><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Vòng tràng hạt</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">54 hạt quanh số đếm, hạt cái và tua</div></div>
+      <div onClick="{{ tapA }}" style="height:640px;border-radius:28px;background:radial-gradient(circle at 50% 40%,#2A241C,#0F0D0A 74%);color:#F5EEE0;position:relative;overflow:hidden;cursor:pointer;user-select:none">
+        <div style="position:absolute;left:28px;top:26px;font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#E8B061">NIỆM PHẬT · VÒNG {{ a.round }}</div>
+        <div style="position:absolute;right:28px;top:22px;font:500 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.6)">{{ a.lap }}</div>
+        <div style="position:absolute;left:50%;top:70px;width:340px;height:340px;transform:translateX(-50%)">
+          <div style="position:absolute;inset:40px;border-radius:50%;background:radial-gradient(circle,rgba(243,198,115,.16),transparent 70%)"></div>
+          <sc-for list="{{ a.beads }}" as="b" hint-placeholder-count="54"><div style="position:absolute;left:{{ b.x }};top:{{ b.y }};width:{{ b.s }};height:{{ b.s }};border-radius:50%;background:{{ b.bg }};box-shadow:{{ b.sh }};transition:all .3s ease"></div></sc-for>
+          <div style="position:absolute;left:50%;top:336px;transform:translateX(-50%);width:10px;height:18px;border-radius:3px;background:linear-gradient(180deg,#8A5A18,#5A3A10)"></div>
+          <div style="position:absolute;left:50%;top:352px;transform:translateX(-50%);width:40px;height:34px;border-radius:3px 3px 20px 20px;background:repeating-linear-gradient(90deg,#C99A4A 0 2px,#8A5A18 2px 3px)"></div>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:500 92px/1 'Cormorant Garamond',serif;color:#F3C673">{{ a.n }}</div><div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.55);margin-top:6px">/ 108 biến</div></div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:44px;text-align:center"><div style="font:500 28px/1.3 'Cormorant Garamond',serif">Nam mô A Di Đà Phật</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.5);margin-top:10px">Chạm bất cứ đâu · phím cách</div></div>
+      </div>
+    </div>
+
+    <div id="2b" style="width:440px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="padding:4px 10px;border-radius:8px;background:#221E19;color:#F7F2E8;font:700 13px 'Be Vietnam Pro',sans-serif">2b</div><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Chuỗi treo</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">hạt trượt theo dây khi lần</div></div>
+      <div onClick="{{ tapB }}" style="height:640px;border-radius:28px;background:linear-gradient(180deg,#1B1712,#0D0B08);color:#F5EEE0;position:relative;overflow:hidden;cursor:pointer;user-select:none">
+        <div style="position:absolute;left:32px;top:30px"><div style="font:500 76px/1 'Cormorant Garamond',serif;color:#F3C673">{{ b.n }}</div><div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.55);margin-top:4px">{{ b.sub }}</div></div>
+        <div style="position:absolute;right:32px;top:40px;width:120px;height:3px;border-radius:2px;background:rgba(242,235,221,.12);overflow:hidden"><div style="height:100%;background:#D9963C;width:{{ b.pct }};transition:width .3s ease"></div></div>
+        <svg style="position:absolute;left:0;top:0" width="440" height="640" viewBox="0 0 440 640"><path d="{{ b.path }}" fill="none" stroke="rgba(201,154,74,.35)" stroke-width="1.5"></path></svg>
+        <sc-for list="{{ b.beads }}" as="x" hint-placeholder-count="15"><div style="position:absolute;left:0;top:0;width:{{ x.s }};height:{{ x.s }};border-radius:50%;background:radial-gradient(circle at 35% 30%,#E9C27E,#B07A3A 50%,#5A3A10);box-shadow:0 8px 14px rgba(0,0,0,.55);transform:{{ x.t }};opacity:{{ x.o }};transition:transform .38s cubic-bezier(.3,.7,.3,1),opacity .2s ease"></div></sc-for>
+        <div style="position:absolute;left:50%;top:{{ b.ringY }};width:62px;height:62px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(243,198,115,.45)"></div>
+        <div style="position:absolute;left:0;right:0;bottom:44px;text-align:center"><div style="font:italic 500 26px/1.3 'Cormorant Garamond',serif;color:rgba(245,238,224,.9)">Nam mô A Di Đà Phật</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.5);margin-top:10px">Chạm để kéo một hạt qua vòng</div></div>
+      </div>
+    </div>
+
+    <div id="2c" style="width:440px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="padding:4px 10px;border-radius:8px;background:#221E19;color:#F7F2E8;font:700 13px 'Be Vietnam Pro',sans-serif">2c</div><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Một hạt trong tay</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">108 chấm quanh hạt lớn, nền giấy sáng</div></div>
+      <div onClick="{{ tapC }}" style="height:640px;border-radius:28px;background:radial-gradient(circle at 50% 38%,#FFFDF8,#EFE6D5 78%);border:1px solid rgba(34,30,25,.08);position:relative;overflow:hidden;cursor:pointer;user-select:none">
+        <div style="position:absolute;left:0;right:0;top:30px;text-align:center"><div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#8A5A18">{{ c.round }}</div></div>
+        <div style="position:absolute;left:50%;top:80px;width:320px;height:320px;transform:translateX(-50%)">
+          <sc-for list="{{ c.dots }}" as="d" hint-placeholder-count="108"><div style="position:absolute;left:{{ d.x }};top:{{ d.y }};width:{{ d.s }};height:{{ d.s }};border-radius:50%;background:{{ d.bg }};transition:background .25s ease"></div></sc-for>
+          <div style="position:absolute;left:50%;top:50%;width:170px;height:170px;transform:translate(-50%,-50%) scale({{ c.scale }});transition:transform .14s ease;border-radius:50%;background:radial-gradient(circle at 34% 28%,#F2D9A6,#C99A4A 38%,#8A5A18 72%,#5A3A10);box-shadow:0 24px 50px rgba(90,58,16,.35),inset -10px -14px 30px rgba(60,36,8,.35);display:flex;align-items:center;justify-content:center"><div style="font:500 64px/1 'Cormorant Garamond',serif;color:#FFF8E8;text-shadow:0 2px 8px rgba(60,36,8,.4)">{{ c.n }}</div></div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font:500 28px/1.3 'Cormorant Garamond',serif">Nam mô A Di Đà Phật</div><div style="display:flex;gap:6px"><div style="padding:6px 14px;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 12px 'Be Vietnam Pro',sans-serif">108</div><div style="padding:6px 14px;border-radius:999px;border:1px solid rgba(34,30,25,.15);font:500 12px 'Be Vietnam Pro',sans-serif">54</div><div style="padding:6px 14px;border-radius:999px;border:1px solid rgba(34,30,25,.15);font:500 12px 'Be Vietnam Pro',sans-serif">21</div></div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">Chạm vào hạt · phím cách</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { a: 30, b: 30, c: 30, pc: false, rp: 30, rBase: 30, rt: 0, rDrag: false };
+  rRef = React.createRef();
+  componentDidMount() { this._k = e => { if (e.code === 'Space') { e.preventDefault(); this.rTap(); } }; window.addEventListener('keydown', this._k); }
+  componentWillUnmount() { window.removeEventListener('keydown', this._k); cancelAnimationFrame(this._raf); }
+  sound() {
+    try {
+      const A = this._ac || (this._ac = new (window.AudioContext || window.webkitAudioContext)()), t = A.currentTime;
+      const hit = (at, g0, f) => {
+        const len = Math.floor(A.sampleRate * .03), buf = A.createBuffer(1, len, A.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+        const src = A.createBufferSource(), bp = A.createBiquadFilter(), g = A.createGain();
+        src.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 3.5; g.gain.value = g0;
+        src.connect(bp); bp.connect(g); g.connect(A.destination); src.start(t + at);
+        const o = A.createOscillator(), og = A.createGain(); o.frequency.setValueAtTime(f / 9, t + at); o.frequency.exponentialRampToValueAtTime(f / 16, t + at + .05);
+        og.gain.setValueAtTime(g0 * .5, t + at); og.gain.exponentialRampToValueAtTime(.0001, t + at + .07); o.connect(og); og.connect(A.destination); o.start(t + at); o.stop(t + at + .08);
+      };
+      hit(0, .5, 2100); hit(.075, .22, 1700);
+    } catch (e) {}
+    if (navigator.vibrate) navigator.vibrate(10);
+  }
+  commit() { this._swayAt = performance.now(); this.setState(q => ({ rBase: q.rBase + 1 })); this.sound(); this.loop(); }
+  loop() {
+    if (this._raf) return;
+    const step = () => {
+      const q = this.state, now = performance.now(), swayOn = this._swayAt && now - this._swayAt < 2600;
+      let p = q.rp, v = this._v || 0, done = true;
+      if (!q.rDrag) { const tgt = this._tgt != null ? this._tgt : q.rBase; v += (tgt - p) * .16; v *= .7; p += v; if (Math.abs(tgt - p) > .0008 || Math.abs(v) > .0008) done = false; else { p = tgt; v = 0; if (this._tgt != null && this._tgt > q.rBase) { this._tgt = null; this.commit(); } this._tgt = null; } }
+      this._v = v;
+      this.setState({ rp: p, rt: now });
+      if (!done || swayOn || q.rDrag) this._raf = requestAnimationFrame(step); else this._raf = null;
+    };
+    this._raf = requestAnimationFrame(step);
+  }
+  rTap() { if (this._tgt != null) return; this._tgt = this.state.rBase + 1; this.loop(); }
+  rDown = e => { this._pid = e.pointerId; e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); this._y0 = e.clientY; this._moved = false; this._tgt = null; this.setState({ rDrag: true }); this.loop(); };
+  rMove = e => {
+    if (!this.state.rDrag) return;
+    const dy = e.clientY - this._y0; if (Math.abs(dy) > 4) this._moved = true;
+    let f = dy / 40; if (f < 0) f = Math.max(-0.25, f * .35);
+    if (f >= 1) { this._y0 += 40; f -= 1; this.commit(); }
+    this.setState(q => ({ rp: q.rBase + f + (f >= 1 ? 0 : 0) }));
+  };
+  rUp = () => {
+    if (!this.state.rDrag) return;
+    const f = this.state.rp - this.state.rBase;
+    this.setState({ rDrag: false });
+    if (!this._moved) this._tgt = this.state.rBase + 1; else if (f > .45) this._tgt = this.state.rBase + 1; else this._tgt = null;
+    this.loop();
+  };
+  rVals() {
+    const s = this.state, CX = 220, Y0 = 330, now = s.rt || 0;
+    const age = this._swayAt ? (now - this._swayAt) / 1000 : 9, sw = age < 2.6 ? 9 * Math.exp(-age * 1.6) * Math.sin(age * 7.5) : 0;
+    const xAt = y => CX + Math.sin(y / 130) * 7 + sw * Math.max(0, (y + 40) / 640);
+    const yOf = v => v >= 0 ? Y0 - v * 40 : v >= -1 ? Y0 - v * 34 : Y0 + 34 + (-v - 1) * 25;
+    const beads = []; const k0 = Math.floor(s.rp) - 9;
+    for (let k = k0; k < k0 + 20; k++) {
+      const v = k - s.rp, y = yOf(v); if (y < -40 || y > 690) continue;
+      const pile = v < -1 ? ((k * 37) % 7 - 3) * .9 : 0, x = xAt(y) + pile, sz = v >= -0.6 && v <= 0.4 ? 32 : 29;
+      beads.push({ s: sz + 'px', t: 'translate(' + (x - sz / 2).toFixed(1) + 'px,' + (y - sz / 2).toFixed(1) + 'px) rotate(' + ((k * 47) % 360) + 'deg)', o: 1 });
+    }
+    let path = ''; for (let y = -30; y <= 680; y += 20) path += (y === -30 ? 'M' : 'L') + xAt(y).toFixed(1) + ' ' + y;
+    const n = s.rBase % 108, near = Math.abs(s.rp - s.rBase - .5) < .5 && (s.rDrag || this._tgt != null);
+    return { n, sub: '/ 108 biến', round: 'VÒNG ' + (Math.floor(s.rBase / 108) + 1), pct: (n / 108 * 100).toFixed(1) + '%', beads, path, thumbX: xAt(Y0).toFixed(1) + 'px', thumbA: near ? '.75' : '.35' };
+  }
+  renderVals() {
+    const s = this.state;
+    const ring = (W, N, s0, n, gold, cream) => {
+      const R = W / 2 - s0, out = [];
+      for (let i = 0; i < N; i++) {
+        const a = Math.PI / 2 + ((i + 1) / (N + 1)) * Math.PI * 2, cx = W / 2 + R * Math.cos(a), cy = W / 2 + R * Math.sin(a);
+        const on = i < n, cur = i === n - 1, sz = cur ? s0 * 1.35 : s0;
+        out.push({ x: (cx - sz / 2).toFixed(1) + 'px', y: (cy - sz / 2).toFixed(1) + 'px', s: sz.toFixed(1) + 'px', bg: on ? gold : cream, sh: cur ? '0 0 0 4px rgba(243,198,115,.22),0 0 18px rgba(243,198,115,.55)' : '0 2px 4px rgba(0,0,0,.45)' });
+      }
+      return out;
+    };
+    const gold = 'radial-gradient(circle at 35% 30%,#F3D08C,#C99A4A 50%,#7A5320)', wood = 'radial-gradient(circle at 35% 30%,#6B5440,#3E2E1F 60%,#22190F)';
+    const an = s.a % 108, lapN = an % 54 || (an ? 54 : 0);
+    const aBeads = ring(340, 54, 15, an === 0 ? 0 : (an % 54 === 0 ? 54 : an % 54), gold, wood);
+    aBeads.push({ x: (170 - 13).toFixed(1) + 'px', y: (340 - 15 - 13 - 2).toFixed(1) + 'px', s: '26px', bg: 'radial-gradient(circle at 35% 30%,#B07A3A,#6B4410 60%,#3E270A)', sh: '0 3px 6px rgba(0,0,0,.5)' });
+    // 2b chain
+    const N = 15, W = 440, top = 150, depth = 280, mid = (N - 1) / 2;
+    const pt = u => ({ x: W * (0.04 + 0.92 * u), y: top + depth * (1 - Math.pow(2 * u - 1, 2)) });
+    let path = ''; for (let k = 0; k <= 40; k++) { const p = pt(k / 40); path += (k ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1); }
+    const bn = s.b;
+    const bBeads = Array.from({ length: N }, (_, i) => { const slot = ((i + bn) % N + N) % N, u = slot / (N - 1), p = pt(u), d = Math.abs(slot - mid), sz = 34 - d * 1.6, edge = slot === 0 || slot === N - 1; return { s: sz.toFixed(1) + 'px', t: 'translate(' + (p.x - sz / 2).toFixed(1) + 'px,' + (p.y - sz / 2).toFixed(1) + 'px) scale(' + (slot === mid ? 1.15 : 1) + ')', o: edge ? 0 : 1 }; });
+    const ringY = pt(0.5).y.toFixed(1) + 'px';
+    // 2c dots
+    const cn = s.c % 108, dots = [];
+    for (let i = 0; i < 108; i++) { const a = -Math.PI / 2 + (i / 108) * Math.PI * 2, R = 148, cx = 160 + R * Math.cos(a), cy = 160 + R * Math.sin(a), on = i < cn, sz = i === cn - 1 ? 9 : 6; dots.push({ x: (cx - sz / 2).toFixed(1) + 'px', y: (cy - sz / 2).toFixed(1) + 'px', s: sz + 'px', bg: on ? '#B8862F' : 'rgba(34,30,25,.14)' }); }
+    return {
+      r: this.rVals(), rRef: this.rRef, rDown: this.rDown, rMove: this.rMove, rUp: this.rUp,
+      a: { n: an, round: Math.floor(s.a / 108) + 1, lap: 'Vòng hạt ' + (an <= 54 ? 1 : 2) + '/2', beads: aBeads },
+      b: { n: bn % 108, sub: '/ 108 biến · vòng ' + (Math.floor(bn / 108) + 1), pct: ((bn % 108) / 108 * 100).toFixed(1) + '%', path, beads: bBeads, ringY },
+      c: { n: cn, round: 'VÒNG ' + (Math.floor(s.c / 108) + 1) + ' · ' + cn + ' / 108', dots, scale: s.pc ? 0.94 : 1 },
+      tapA: () => this.setState(q => ({ a: q.a + 1 })),
+      tapB: () => this.setState(q => ({ b: q.b + 1 })),
+      tapC: () => { this.setState(q => ({ c: q.c + 1, pc: true })); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ pc: false }), 120); },
+    };
+  }
+}
+</script>
+</body>
+</html>

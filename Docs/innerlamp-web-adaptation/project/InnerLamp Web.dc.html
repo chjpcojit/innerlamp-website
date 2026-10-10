@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap&subset=vietnamese,latin" rel="stylesheet">
+<style>body{margin:0;background:#E6DFD0;font-family:'Be Vietnam Pro',system-ui,sans-serif;color:#221E19}a{color:#8A5A18;text-decoration:none}a:hover{color:#B8862F}</style>
+</helmet>
+
+<section style="padding:56px 64px 80px">
+  <div style="max-width:900px;margin-bottom:36px">
+    <div style="font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:rgba(34,30,25,.5)">VÒNG 1 · TRANG CHỦ TRÊN WEB</div>
+    <div style="font:400 30px/1.3 Lora,serif;margin-top:10px">Ba cách bố cục Trang chủ cho màn hình desktop</div>
+    <div style="font:400 14px/1.7 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.62);margin-top:10px;text-wrap:pretty">Cùng nội dung với Trang chủ mobile: lịch âm tuần, thẻ ngày, sự kiện Phật giáo, chùa Việt Nam, thời khóa, tràng hạt, chuông mõ, bài viết. Có thể bấm chọn ngày và chạm tràng hạt. <a href="#1a">1a</a> sidebar trái · <a href="#1b">1b</a> thanh điều hướng trên · <a href="#1c">1c</a> ba cột kiểu ứng dụng.</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+    <!-- ============ 1a ============ -->
+    <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="padding:5px 11px;border-radius:999px;background:#221E19;color:#F7F2E8;font:600 12px 'Be Vietnam Pro',sans-serif">1a</div>
+        <div style="font:500 14px 'Be Vietnam Pro',sans-serif">Sidebar trái · bảng điều khiển hai cột</div>
+      </div>
+      <div style="width:1360px;background:#F7F2E8;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(34,30,25,.18);display:flex;min-height:1400px">
+        <aside style="width:248px;flex:none;background:#FBF7EF;border-right:1px solid rgba(34,30,25,.08);padding:28px 18px;display:flex;flex-direction:column;gap:28px">
+          <div style="display:flex;align-items:center;gap:11px;padding:0 8px">
+            <div style="width:34px;height:34px;border-radius:50%;border:1.5px solid #B8862F;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box;background:radial-gradient(circle at 50% 74%,rgba(217,150,60,.22),transparent 66%)"><div style="width:8px;height:11px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:linear-gradient(180deg,#F3C673,#D9963C);box-shadow:0 0 12px rgba(217,150,60,.8)"></div></div>
+            <div style="font:600 13px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em">INNERLAMP</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ navMain }}" as="n" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;cursor:pointer;background: {{ n.bg }};font:500 14px 'Be Vietnam Pro',sans-serif;color: {{ n.fg }}" style-hover="background:#F3ECDE">
+                <div style="width:7px;height:7px;border-radius:50%;background: {{ n.dot }}"></div>{{ n.label }}
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:rgba(34,30,25,.42);padding:0 12px 8px">THỰC HÀNH</div>
+            <sc-for list="{{ navPractice }}" as="n" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;font:400 13.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.72)" style-hover="background:#F3ECDE">
+                <div style="width:7px;height:7px;border-radius:50%;border:1.3px solid rgba(34,30,25,.35)"></div>{{ n }}
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:14px">
+            <div style="padding:14px 18px;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 14px 'Be Vietnam Pro',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 24px rgba(34,30,25,.18);cursor:pointer">
+              <div style="width:8px;height:11px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:#E6A94E;box-shadow:0 0 10px rgba(217,150,60,.9)"></div>Thắp đèn · ngồi thiền
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid rgba(34,30,25,.08)">
+              <div style="width:36px;height:36px;border-radius:50%;background:#E2D4BB;display:flex;align-items:center;justify-content:center;font:500 13px Lora,serif;color:#8A5A18">DT</div>
+              <div style="flex:1;min-width:0"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">Diệu Tâm</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">Phật tử tại gia</div></div>
+            </div>
+          </div>
+        </aside>
+
+        <main style="flex:1;min-width:0;padding:30px 40px 48px;display:flex;flex-direction:column;gap:28px">
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="flex:1">
+              <div style="font:400 28px/1.2 Lora,serif">{{ greeting }}</div>
+              <div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:6px">{{ dateLine }}</div>
+            </div>
+            <div style="width:300px;height:44px;border-radius:14px;background:#FFFDF8;border:1px solid rgba(34,30,25,.1);display:flex;align-items:center;gap:10px;padding:0 16px;box-sizing:border-box;font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.42)"><div style="width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(34,30,25,.4)"></div>Tìm kinh, pháp thoại, chùa…</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:#FFFDF8;border:1px solid rgba(34,30,25,.1);display:flex;align-items:center;justify-content:center;position:relative"><div style="width:12px;height:13px;border-radius:6px 6px 2px 2px;border:1.5px solid #4A443C"></div><div style="position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;background:#D9963C"></div></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:24px">
+              <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:22px 24px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="font:500 14px 'Be Vietnam Pro',sans-serif">Tháng 9 – Tháng 10, 2026</div>
+                  <div style="display:flex;gap:8px;align-items:center"><div style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(34,30,25,.14);display:flex;align-items:center;justify-content:center;font:400 14px sans-serif;color:rgba(34,30,25,.6)">‹</div><div style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(34,30,25,.14);display:flex;align-items:center;justify-content:center;font:400 14px sans-serif;color:rgba(34,30,25,.6)">›</div><a href="#1a" style="font:500 13px 'Be Vietnam Pro',sans-serif;margin-left:8px;white-space:nowrap">Lịch âm</a></div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:16px">
+                  <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                    <div onClick="{{ d.select }}" style="cursor:pointer;border-radius:16px;padding:12px 0 10px;text-align:center;background: {{ d.bg }};color: {{ d.fg }};border:1px solid {{ d.bd }};transition:background .16s ease">
+                      <div style="font:500 11px 'Be Vietnam Pro',sans-serif;opacity:.6">{{ d.wd }}</div>
+                      <div style="font:400 22px Lora,serif;margin-top:4px">{{ d.solar }}</div>
+                      <div style="font:400 11px 'Be Vietnam Pro',sans-serif;opacity:.55;margin-top:2px">{{ d.lunar }}</div>
+                      <div style="width:5px;height:5px;border-radius:50%;margin:7px auto 0;background: {{ d.dot }}"></div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;gap:18px;margin-top:14px;font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">
+                  <div style="display:flex;align-items:center;gap:6px"><div style="width:6px;height:6px;border-radius:50%;background:#6E8F7A"></div>Hoàng đạo</div>
+                  <div style="display:flex;align-items:center;gap:6px"><div style="width:6px;height:6px;border-radius:50%;background:#C2857F"></div>Hắc đạo</div>
+                  <div style="display:flex;align-items:center;gap:6px"><div style="width:6px;height:6px;border-radius:50%;background:#D9963C"></div>Rằm · Mùng Một</div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px">
+                <div style="border-radius:24px;background:linear-gradient(150deg,#2A2620,#161310);padding:26px 28px;position:relative;overflow:hidden;color:#F5EEE0;cursor:pointer">
+                  <div style="position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(217,150,60,.3),transparent 66%)"></div>
+                  <div style="position:relative;display:flex;gap:22px;align-items:flex-start">
+                    <div style="font:400 72px/1 Lora,serif;color:#F3C673">{{ sel.lunar }}</div>
+                    <div style="padding-top:6px">
+                      <div style="font:500 15px 'Be Vietnam Pro',sans-serif">tháng Tám âm lịch</div>
+                      <div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.6);margin-top:4px">Năm Bính Ngọ · {{ sel.full }}</div>
+                      <div style="display:inline-flex;margin-top:12px;padding:6px 12px;border-radius:999px;background:rgba(217,150,60,.16);color:#E8B061;font:500 11.5px 'Be Vietnam Pro',sans-serif">{{ sel.advice }}</div>
+                    </div>
+                  </div>
+                  <div style="position:relative;margin-top:22px;padding-top:18px;border-top:1px solid rgba(242,235,221,.12)">
+                    <div style="font:600 9.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:rgba(217,150,60,.9)">LỜI PHẬT DẠY HÔM NAY</div>
+                    <div style="font:400 18px/1.55 Lora,serif;margin-top:8px">“Ý dẫn đầu các pháp, ý làm chủ, ý tạo.”</div>
+                    <div style="font:italic 400 12.5px Lora,serif;color:rgba(242,235,221,.5);margin-top:4px">Mind precedes all mental states.</div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                  <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:20px 22px;flex:1">
+                    <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:rgba(34,30,25,.42)">THỜI KHÓA HÔM NAY</div>
+                    <div style="font:400 30px Lora,serif;margin-top:10px">12<span style="font-size:18px;color:rgba(34,30,25,.45)"> / 20 phút</span></div>
+                    <div style="height:6px;border-radius:3px;background:#E2D4BB;margin-top:14px;overflow:hidden"><div style="width:60%;height:100%;background:#B8862F;border-radius:3px"></div></div>
+                  </div>
+                  <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:20px 22px;flex:1">
+                    <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:rgba(34,30,25,.42)">CHUỖI NGÀY TINH TẤN</div>
+                    <div style="font:400 30px Lora,serif;margin-top:10px">42<span style="font-size:18px;color:rgba(34,30,25,.45)"> ngày</span></div>
+                    <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:#4E6C59;margin-top:8px">Còn 6 ngày tròn dấu ấn An cư</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:22px;text-align:center">
+                <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">Tràng hạt</div><a href="#1a" style="font:500 12px 'Be Vietnam Pro',sans-serif">Toàn màn hình</a></div>
+                <div onClick="{{ tapBead }}" style="cursor:pointer;width:170px;height:170px;border-radius:50%;margin:18px auto 0;background:conic-gradient(#B8862F {{ beadPct }}, #EFE6D5 0);display:flex;align-items:center;justify-content:center;transform:scale({{ beadScale }});transition:transform .12s ease">
+                  <div style="width:150px;height:150px;border-radius:50%;background:#FFFDF8;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <div style="font:400 44px/1 Lora,serif">{{ beads }}</div>
+                    <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);margin-top:4px">/ 108</div>
+                  </div>
+                </div>
+                <div style="font:400 15px Lora,serif;margin-top:16px">Nam mô A Di Đà Phật</div>
+                <div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);margin-top:4px">Chạm vào vòng để lần một hạt</div>
+                <div onClick="{{ resetBeads }}" style="display:inline-flex;margin-top:14px;padding:9px 18px;border-radius:999px;border:1px solid rgba(34,30,25,.18);font:500 12.5px 'Be Vietnam Pro',sans-serif;cursor:pointer">Bắt đầu lại</div>
+              </div>
+              <div style="border-radius:22px;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer">
+                <div style="width:44px;height:44px;border-radius:13px;background:rgba(184,134,47,.14);display:flex;align-items:center;justify-content:center"><div style="width:18px;height:14px;border-radius:9px 9px 3px 3px;background:#B8862F"></div></div>
+                <div style="flex:1"><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Chuông mõ</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">Giữ nhịp tụng, thỉnh chuông</div></div>
+                <div style="font:400 16px sans-serif;color:rgba(34,30,25,.35)">›</div>
+              </div>
+              <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:20px">
+                <div style="font:500 13px 'Be Vietnam Pro',sans-serif;margin-bottom:6px">Thời khóa gợi ý</div>
+                <sc-for list="{{ routines }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(34,30,25,.06);cursor:pointer">
+                    <div style="width:38px;height:38px;border-radius:12px;background: {{ r.tint }};display:flex;align-items:center;justify-content:center"><div style="width:13px;height:13px;border-radius:50% 0 50% 50%;background: {{ r.tone }}"></div></div>
+                    <div style="flex:1;min-width:0"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">{{ r.title }}</div><div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">{{ r.sub }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><div style="font:400 22px Lora,serif">Sự kiện Phật giáo</div><a href="#1a" style="font:500 13px 'Be Vietnam Pro',sans-serif">Tất cả</a></div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px">
+              <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+                <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:18px;padding:16px;cursor:pointer">
+                  <div style="font:500 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">{{ e.date }}</div>
+                  <div style="font:500 14px/1.35 'Be Vietnam Pro',sans-serif;margin-top:8px;color: {{ e.color }}">{{ e.name }}</div>
+                  <div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:6px">{{ e.lunar }}</div>
+                  <div style="font:500 11px 'Be Vietnam Pro',sans-serif;color:#8A5A18;margin-top:10px">{{ e.count }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><div style="font:400 22px Lora,serif">Chùa Việt Nam</div><a href="#1a" style="font:500 13px 'Be Vietnam Pro',sans-serif">Tìm chùa</a></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+              <sc-for list="{{ temples4 }}" as="t" hint-placeholder-count="4">
+                <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:20px;overflow:hidden;cursor:pointer">
+                  <div style="height:130px;background:repeating-linear-gradient(135deg,#EFE6D5 0 8px,#F4EDE0 8px 16px);display:flex;align-items:center;justify-content:center;font:400 10.5px ui-monospace,monospace;color:rgba(34,30,25,.4)">ảnh chùa</div>
+                  <div style="padding:14px 16px 16px"><div style="font:500 14px 'Be Vietnam Pro',sans-serif">{{ t.name }}</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">{{ t.place }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><div style="font:400 22px Lora,serif">Bài viết Phật pháp hay</div><a href="#1a" style="font:500 13px 'Be Vietnam Pro',sans-serif">Xem tất cả</a></div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+              <sc-for list="{{ articles }}" as="a" hint-placeholder-count="4">
+                <div style="display:flex;gap:16px;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:20px;padding:14px;cursor:pointer">
+                  <div style="width:92px;height:92px;flex:none;border-radius:14px;background:repeating-linear-gradient(135deg,#EFE6D5 0 8px,#F4EDE0 8px 16px)"></div>
+                  <div style="min-width:0;padding-top:2px"><div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.12em;color:#8A5A18">{{ a.cat }}</div><div style="font:400 16px/1.4 Lora,serif;margin-top:6px">{{ a.title }}</div><div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:8px">{{ a.meta }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ============ 1b ============ -->
+    <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="padding:5px 11px;border-radius:999px;background:#221E19;color:#F7F2E8;font:600 12px 'Be Vietnam Pro',sans-serif">1b</div>
+        <div style="font:500 14px 'Be Vietnam Pro',sans-serif">Thanh điều hướng trên · bố cục tạp chí, hero ngày âm</div>
+      </div>
+      <div style="width:1360px;background:#F7F2E8;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(34,30,25,.18)">
+        <header style="height:72px;display:flex;align-items:center;gap:36px;padding:0 48px;border-bottom:1px solid rgba(34,30,25,.08);background:#FBF7EF">
+          <div style="display:flex;align-items:center;gap:11px">
+            <div style="width:32px;height:32px;border-radius:50%;border:1.5px solid #B8862F;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;box-sizing:border-box"><div style="width:8px;height:11px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:linear-gradient(180deg,#F3C673,#D9963C);box-shadow:0 0 12px rgba(217,150,60,.8)"></div></div>
+            <div style="font:600 13px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em">INNERLAMP</div>
+          </div>
+          <nav style="display:flex;gap:6px;flex:1">
+            <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="6">
+              <div style="padding:9px 15px;border-radius:999px;font:500 13.5px 'Be Vietnam Pro',sans-serif;cursor:pointer;background: {{ n.bg }};color: {{ n.fg }}" style-hover="background:#F1E8D8">{{ n.label }}</div>
+            </sc-for>
+          </nav>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;border:1px solid rgba(34,30,25,.12);display:flex;align-items:center;justify-content:center"><div style="width:11px;height:11px;border-radius:50%;border:1.5px solid #4A443C"></div></div>
+            <div style="width:40px;height:40px;border-radius:50%;border:1px solid rgba(34,30,25,.12);display:flex;align-items:center;justify-content:center;position:relative"><div style="width:11px;height:12px;border-radius:6px 6px 2px 2px;border:1.5px solid #4A443C"></div><div style="position:absolute;top:9px;right:10px;width:6px;height:6px;border-radius:50%;background:#D9963C"></div></div>
+            <div style="padding:11px 18px;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 13.5px 'Be Vietnam Pro',sans-serif;display:flex;align-items:center;gap:9px;cursor:pointer;white-space:nowrap;flex:none"><div style="width:7px;height:10px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:#E6A94E;box-shadow:0 0 9px rgba(217,150,60,.9)"></div>Thắp đèn</div>
+            <div style="width:40px;height:40px;border-radius:50%;background:#E2D4BB;display:flex;align-items:center;justify-content:center;font:500 13px Lora,serif;color:#8A5A18">DT</div>
+          </div>
+        </header>
+
+        <div style="max-width:1200px;margin:0 auto;padding:40px 40px 64px;display:flex;flex-direction:column;gap:44px">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:stretch">
+            <div style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0">
+              <div>
+                <div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">{{ dateLine }}</div>
+                <div style="font:400 44px/1.15 Lora,serif;margin-top:14px;text-wrap:pretty">{{ greeting }}</div>
+                <div style="font:italic 400 17px/1.6 Lora,serif;color:rgba(34,30,25,.6);margin-top:16px">Tự thắp đèn tâm, tự soi lối về</div>
+              </div>
+              <div style="display:flex;gap:28px;margin-top:28px">
+                <div><div style="font:400 30px Lora,serif">12<span style="font-size:16px;color:rgba(34,30,25,.45)"> / 20 phút</span></div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:4px">Thời khóa hôm nay</div></div>
+                <div style="width:1px;background:rgba(34,30,25,.12)"></div>
+                <div><div style="font:400 30px Lora,serif">42<span style="font-size:16px;color:rgba(34,30,25,.45)"> ngày</span></div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:4px">Chuỗi ngày tinh tấn</div></div>
+              </div>
+            </div>
+            <div style="border-radius:28px;background:linear-gradient(150deg,#2A2620,#161310);padding:28px 30px 24px;position:relative;overflow:hidden;color:#F5EEE0">
+              <div style="position:absolute;left:30%;top:-120px;width:360px;height:300px;border-radius:50%;background:radial-gradient(ellipse,rgba(217,150,60,.26),transparent 66%)"></div>
+              <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="display:flex;gap:20px;align-items:flex-start">
+                  <div style="font:400 84px/1 Lora,serif;color:#F3C673">{{ sel.lunar }}</div>
+                  <div style="padding-top:10px"><div style="font:500 15px 'Be Vietnam Pro',sans-serif">tháng Tám âm lịch</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.6);margin-top:4px">Bính Ngọ · {{ sel.full }}</div><div style="display:inline-flex;margin-top:12px;padding:6px 12px;border-radius:999px;background:rgba(217,150,60,.16);color:#E8B061;font:500 11.5px 'Be Vietnam Pro',sans-serif">{{ sel.advice }}</div></div>
+                </div>
+                <a href="#1b" style="font:500 12.5px 'Be Vietnam Pro',sans-serif;color:#E8B061">Lịch âm ›</a>
+              </div>
+              <div style="position:relative;font:400 17px/1.55 Lora,serif;margin-top:20px;max-width:440px">“Ý dẫn đầu các pháp, ý làm chủ, ý tạo.”</div>
+              <div style="position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:22px">
+                <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                  <div onClick="{{ d.select }}" style="cursor:pointer;border-radius:14px;padding:10px 0 8px;text-align:center;background: {{ d.dbg }};color: {{ d.dfg }};border:1px solid {{ d.dbd }};transition:background .16s ease">
+                    <div style="font:500 10.5px 'Be Vietnam Pro',sans-serif;opacity:.6">{{ d.wd }}</div>
+                    <div style="font:400 19px Lora,serif;margin-top:3px">{{ d.solar }}</div>
+                    <div style="font:400 10.5px 'Be Vietnam Pro',sans-serif;opacity:.55;margin-top:1px">{{ d.lunar }}</div>
+                    <div style="width:5px;height:5px;border-radius:50%;margin:6px auto 0;background: {{ d.dot }}"></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+            <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:24px;padding:22px;display:flex;align-items:center;gap:20px">
+              <div onClick="{{ tapBead }}" style="cursor:pointer;width:112px;height:112px;flex:none;border-radius:50%;background:conic-gradient(#B8862F {{ beadPct }}, #EFE6D5 0);display:flex;align-items:center;justify-content:center;transform:scale({{ beadScale }});transition:transform .12s ease"><div style="width:98px;height:98px;border-radius:50%;background:#FFFDF8;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:400 32px/1 Lora,serif">{{ beads }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);margin-top:2px">/ 108</div></div></div>
+              <div><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Tràng hạt</div><div style="font:400 14px Lora,serif;margin-top:6px">Nam mô A Di Đà Phật</div><div style="display:flex;gap:12px;margin-top:12px"><div onClick="{{ resetBeads }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer">Bắt đầu lại</div><a href="#1b" style="font:500 12px 'Be Vietnam Pro',sans-serif">Toàn màn hình</a></div></div>
+            </div>
+            <div style="border-radius:24px;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);padding:22px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
+              <div style="width:48px;height:48px;border-radius:14px;background:rgba(184,134,47,.14);display:flex;align-items:center;justify-content:center"><div style="width:20px;height:15px;border-radius:10px 10px 3px 3px;background:#B8862F"></div></div>
+              <div><div style="font:500 15px 'Be Vietnam Pro',sans-serif;margin-top:16px">Chuông mõ</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:4px">Giữ nhịp tụng kinh, thỉnh chuông khi thiền</div></div>
+            </div>
+            <div style="border-radius:24px;background:rgba(110,143,122,.12);border:1px solid rgba(110,143,122,.25);padding:22px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
+              <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:#4E6C59">GỢI Ý BUỔI SÁNG</div>
+              <div><div style="font:400 20px/1.3 Lora,serif;margin-top:16px">Thiền hơi thở buổi sáng</div><div style="font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:6px">20 phút · Thầy Minh Đạo</div></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><div style="font:400 24px Lora,serif">Sự kiện Phật giáo</div><a href="#1b" style="font:500 13px 'Be Vietnam Pro',sans-serif">Tất cả</a></div>
+              <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:6px 22px">
+                <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid rgba(34,30,25,.06);cursor:pointer">
+                    <div style="width:52px;text-align:center"><div style="font:400 22px/1 Lora,serif">{{ e.day }}</div><div style="font:500 10.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);margin-top:3px">{{ e.mon }}</div></div>
+                    <div style="flex:1;min-width:0"><div style="font:500 14px 'Be Vietnam Pro',sans-serif;color: {{ e.color }}">{{ e.name }}</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">{{ e.lunar }} · {{ e.count }}</div></div>
+                    <div style="font:500 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">{{ e.left }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><div style="font:400 24px Lora,serif">Thời khóa gợi ý</div></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ routines }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:14px;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:18px;padding:14px 16px;cursor:pointer">
+                    <div style="width:44px;height:44px;border-radius:13px;background: {{ r.tint }};display:flex;align-items:center;justify-content:center"><div style="width:14px;height:14px;border-radius:50% 0 50% 50%;background: {{ r.tone }}"></div></div>
+                    <div style="flex:1;min-width:0"><div style="font:500 13.5px 'Be Vietnam Pro',sans-serif">{{ r.title }}</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">{{ r.sub }}</div></div>
+                    <div style="font:400 16px sans-serif;color:rgba(34,30,25,.35)">›</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><div style="font:400 24px Lora,serif">Chùa Việt Nam</div><a href="#1b" style="font:500 13px 'Be Vietnam Pro',sans-serif">Tìm chùa</a></div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:180px 180px;gap:16px">
+              <sc-for list="{{ temples3 }}" as="t" hint-placeholder-count="3">
+                <div style="grid-row:{{ t.row }};border-radius:22px;overflow:hidden;position:relative;background:repeating-linear-gradient(135deg,#EAE0CD 0 8px,#F1E9DA 8px 16px);cursor:pointer">
+                  <div style="position:absolute;top:14px;left:16px;font:400 10.5px ui-monospace,monospace;color:rgba(34,30,25,.4)">ảnh chùa</div>
+                  <div style="position:absolute;left:12px;right:12px;bottom:12px;background:rgba(255,253,248,.94);border-radius:14px;padding:12px 14px"><div style="font:500 14px 'Be Vietnam Pro',sans-serif">{{ t.name }}</div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">{{ t.place }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><div style="font:400 24px Lora,serif">Bài viết Phật pháp hay</div><a href="#1b" style="font:500 13px 'Be Vietnam Pro',sans-serif">Xem tất cả</a></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+              <sc-for list="{{ articles }}" as="a" hint-placeholder-count="4">
+                <div style="cursor:pointer">
+                  <div style="aspect-ratio:1;border-radius:18px;background:repeating-linear-gradient(135deg,#EAE0CD 0 8px,#F1E9DA 8px 16px);display:flex;align-items:center;justify-content:center;font:400 10.5px ui-monospace,monospace;color:rgba(34,30,25,.4)">ảnh bài viết</div>
+                  <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.12em;color:#8A5A18;margin-top:14px">{{ a.cat }}</div>
+                  <div style="font:400 17px/1.4 Lora,serif;margin-top:6px">{{ a.title }}</div>
+                  <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:8px">{{ a.meta }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1c ============ -->
+    <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="padding:5px 11px;border-radius:999px;background:#221E19;color:#F7F2E8;font:600 12px 'Be Vietnam Pro',sans-serif">1c</div>
+        <div style="font:500 14px 'Be Vietnam Pro',sans-serif">Ba cột kiểu ứng dụng · lịch trái, nội dung giữa, thực hành phải</div>
+      </div>
+      <div style="width:1360px;height:1000px;background:#F7F2E8;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(34,30,25,.18);display:flex">
+        <div style="width:76px;flex:none;background:#221E19;display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:6px">
+          <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid #D9963C;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box;margin-bottom:22px"><div style="width:8px;height:11px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:linear-gradient(180deg,#F3C673,#D9963C);box-shadow:0 0 12px rgba(217,150,60,.9)"></div></div>
+          <sc-for list="{{ navRail }}" as="n" hint-placeholder-count="6">
+            <div style="width:60px;padding:9px 0;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;background: {{ n.bg }}" style-hover="background:rgba(242,235,221,.08)">
+              <div style="width:8px;height:8px;border-radius:50%;background: {{ n.dot }}"></div>
+              <div style="font:500 10px 'Be Vietnam Pro',sans-serif;color: {{ n.fg }}">{{ n.label }}</div>
+            </div>
+          </sc-for>
+          <div style="margin-top:auto;width:40px;height:40px;border-radius:50%;background:#E2D4BB;display:flex;align-items:center;justify-content:center;font:500 13px Lora,serif;color:#8A5A18">DT</div>
+        </div>
+
+        <div style="width:310px;flex:none;border-right:1px solid rgba(34,30,25,.08);background:#FBF7EF;padding:26px 22px;display:flex;flex-direction:column;gap:22px;overflow:hidden">
+          <div>
+            <div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55)">Thứ Bảy, 3 tháng 10</div>
+            <div style="font:400 24px Lora,serif;margin-top:6px">Tháng 10 · 2026</div>
+            <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">Âm lịch Bính Ngọ · tháng Tám – Chín</div>
+          </div>
+          <div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font:500 10px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.42);text-align:center;margin-bottom:6px">
+              <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">
+              <sc-for list="{{ month }}" as="m" hint-placeholder-count="35">
+                <div onClick="{{ m.select }}" style="height:42px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background: {{ m.bg }};color: {{ m.fg }};opacity: {{ m.op }}">
+                  <div style="font:500 12.5px 'Be Vietnam Pro',sans-serif">{{ m.solar }}</div>
+                  <div style="font:400 9px 'Be Vietnam Pro',sans-serif;opacity:.6;margin-top:1px">{{ m.lunar }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">Sự kiện sắp tới</div><a href="#1c" style="font:500 12px 'Be Vietnam Pro',sans-serif">Tất cả</a></div>
+            <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+              <div style="display:flex;gap:12px;padding:10px 0;border-top:1px solid rgba(34,30,25,.06);cursor:pointer">
+                <div style="width:4px;border-radius:2px;background: {{ e.bar }}"></div>
+                <div style="flex:1;min-width:0"><div style="font:500 12.5px 'Be Vietnam Pro',sans-serif;color: {{ e.color }}">{{ e.name }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">{{ e.date }} · {{ e.left }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <main style="flex:1;min-width:0;padding:26px 30px;display:flex;flex-direction:column;gap:22px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="flex:1;min-width:0;font:400 23px Lora,serif;white-space:nowrap">{{ greeting }}</div>
+            <div style="width:180px;flex:none;height:40px;border-radius:12px;background:#FFFDF8;border:1px solid rgba(34,30,25,.1);display:flex;align-items:center;gap:9px;padding:0 14px;box-sizing:border-box;font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.42)"><div style="width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(34,30,25,.4)"></div>Tìm kiếm</div>
+          </div>
+          <div style="border-radius:24px;background:linear-gradient(150deg,#2A2620,#161310);padding:24px 26px;position:relative;overflow:hidden;color:#F5EEE0;display:flex;gap:28px;align-items:center">
+            <div style="position:absolute;left:-60px;top:-80px;width:280px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(217,150,60,.28),transparent 66%)"></div>
+            <div style="position:relative;text-align:center;min-width:110px"><div style="font:400 76px/1 Lora,serif;color:#F3C673">{{ sel.lunar }}</div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.6);margin-top:6px">tháng Tám âm</div></div>
+            <div style="position:relative;flex:1;min-width:0">
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div style="font:500 14px 'Be Vietnam Pro',sans-serif;white-space:nowrap">{{ sel.full }}</div><div style="white-space:nowrap;padding:5px 11px;border-radius:999px;background:rgba(217,150,60,.16);color:#E8B061;font:500 11px 'Be Vietnam Pro',sans-serif">{{ sel.advice }}</div></div>
+              <div style="font:400 18px/1.55 Lora,serif;margin-top:12px">“Ý dẫn đầu các pháp, ý làm chủ, ý tạo.”</div>
+              <div style="font:italic 400 12.5px Lora,serif;color:rgba(242,235,221,.5);margin-top:4px">Mind precedes all mental states.</div>
+            </div>
+            <a href="#1c" style="position:relative;font:500 12.5px 'Be Vietnam Pro',sans-serif;color:#E8B061;align-self:flex-start">Chi tiết ngày ›</a>
+          </div>
+          <div>
+            <div style="font:500 13px 'Be Vietnam Pro',sans-serif;margin-bottom:10px">Thời khóa gợi ý</div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+              <sc-for list="{{ routines }}" as="r" hint-placeholder-count="3">
+                <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:18px;padding:16px;cursor:pointer">
+                  <div style="width:38px;height:38px;border-radius:12px;background: {{ r.tint }};display:flex;align-items:center;justify-content:center"><div style="width:13px;height:13px;border-radius:50% 0 50% 50%;background: {{ r.tone }}"></div></div>
+                  <div style="font:500 13.5px/1.35 'Be Vietnam Pro',sans-serif;margin-top:12px">{{ r.title }}</div><div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">{{ r.sub }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">Bài viết Phật pháp hay</div><a href="#1c" style="font:500 12px 'Be Vietnam Pro',sans-serif">Xem tất cả</a></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ articles3 }}" as="a" hint-placeholder-count="3">
+                <div style="display:flex;gap:14px;align-items:center;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:18px;padding:12px;cursor:pointer">
+                  <div style="width:64px;height:64px;flex:none;border-radius:12px;background:repeating-linear-gradient(135deg,#EFE6D5 0 8px,#F4EDE0 8px 16px)"></div>
+                  <div style="min-width:0"><div style="font:600 9.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.12em;color:#8A5A18">{{ a.cat }}</div><div style="font:400 15px/1.35 Lora,serif;margin-top:4px">{{ a.title }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:4px">{{ a.meta }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">Chùa Việt Nam</div><a href="#1c" style="font:500 12px 'Be Vietnam Pro',sans-serif">Tìm chùa</a></div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+              <sc-for list="{{ temples3 }}" as="t" hint-placeholder-count="3">
+                <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:18px;overflow:hidden;cursor:pointer">
+                  <div style="height:84px;background:repeating-linear-gradient(135deg,#EFE6D5 0 8px,#F4EDE0 8px 16px)"></div>
+                  <div style="padding:10px 14px 12px"><div style="font:500 13px 'Be Vietnam Pro',sans-serif">{{ t.name }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:2px">{{ t.place }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </main>
+
+        <aside style="width:300px;flex:none;border-left:1px solid rgba(34,30,25,.08);background:#FBF7EF;padding:26px 22px;display:flex;flex-direction:column;gap:18px">
+          <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.14em;color:rgba(34,30,25,.42)">THỰC HÀNH HÔM NAY</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:16px;padding:14px"><div style="font:400 24px Lora,serif">12<span style="font-size:13px;color:rgba(34,30,25,.45)">/20′</span></div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">Thời khóa</div></div>
+            <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:16px;padding:14px"><div style="font:400 24px Lora,serif">42</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:3px">Ngày tinh tấn</div></div>
+          </div>
+          <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:20px;text-align:center">
+            <div onClick="{{ tapBead }}" style="cursor:pointer;width:156px;height:156px;border-radius:50%;margin:0 auto;background:conic-gradient(#B8862F {{ beadPct }}, #EFE6D5 0);display:flex;align-items:center;justify-content:center;transform:scale({{ beadScale }});transition:transform .12s ease"><div style="width:138px;height:138px;border-radius:50%;background:#FFFDF8;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:400 40px/1 Lora,serif">{{ beads }}</div><div style="font:400 11px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);margin-top:3px">/ 108</div></div></div>
+            <div style="font:400 14.5px Lora,serif;margin-top:14px">Nam mô A Di Đà Phật</div>
+            <div style="display:flex;justify-content:center;gap:16px;margin-top:10px"><div onClick="{{ resetBeads }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer">Bắt đầu lại</div><a href="#1c" style="font:500 12px 'Be Vietnam Pro',sans-serif">Toàn màn hình</a></div>
+          </div>
+          <div style="border-radius:18px;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(184,134,47,.14);display:flex;align-items:center;justify-content:center"><div style="width:17px;height:13px;border-radius:9px 9px 3px 3px;background:#B8862F"></div></div>
+            <div style="flex:1"><div style="font:500 13.5px 'Be Vietnam Pro',sans-serif">Chuông mõ</div><div style="font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">Giữ nhịp tụng</div></div>
+          </div>
+          <div style="margin-top:auto;padding:15px 18px;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 14px 'Be Vietnam Pro',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 24px rgba(34,30,25,.18);cursor:pointer"><div style="width:8px;height:11px;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:#E6A94E;box-shadow:0 0 10px rgba(217,150,60,.9)"></div>Thắp đèn · ngồi thiền</div>
+        </aside>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sel: 5, beads: 27, pulse: false };
+  lunarOct(d) { return d <= 9 ? 20 + d : d - 9; }
+  advice(l) {
+    if (l === 1 || l === 15) return 'Ngày trai giới';
+    if ([8, 14, 23, 30].includes(l)) return 'Ngày trai';
+    return 'Ngày thường';
+  }
+  renderVals() {
+    const ink = '#221E19', T = 'transparent';
+    const wds = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    const solars = [28, 29, 30, 1, 2, 3, 4];
+    const months = ['tháng 9', 'tháng 9', 'tháng 9', 'tháng 10', 'tháng 10', 'tháng 10', 'tháng 10'];
+    const dots = ['#6E8F7A', '#C2857F', '#6E8F7A', T, '#C2857F', '#6E8F7A', T];
+    const weekdaysFull = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
+    const sel = this.state.sel;
+    const week = solars.map((s, i) => {
+      const on = i === sel, today = i === 5;
+      return {
+        wd: wds[i], solar: s, lunar: 18 + i, dot: dots[i],
+        bg: on ? ink : '#FBF7EF', fg: on ? '#F7F2E8' : ink, bd: today && !on ? '#B8862F' : (on ? ink : 'rgba(34,30,25,.06)'),
+        dbg: on ? '#F3C673' : 'rgba(242,235,221,.05)', dfg: on ? '#1A1611' : '#F2EBDD', dbd: today && !on ? 'rgba(217,150,60,.7)' : 'rgba(242,235,221,.08)',
+        select: () => this.setState({ sel: i }),
+      };
+    });
+    const l = 18 + sel;
+    const selInfo = { lunar: l, full: `${weekdaysFull[sel]}, ${solars[sel]} ${months[sel]} 2026`, advice: this.advice(l) };
+
+    const month = [];
+    for (let i = 0; i < 35; i++) {
+      const d = i - 2; // Oct 1 = Thursday
+      const inM = d >= 1 && d <= 31;
+      const solar = inM ? d : (d < 1 ? 30 + d : d - 31);
+      const lun = inM ? this.lunarOct(d) : (i < 3 ? 18 + i : '');
+      const wkIdx = i < 7 ? i : -1;
+      const on = wkIdx === sel;
+      const fast = inM && [1, 8, 14, 15, 18, 23, 30].includes(lun);
+      const lunLabel = lun === 1 ? 'M1/9' : lun === 15 ? 'Rằm' : lun;
+      month.push({
+        solar, lunar: lunLabel, op: inM || on ? 1 : 0.4,
+        bg: on ? ink : (d === 3 ? 'rgba(184,134,47,.28)' : fast ? 'rgba(184,134,47,.12)' : T),
+        fg: on ? '#F7F2E8' : ink,
+        select: () => { if (wkIdx >= 0) this.setState({ sel: wkIdx }); },
+      });
+    }
+
+    const n = this.state.beads;
+    const navMain = ['Trang chủ', 'Thư viện', 'Đạo tràng', 'Nhật ký', 'Tôi'].map((label, i) => ({ label, bg: i === 0 ? '#F1E8D8' : T, fg: i === 0 ? ink : 'rgba(34,30,25,.72)', dot: i === 0 ? '#B8862F' : 'rgba(34,30,25,.25)' }));
+    const navTop = ['Trang chủ', 'Thư viện', 'Thực hành', 'Đạo tràng', 'Lịch âm', 'Chùa'].map((label, i) => ({ label, bg: i === 0 ? '#F1E8D8' : T, fg: i === 0 ? ink : 'rgba(34,30,25,.65)' }));
+    const navRail = ['Trang chủ', 'Thư viện', 'Thực hành', 'Đạo tràng', 'Nhật ký', 'Cài đặt'].map((label, i) => ({ label, bg: i === 0 ? 'rgba(242,235,221,.1)' : T, fg: i === 0 ? '#F2EBDD' : 'rgba(242,235,221,.5)', dot: i === 0 ? '#D9963C' : 'rgba(242,235,221,.3)' }));
+
+    const temples = [
+      { name: 'Chùa Từ Quang', place: 'Quận 1, TP.HCM' },
+      { name: 'Chùa Trấn Quốc', place: 'Tây Hồ, Hà Nội' },
+      { name: 'Chùa Thiên Mụ', place: 'TP. Huế' },
+      { name: 'Chùa Bái Đính', place: 'Gia Viễn, Ninh Bình' },
+    ];
+    const articles = [
+      { cat: 'THIỀN TẬP', title: 'Trở về hơi thở giữa một ngày bận rộn', meta: 'Thầy Minh Đạo · 6 phút đọc' },
+      { cat: 'KINH ĐIỂN', title: 'Đọc chậm Kinh Pháp Cú: Phẩm Song Yếu', meta: 'Diệu Hạnh · 9 phút đọc' },
+      { cat: 'ĐỜI SỐNG', title: 'Ăn chay ngày rằm: bắt đầu từ một bữa', meta: 'Tịnh An · 5 phút đọc' },
+      { cat: 'HIẾU HẠNH', title: 'Hồi hướng công đức cho cha mẹ hiện tiền', meta: 'Thầy Quảng Tâm · 7 phút đọc' },
+    ];
+    return {
+      greeting: 'Chào buổi sáng, Diệu Tâm',
+      dateLine: 'Thứ Bảy, 3 tháng 10 — 23 tháng Tám âm',
+      navMain, navTop, navRail,
+      navPractice: ['Chuẩn bị thiền', 'Niệm Phật', 'Chuông mõ', 'Tụng kinh', 'Cúng dường'],
+      week, month, sel: selInfo,
+      beads: n, beadPct: `${(n / 108) * 100}%`, beadScale: this.state.pulse ? 0.97 : 1,
+      tapBead: () => { this.setState(s => ({ beads: s.beads >= 108 ? 1 : s.beads + 1, pulse: true })); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ pulse: false }), 120); },
+      resetBeads: () => this.setState({ beads: 0 }),
+      routines: [
+        { title: 'Thiền hơi thở buổi sáng', sub: '20 phút · có hướng dẫn', tint: 'rgba(110,143,122,.16)', tone: '#6E8F7A' },
+        { title: 'Kinh Vu Lan Báo Hiếu', sub: 'Tụng kinh · 38 phút', tint: 'rgba(184,134,47,.14)', tone: '#B8862F' },
+        { title: 'Cúng dường đèn Vu Lan', sub: 'Hồi hướng cho người thương', tint: 'rgba(194,133,127,.16)', tone: '#C2857F' },
+      ],
+      events: [
+        { date: 'Thứ Bảy, 10/10', day: '10', mon: 'TH10', name: 'Mùng Một tháng Chín', lunar: '1/9 âm', count: 'Ngày trai giới', left: 'còn 7 ngày', color: ink, bar: '#E2D4BB' },
+        { date: 'Thứ Bảy, 24/10', day: '24', mon: 'TH10', name: 'Rằm tháng Chín', lunar: '15/9 âm', count: 'Ngày trai giới', left: 'còn 21 ngày', color: ink, bar: '#E2D4BB' },
+        { date: 'Thứ Tư, 28/10', day: '28', mon: 'TH10', name: 'Vía Quan Âm xuất gia', lunar: '19/9 âm', count: '3 chùa tổ chức', left: 'còn 25 ngày', color: '#8A5A18', bar: '#B8862F' },
+        { date: 'Thứ Hai, 9/11', day: '9', mon: 'TH11', name: 'Mùng Một tháng Mười', lunar: '1/10 âm', count: 'Ngày trai giới', left: 'còn 37 ngày', color: ink, bar: '#E2D4BB' },
+        { date: 'Thứ Hai, 23/11', day: '23', mon: 'TH11', name: 'Rằm tháng Mười', lunar: '15/10 âm', count: '9 chùa tổ chức', left: 'còn 51 ngày', color: '#8A5A18', bar: '#B8862F' },
+      ],
+      temples4: temples,
+      temples3: temples.slice(0, 3).map((t, i) => ({ ...t, row: i === 0 ? '1 / span 2' : 'auto' })),
+      articles, articles3: articles.slice(0, 3),
+    };
+  }
+}
+</script>
+</body>
+</html>
