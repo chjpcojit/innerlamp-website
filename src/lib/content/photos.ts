@@ -1,41 +1,11 @@
 import { m } from '$lib/paraglide/messages';
 
-export type PhotoCategory = 'temple' | 'statue' | 'bodhisattva' | 'festival' | 'life';
-
 export interface PhotoItem {
 	id: number;
 	name: () => string;
 	place: () => string;
 	caption: () => string;
-	category: PhotoCategory;
 }
-
-export const PHOTO_CATEGORIES: { id: PhotoCategory; label: () => string }[] = [
-	{ id: 'temple', label: () => m.gallery_cat_temple() },
-	{ id: 'statue', label: () => m.gallery_cat_statue() },
-	{ id: 'bodhisattva', label: () => m.gallery_cat_bodhisattva() },
-	{ id: 'festival', label: () => m.gallery_cat_festival() },
-	{ id: 'life', label: () => m.gallery_cat_life() }
-];
-
-const CATEGORY_OF: PhotoCategory[] = [
-	'temple',
-	'statue',
-	'bodhisattva',
-	'festival',
-	'temple',
-	'statue',
-	'life',
-	'festival',
-	'temple',
-	'statue',
-	'bodhisattva',
-	'life',
-	'life',
-	'temple',
-	'festival',
-	'bodhisattva'
-];
 
 const NAMES = [
 	() => m.photo_1_name(),
@@ -97,6 +67,5 @@ export const PHOTO_LIST: PhotoItem[] = NAMES.map((name, i) => ({
 	id: i + 1,
 	name,
 	place: PLACES[i],
-	caption: CAPTIONS[i],
-	category: CATEGORY_OF[i]
+	caption: CAPTIONS[i]
 }));

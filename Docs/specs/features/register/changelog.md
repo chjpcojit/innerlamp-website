@@ -3,6 +3,12 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v1.2 (2026-10-11)
+
+- `requirements.md`: `ordination_place` → `ordination_temple_id`; thêm `full_name` ≤ 300; thêm mục "Đề xuất chùa" (`POST /v1/temple-suggestions`, gửi sau verify-otp); `expires_in` dùng cho TTL cookie; bỏ ⚠️ "Thêm chùa" vì BE đã có endpoint.
+- `tasks.md`: thêm Phase 1b (đồng bộ contract BE); chỉnh mục giới hạn độ dài ở Phase 5.
+- Reason: session BE xác nhận contract mới — `ordination_place` bị bỏ (gửi lên là 400), thêm `ordination_temple_id` và endpoint đề xuất chùa.
+
 ## v1.1 (2026-10-10)
 
 - `requirements.md`: thêm mục "Bảo mật & ràng buộc đầu vào"; `ordination_place` chuyển từ ⚠️ sang resolved (chuỗi tự do ≤ 255); ⚠️ `API_KEY` production thêm OTP dev `111111` là blocker phía BE.

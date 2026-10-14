@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { localizeHref } from '$lib/paraglide/runtime';
 	import { DEFAULT_SIT_DURATION, SIT_DURATIONS } from '$lib/content/practice';
 
 	let duration = $state<number>(DEFAULT_SIT_DURATION);
@@ -40,12 +41,13 @@
 	</div>
 	<div class="mt-auto flex flex-wrap items-center justify-between gap-4">
 		<p class="text-[12.5px] text-[#f2ebdd]/55">{m.practice_sit_bell_note()}</p>
-		<!-- No meditation route yet: the session screen is not built. -->
-		<button
-			type="button"
-			class="cursor-pointer rounded-full bg-amber px-7 py-3.5 text-sm font-medium whitespace-nowrap text-[#1a1611] transition-colors hover:bg-amber-light"
+		<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
+		<a
+			href={localizeHref(`/practice/meditate?d=${duration}`)}
+			class="rounded-full bg-amber px-7 py-3.5 text-sm font-medium whitespace-nowrap text-[#1a1611] transition-colors hover:bg-amber-light"
 		>
 			{m.practice_sit_start({ minutes: duration })}
-		</button>
+		</a>
+		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 	</div>
 </section>

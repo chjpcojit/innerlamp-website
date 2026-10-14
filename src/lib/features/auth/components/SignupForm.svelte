@@ -5,18 +5,24 @@
 	import { m } from '$lib/paraglide/messages';
 	import { passwordScore } from '$lib/utils/password';
 	import { enhance } from '$app/forms';
-	import { DHARMA_NAMES, TEMPLES } from '../data';
+	import { DHARMA_NAMES } from '../data';
 	import { authErrorMessage } from '../errors';
 	import PhoneField from './PhoneField.svelte';
 	import SignupOtp from './SignupOtp.svelte';
+	import AddTempleForm from './AddTempleForm.svelte';
+	import TempleSelect from '$lib/components/ui/TempleSelect.svelte';
+	import type { PendingTemple, TempleOption, TempleSuggestionRequest } from '$lib/types/temple';
+
+	type TempleSuggestion = TempleSuggestionRequest;
 
 	interface Props {
 		form?: {
 			error?: string;
-			retryAfter?: number;
 			step?: 'otp';
 			phone?: string;
 			resendAfter?: number;
+			expiresIn?: number;
+			suggestion?: TempleSuggestion | null;
 		} | null;
 	}
 
@@ -27,11 +33,15 @@
 	let busy = $state(false);
 	const otpStep = $derived(form?.step === 'otp' && !!form.phone && !backed);
 
+	let fullName = $state('');
 	let name = $state('');
 	let nameIdx = $state(-1);
 	let diceRot = $state(0);
-	let templeIdx = $state(-1);
-	let templeOpen = $state(false);
+	let temple = $state<TempleOption | null>(null);
+	// A temple the visitor proposed because theirs wasn't listed; awaits InnerLamp's review.
+	let pendingTemple = $state<PendingTemple | null>(null);
+	// The "add temple" step replaces the form's view but keeps everything typed so far.
+	let addingTemple = $state(false);
 	let phone = $state('');
 	let phoneOk = $state(false);
 	let e164 = $state('');
@@ -45,10 +55,8 @@
 	const score = $derived(passwordScore(password));
 	// The backend counts bytes, not characters.
 	const passwordOk = $derived(new TextEncoder().encode(password).length >= 8);
-	const canSubmit = $derived(agree && phoneOk && emailOk && passwordOk && !busy);
-	// "none" / "other" carry no place name to store.
-	const ordinationPlace = $derived(
-		templeIdx > 0 && TEMPLES[templeIdx].id !== 'other' ? TEMPLES[templeIdx].label() : ''
+	const canSubmit = $derived(
+		fullName.trim().length >= 2 && agree && phoneOk && emailOk && passwordOk && !busy
 	);
 	const strengthLabels = [
 		() => m.signup_strength_min(),
@@ -81,13 +89,31 @@
 {#if otpStep && form?.phone}
 	<SignupOtp
 		phone={form.phone}
-		resendAfter={form.resendAfter ?? 60}
+		resendAfter={form.resendAfter}
+		expiresIn={form.expiresIn}
+		suggestion={form.suggestion}
 		error={form.error}
-		retryAfter={form.retryAfter}
 		onback={() => (backed = true)}
 	/>
 {:else}
+	{#if addingTemple}
+		<AddTempleForm
+			initial={pendingTemple}
+			onback={() => (addingTemple = false)}
+			onnone={() => {
+				temple = null;
+				pendingTemple = null;
+				addingTemple = false;
+			}}
+			onsubmit={(t) => {
+				pendingTemple = t;
+				temple = null;
+				addingTemple = false;
+			}}
+		/>
+	{/if}
 	<form
+		hidden={addingTemple}
 		method="POST"
 		action="?/request"
 		class="flex w-[min(100%,420px)] flex-col"
@@ -101,12 +127,36 @@
 		}}
 	>
 		<input type="hidden" name="phone_number" value={e164} />
-		<input type="hidden" name="ordination_place" value={ordinationPlace} />
+		{#if pendingTemple?.ward_code}
+			<!-- Sent to the backend for review once the account is created. -->
+			<input type="hidden" name="suggest_name" value={pendingTemple.name} />
+			<input type="hidden" name="suggest_province_code" value={pendingTemple.province_code} />
+			<input type="hidden" name="suggest_ward_code" value={pendingTemple.ward_code} />
+			<input type="hidden" name="suggest_address" value={pendingTemple.address} />
+		{/if}
 		<h1 class="font-serif text-[31px]/[1.22]">{m.signup_title()}</h1>
 		<p class="mt-2.5 text-[13.5px]/[1.65] text-ink/50">{m.signup_subtitle()}</p>
 
 		<div class="mt-[22px] flex flex-col gap-2.5">
-			<!-- Name -->
+			<!-- Full name -->
+			<div class="{field} border-ink/12">
+				<label class="flex flex-col">
+					<span class="{label} flex items-baseline gap-1">
+						{m.signup_fullname_label()}<span class="text-[#A7443F]" aria-hidden="true">*</span>
+					</span>
+					<input
+						bind:value={fullName}
+						name="full_name"
+						autocomplete="name"
+						maxlength={300}
+						required
+						placeholder={m.signup_fullname_placeholder()}
+						class="{input} mt-[3px]"
+					/>
+				</label>
+			</div>
+
+			<!-- Dharma name -->
 			<div class="{field} flex items-center gap-3 border-ink/12">
 				<label class="flex min-w-0 flex-1 flex-col">
 					<span class={label}>{m.signup_name_label()}</span>
@@ -114,6 +164,7 @@
 						bind:value={name}
 						name="dharma_name"
 						autocomplete="nickname"
+						maxlength={255}
 						placeholder={m.signup_name_placeholder()}
 						class="{input} mt-[3px]"
 					/>
@@ -134,67 +185,31 @@
 				</button>
 			</div>
 
-			<!-- Temple -->
-			<div class="relative z-20">
-				<button
-					type="button"
-					aria-expanded={templeOpen}
-					onclick={() => (templeOpen = !templeOpen)}
-					class="{field} flex w-full cursor-pointer items-center gap-3 text-left select-none {templeOpen
-						? 'border-gold/55'
-						: 'border-ink/12'}"
+			<TempleSelect
+				bind:value={temple}
+				bind:pending={pendingTemple}
+				onadd={() => (addingTemple = true)}
+			/>
+			{#if pendingTemple}
+				<div
+					class="flex items-start gap-3 rounded-[14px] border border-gold/25 bg-gold/9 px-3.5 py-3"
+					role="status"
 				>
-					<span class="min-w-0 flex-1">
-						<span class="flex items-baseline justify-between gap-2">
-							<span class={label}>{m.signup_temple_label()}</span>
-							<span class="text-[10.5px] text-ink/38">{m.signup_temple_optional()}</span>
-						</span>
-						<span class="mt-[3px] block text-[15px] {templeIdx < 0 ? 'text-ink/42' : ''}">
-							{templeIdx < 0 ? m.signup_temple_placeholder() : TEMPLES[templeIdx].label()}
-						</span>
-					</span>
 					<span
-						class="size-[7px] flex-none border-r-[1.5px] border-b-[1.5px] border-ink/45 transition-transform duration-200 {templeOpen
-							? 'translate-x-[-2px] translate-y-[-2px] rotate-[225deg]'
-							: 'translate-x-[-2px] translate-y-[-2px] rotate-45'}"
-						aria-hidden="true"
-					></span>
-				</button>
-				{#if templeOpen}
-					<ul
-						class="absolute inset-x-0 top-[calc(100%+6px)] max-h-[300px] overflow-y-auto rounded-2xl border border-ink/12 bg-paper shadow-[0_16px_40px_rgba(34,30,25,.16)]"
+						class="mt-px flex size-[18px] flex-none items-center justify-center rounded-full bg-gold text-[11px] leading-none font-semibold text-paper"
+						aria-hidden="true">!</span
 					>
-						{#each TEMPLES as t, i (t.id)}
-							<li class={i ? 'border-t border-ink/7' : ''}>
-								<button
-									type="button"
-									onclick={() => {
-										templeIdx = i;
-										templeOpen = false;
-									}}
-									class="flex w-full cursor-pointer items-center gap-2.5 px-4 py-3 text-left hover:bg-ink/4 {i ===
-									templeIdx
-										? 'bg-gold/8'
-										: ''}"
-								>
-									<span class="min-w-0 flex-1">
-										<span class="block text-sm">{t.label()}</span>
-										<span class="mt-0.5 block text-[11px] text-ink/45">{t.sub()}</span>
-									</span>
-									<span
-										class="box-border flex size-4 flex-none items-center justify-center rounded-full border-[1.5px] {i ===
-										templeIdx
-											? 'border-gold'
-											: 'border-ink/18'}"
-									>
-										<span class="size-[7px] rounded-full {i === templeIdx ? 'bg-gold' : ''}"></span>
-									</span>
-								</button>
-							</li>
-						{/each}
+					<ul class="flex min-w-0 flex-col gap-1 text-[12.5px]/[1.6] text-pretty text-[#6E4A14]">
+						<li>
+							<span class="font-semibold"
+								>{m.signup_temple_pending_review({ name: pendingTemple.name })}</span
+							>
+						</li>
+						<li>{m.signup_temple_pending_no_place()}</li>
+						<li>{m.signup_temple_pending_later()}</li>
 					</ul>
-				{/if}
-			</div>
+				</div>
+			{/if}
 
 			<PhoneField
 				id="signup-phone"

@@ -50,7 +50,7 @@ Hành vi BE đã xác nhận: đăng nhập lại cùng thiết bị thu hồi p
 | `il_refresh` | refresh token | 7 ngày | như trên |
 | `il_name` | `dharma_name \|\| phone_number` | 7 ngày | như trên |
 
-TTL mirror cấu hình dev của BE (BE không trả `expires_in`). `locals.user = {name}` đọc từ `il_name`; chưa có `/me`.
+TTL mirror cấu hình dev của BE (BE không trả `expires_in`). `locals.user = {name}` đọc từ `il_name`; làm mới từ `GET /v1/users/me` ở trang chủ.
 
 ## Bảng lỗi → hành vi UI
 
@@ -66,7 +66,7 @@ TTL mirror cấu hình dev của BE (BE không trả `expires_in`). `locals.user
 ## Out of scope
 
 - Đăng ký / OTP đăng ký → `../register/`.
-- Quên mật khẩu (chưa có trang/API), đăng nhập bằng OTP SMS (chưa có API), đăng nhập bằng email, `GET /v1/users/me`.
+- Quên mật khẩu (chưa có trang/API), đăng nhập bằng OTP SMS (chưa có API), đăng nhập bằng email.
 
 ## Pending (not yet implemented)
 

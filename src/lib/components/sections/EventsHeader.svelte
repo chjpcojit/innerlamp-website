@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { EVENT_TABS } from '$lib/content/events';
-	import { canChiYear } from '$lib/utils/lunar';
 
 	interface Props {
-		year: number;
-		/** Total events in the year, ignoring the filter. */
+		/** Loaded year(s) label, e.g. "2026" or "2026–2027". */
+		years: string;
+		/** Total events loaded, ignoring the filter. */
 		total: number;
+		/** Filter tabs: "all" plus one per backend group. */
+		tabs: { id: string; label: string }[];
 		counts: Record<string, number>;
 		tab: string;
 	}
 
-	let { year = $bindable(), total, counts, tab = $bindable() }: Props = $props();
+	let { years, total, tabs, counts, tab = $bindable() }: Props = $props();
 
 	const chip =
 		'inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-[9px] text-[13px] font-medium whitespace-nowrap transition-colors';
@@ -26,41 +27,20 @@
 				{m.ev_meta_title()}
 			</h1>
 			<p class="mt-2 text-sm text-ink/55">
-				{m.ev_subtitle({ year: canChiYear(year), solar: year, count: total })}
+				{m.ev_subtitle({ year: years, count: total })}
 			</p>
-		</div>
-		<div class="flex items-center gap-2">
-			<button
-				type="button"
-				aria-label={m.ev_prev_year()}
-				onclick={() => year--}
-				class="flex size-10 cursor-pointer items-center justify-center rounded-full border border-ink/14 text-ink/60 transition-colors hover:bg-sand/60"
-			>
-				<span aria-hidden="true">‹</span>
-			</button>
-			<p class="min-w-[110px] text-center font-serif text-[22px] font-medium whitespace-nowrap">
-				{m.ev_year_label({ year: canChiYear(year) })}
-			</p>
-			<button
-				type="button"
-				aria-label={m.ev_next_year()}
-				onclick={() => year++}
-				class="flex size-10 cursor-pointer items-center justify-center rounded-full border border-ink/14 text-ink/60 transition-colors hover:bg-sand/60"
-			>
-				<span aria-hidden="true">›</span>
-			</button>
 		</div>
 	</div>
 
 	<div class="flex flex-wrap gap-2" role="group" aria-label={m.ev_filter_label()}>
-		{#each EVENT_TABS as t (t.id)}
+		{#each tabs as t (t.id)}
 			<button
 				type="button"
 				class="{chip} {tab === t.id ? chipOn : chipOff}"
 				aria-pressed={tab === t.id}
 				onclick={() => (tab = t.id)}
 			>
-				{t.label()}
+				{t.label}
 				<span class="opacity-60">{counts[t.id]}</span>
 			</button>
 		{/each}

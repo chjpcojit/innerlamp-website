@@ -6,7 +6,9 @@
 	import LibraryEntries from '$lib/components/sections/LibraryEntries.svelte';
 	import LibraryList from '$lib/components/sections/LibraryList.svelte';
 	import BuddhaGrid from '$lib/components/sections/BuddhaGrid.svelte';
+	import type { PageProps } from './$types';
 
+	let { data }: PageProps = $props();
 	let query = $state('');
 	let active = $state<LibraryCategory | null>(null);
 </script>
@@ -20,6 +22,6 @@
 	<LibraryFilters bind:query bind:active />
 	<LibraryFeatured />
 	<LibraryEntries />
-	<BuddhaGrid title={m.lib_buddhas_title()} />
+	<BuddhaGrid title={m.lib_buddhas_title()} items={data.buddhas} />
 	<LibraryList {query} {active} />
 </div>

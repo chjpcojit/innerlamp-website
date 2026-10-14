@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { page } from '$app/state';
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
-	import { EVENTS, LUNAR_MONTHS } from '$lib/content/home';
+	import { LUNAR_MONTHS } from '$lib/content/home';
+	import type { CalendarListItem } from '$lib/types/calendar';
+	import { daysBetween, parseIsoDate } from '$lib/utils/events';
 	import {
 		branchHours,
 		canChiYear,
@@ -13,8 +16,23 @@
 		solarToLunar
 	} from '$lib/utils/lunar';
 
+	interface MonthEvents {
+		/** `YYYY-MM` the items belong to. */
+		month: string;
+		/** `null` when the backend could not serve them. */
+		items: CalendarListItem[] | null;
+	}
+
+	interface Props {
+		/** Events of the month the page opened on, loaded by the server. */
+		initialEvents: MonthEvents;
+		/** Guests can't read the calendar API, so they get a sign-in hint instead. */
+		isGuest: boolean;
+	}
+
+	let { initialEvents, isGuest }: Props = $props();
+
 	const locale = getLocale();
-	const DAY_MS = 86_400_000;
 	const today = new Date();
 	const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
@@ -120,10 +138,54 @@
 		};
 	});
 
-	const upcoming = EVENTS.map((e) => ({
-		item: e,
-		daysLeft: Math.round((e.date.getTime() - startOfToday.getTime()) / DAY_MS)
-	})).filter((e) => e.daysLeft >= 0);
+	// Events of the viewed month: the server sends the first one, later months come from
+	// `/api/calendar/month`. Months already fetched are kept so paging back is instant.
+	const monthKey = $derived(`${viewMonth.getFullYear()}-${p2(viewMonth.getMonth() + 1)}`);
+	// Plain cache, not reactive state: only the effect below reads it.
+	const fetched: Record<string, CalendarListItem[]> = {};
+	// Props seed the state once (the server only loads the first month); a 401 later flips `guest`.
+	// svelte-ignore state_referenced_locally
+	let events = $state<MonthEvents>(initialEvents);
+	// svelte-ignore state_referenced_locally
+	let guest = $state(isGuest);
+	// svelte-ignore state_referenced_locally
+	if (initialEvents.items) fetched[initialEvents.month] = initialEvents.items;
+	const loading = $derived(!guest && events.month !== monthKey);
+
+	$effect(() => {
+		const month = monthKey;
+		if (guest || untrack(() => events.month) === month) return;
+		const cached = fetched[month];
+		if (cached) {
+			events = { month, items: cached };
+			return;
+		}
+
+		const controller = new AbortController();
+		fetch(`/api/calendar/month?month=${month}`, { signal: controller.signal })
+			.then(async (res) => {
+				if (res.status === 401) {
+					guest = true;
+					return;
+				}
+				const items = res.ok ? ((await res.json()) as { items: CalendarListItem[] }).items : null;
+				if (items) fetched[month] = items;
+				events = { month, items };
+			})
+			.catch((e: unknown) => {
+				if (controller.signal.aborted) return;
+				console.error('[lunar] month events', e);
+				events = { month, items: null };
+			});
+		return () => controller.abort();
+	});
+
+	const monthEvents = $derived(
+		(events.items ?? []).map((item) => {
+			const date = parseIsoDate(item.solar_date);
+			return { item, date, daysLeft: daysBetween(startOfToday, date) };
+		})
+	);
 </script>
 
 <div class="flex flex-col gap-7">
@@ -258,29 +320,56 @@
 			</section>
 
 			<section
-				class="rounded-[22px] border border-ink/8 bg-paper px-5 py-2"
-				aria-label={m.lunar_upcoming()}
+				class="rounded-[22px] border border-ink/8 bg-paper px-5 py-2 transition-opacity {loading
+					? 'opacity-50'
+					: ''}"
+				aria-label={m.lunar_month_events()}
+				aria-busy={loading}
 			>
-				<ul>
-					{#each upcoming as { item: e, daysLeft } (e.name())}
-						<li class="flex gap-3 border-b border-ink/6 py-3 last:border-b-0">
-							<span
-								class="w-1 rounded-sm {e.highlight ? 'bg-gold' : 'bg-sand-deep'}"
-								aria-hidden="true"
-							></span>
-							<div class="min-w-0 flex-1">
-								<p class="text-[13px] font-medium {e.highlight ? 'text-gold-deep' : ''}">
-									{e.name()}
-								</p>
-								<p class="mt-0.5 text-[11.5px] text-ink/50">
-									{dayMonthFormat.format(e.date)} · {daysLeft === 0
-										? m.events_today()
-										: m.events_days_left({ count: daysLeft })}
-								</p>
-							</div>
-						</li>
-					{/each}
-				</ul>
+				{#if guest || events.items === null || monthEvents.length === 0}
+					<p class="py-3 text-[13px] text-ink/50">
+						{guest
+							? m.events_guest()
+							: events.items === null
+								? m.events_unavailable()
+								: m.events_month_empty()}
+					</p>
+				{:else}
+					<ul>
+						{#each monthEvents as { item: e, date, daysLeft } (`${e.code}-${e.solar_date}`)}
+							<li class="border-b border-ink/6 last:border-b-0 {daysLeft < 0 ? 'opacity-50' : ''}">
+								<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
+								<a
+									href={localizeHref(`/events/${encodeURIComponent(e.code)}?date=${e.solar_date}`)}
+									class="flex gap-3 py-3"
+								>
+									<span
+										class="w-1 rounded-sm {e.is_public_holiday ? 'bg-gold' : 'bg-sand-deep'}"
+										aria-hidden="true"
+									></span>
+									<span class="min-w-0 flex-1">
+										<span
+											class="block text-[13px] font-medium {e.is_public_holiday
+												? 'text-gold-deep'
+												: ''}"
+										>
+											{e.name}
+										</span>
+										<span class="mt-0.5 block text-[11.5px] text-ink/50">
+											{dayMonthFormat.format(date)} · {m.events_lunar_date({
+												day: e.lunar_date.day,
+												month: e.lunar_date.month
+											})}{daysLeft >= 0
+												? ` · ${daysLeft === 0 ? m.events_today() : m.events_days_left({ count: daysLeft })}`
+												: ''}
+										</span>
+									</span>
+								</a>
+								<!-- eslint-enable svelte/no-navigation-without-resolve -->
+							</li>
+						{/each}
+					</ul>
+				{/if}
 			</section>
 		</div>
 	</div>

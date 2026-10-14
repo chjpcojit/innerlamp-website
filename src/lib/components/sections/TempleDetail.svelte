@@ -1,33 +1,41 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { localizeHref } from '$lib/paraglide/runtime';
-	import { TEMPLE_LIST, type TempleItem } from '$lib/content/temples';
+	import { templeRankLabel, templeSectLabel } from '$lib/utils/temple-labels';
 	import { templeFollow } from '$lib/state/temple-follow.svelte';
+	import TempleEvents from './TempleEvents.svelte';
+	import TempleSanghaCard from '$lib/features/sangha/components/TempleSanghaCard.svelte';
+	import type { TempleAmenities, TempleDetail } from '$lib/types/temple';
+	import type { TempleEventEntry } from '$lib/types/temple-event';
 
 	interface Props {
-		temple: TempleItem;
+		temple: TempleDetail;
+		events: TempleEventEntry[];
+		/** The user's practice temple; null when unset, unknown or a guest. */
+		sanghaTemple: { id: string; name: string } | null;
+		isGuest: boolean;
 	}
 
-	let { temple }: Props = $props();
+	let { temple, events, sanghaTemple, isGuest }: Props = $props();
+
+	const AMENITY_LABELS: Record<keyof TempleAmenities, () => string> = {
+		parking_car: () => m.temple_amenity_parking_car(),
+		parking_motorcycle: () => m.temple_amenity_parking_motorcycle(),
+		vegetarian_meals: () => m.temple_amenity_vegetarian_meals(),
+		summer_retreat: () => m.temple_amenity_summer_retreat()
+	};
 
 	const following = $derived(templeFollow.has(temple.id));
-	const nearby = $derived(
-		TEMPLE_LIST.filter((t) => t.region === temple.region && t.id !== temple.id).slice(0, 3)
+	const rank = $derived(templeRankLabel(temple.heritage_rank));
+	const sect = $derived(templeSectLabel(temple.sect));
+	const amenities = $derived(
+		(Object.keys(AMENITY_LABELS) as (keyof TempleAmenities)[])
+			.filter((key) => temple.amenities[key])
+			.map((key) => AMENITY_LABELS[key]())
 	);
 	const directionsUrl = $derived(
-		`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${temple.name()}, ${temple.address()}`)}`
+		`https://www.google.com/maps/search/?api=1&query=${temple.location.lat},${temple.location.lng}`
 	);
-	const photos = [
-		() => m.temple_d_photo_hall(),
-		() => m.temple_d_photo_statue(),
-		() => m.temple_d_photo_grounds()
-	];
-	const schedule = [
-		{ t: () => m.temple_d_sched_1_t(), l: () => m.temple_d_sched_1_l() },
-		{ t: () => m.temple_d_sched_2_t(), l: () => m.temple_d_sched_2_l() },
-		{ t: () => m.temple_d_sched_3_t(), l: () => m.temple_d_sched_3_l() }
-	];
 
 	onMount(() => templeFollow.init());
 
@@ -37,66 +45,83 @@
 		'flex h-11 flex-1 items-center justify-center rounded-full text-[13.5px] font-medium transition-colors';
 </script>
 
-<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal links -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -- external Google Maps link -->
 <article class="flex flex-col gap-8">
 	<header
 		data-keep-dark
 		class="relative flex h-[clamp(300px,42vw,440px)] flex-col justify-end overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_70%_20%,#4a3b25,#1c1813_70%)]"
 	>
+		{#if temple.image_url}
+			<img src={temple.image_url} alt="" class="absolute inset-0 size-full object-cover" />
+		{/if}
 		<div
 			class="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(20,17,13,.8))]"
 		></div>
 		<div class="relative px-[clamp(24px,4vw,44px)] pb-8 text-cream">
-			<div class="flex flex-wrap gap-1.5">
-				<span
-					class="rounded-full border border-amber-light/55 px-2.5 py-1 text-xs font-medium text-amber-light"
-				>
-					{temple.heritage ? m.temple_d_heritage({ rank: temple.rank() }) : temple.rank()}
-				</span>
-				<span class="rounded-full border border-cream/40 px-2.5 py-1 text-xs font-medium">
-					{temple.sect()}
-				</span>
-			</div>
+			{#if rank || sect}
+				<div class="flex flex-wrap gap-1.5">
+					{#if rank}
+						<span
+							class="rounded-full border border-amber-light/55 px-2.5 py-1 text-xs font-medium text-amber-light"
+						>
+							{rank}
+						</span>
+					{/if}
+					{#if sect}
+						<span class="rounded-full border border-cream/40 px-2.5 py-1 text-xs font-medium">
+							{sect}
+						</span>
+					{/if}
+				</div>
+			{/if}
 			<h1 class="mt-3.5 font-serif text-[clamp(48px,12vw,64px)]/[1.1] font-medium">
-				{temple.name()}
+				{temple.name}
 			</h1>
-			<p class="mt-2 text-sm text-cream/85">{temple.place()}</p>
+			<p class="mt-2 text-sm text-cream/85">{temple.location.province}</p>
 		</div>
 	</header>
 
+	<TempleSanghaCard {temple} current={sanghaTemple} {isGuest} />
+
 	<div class="flex flex-wrap items-start gap-9">
 		<div class="flex min-w-0 flex-[2_1_480px] flex-col gap-7">
-			<section aria-labelledby="tp-intro">
-				<h2 id="tp-intro" class={label}>{m.temple_d_intro()}</h2>
-				<p class="mt-3 max-w-[680px] text-[17px]/[1.8] text-pretty text-ink/80">
-					{temple.intro()}
-				</p>
-			</section>
+			{#if temple.introduction}
+				<section aria-labelledby="tp-intro">
+					<h2 id="tp-intro" class={label}>{m.temple_d_intro()}</h2>
+					<p
+						class="mt-3 max-w-[680px] text-[17px]/[1.8] text-pretty whitespace-pre-line text-ink/80"
+					>
+						{temple.introduction}
+					</p>
+				</section>
+			{/if}
 
-			<section aria-labelledby="tp-highlights">
-				<h2 id="tp-highlights" class={label}>{m.temple_d_highlights()}</h2>
-				<ol class="mt-3 flex flex-col gap-2">
-					{#each temple.highlights as h, i (i)}
-						<li class="flex items-start gap-3 rounded-2xl border border-ink/8 bg-paper px-4 py-3">
-							<span class="w-6 flex-none font-serif text-lg text-gold-deep">{i + 1}</span>
-							<span class="flex-1 text-sm/[1.55]">{h()}</span>
-						</li>
-					{/each}
-				</ol>
-			</section>
+			{#if temple.architecture_heritage}
+				<section aria-labelledby="tp-architecture">
+					<h2 id="tp-architecture" class={label}>{m.temple_d_architecture()}</h2>
+					<p
+						class="mt-3 max-w-[680px] text-[17px]/[1.8] text-pretty whitespace-pre-line text-ink/80"
+					>
+						{temple.architecture_heritage}
+					</p>
+				</section>
+			{/if}
 
-			<section aria-labelledby="tp-photos">
-				<h2 id="tp-photos" class={label}>{m.temple_d_photos()}</h2>
-				<ul class="mt-3 grid grid-cols-3 gap-3">
-					{#each photos as p, i (i)}
-						<li
-							class="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[18px] bg-[repeating-linear-gradient(135deg,#efe6d5_0_8px,#f4ede0_8px_16px)] font-mono text-[10.5px] text-ink/40"
-						>
-							{p()}
-						</li>
-					{/each}
-				</ul>
-			</section>
+			{#if temple.visiting_notes.length}
+				<section aria-labelledby="tp-visiting">
+					<h2 id="tp-visiting" class={label}>{m.temple_d_visiting()}</h2>
+					<ol class="mt-3 flex flex-col gap-2">
+						{#each temple.visiting_notes as note, i (i)}
+							<li class="flex items-start gap-3 rounded-2xl border border-ink/8 bg-paper px-4 py-3">
+								<span class="w-6 flex-none font-serif text-lg text-gold-deep">{i + 1}</span>
+								<span class="flex-1 text-sm/[1.55]">{note}</span>
+							</li>
+						{/each}
+					</ol>
+				</section>
+			{/if}
+
+			<TempleEvents entries={events} />
 		</div>
 
 		<aside class="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
@@ -104,18 +129,38 @@
 				<dl class="flex flex-col gap-4">
 					<div>
 						<dt class="text-xs text-ink/45">{m.temple_d_address()}</dt>
-						<dd class="mt-[3px] text-sm/normal">{temple.address()}</dd>
+						<dd class="mt-[3px] text-sm/normal">{temple.location.full_address}</dd>
 					</div>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
 							<dt class="text-xs text-ink/45">{m.temple_d_founded()}</dt>
-							<dd class="mt-[3px] font-serif text-[22px]">{temple.year()}</dd>
+							<dd class="mt-[3px] font-serif text-[22px]">{temple.established_year}</dd>
 						</div>
-						<div>
-							<dt class="text-xs text-ink/45">{m.temple_d_hours()}</dt>
-							<dd class="mt-[3px] font-serif text-[22px]">{temple.hours}</dd>
-						</div>
+						{#if temple.operating_hours}
+							<div>
+								<dt class="text-xs text-ink/45">{m.temple_d_hours()}</dt>
+								<dd class="mt-[3px] font-serif text-[22px]">{temple.operating_hours}</dd>
+							</div>
+						{/if}
 					</div>
+					{#if temple.founder}
+						<div>
+							<dt class="text-xs text-ink/45">{m.temple_d_founder()}</dt>
+							<dd class="mt-[3px] text-sm/normal">{temple.founder}</dd>
+						</div>
+					{/if}
+					{#if temple.current_abbot}
+						<div>
+							<dt class="text-xs text-ink/45">{m.temple_d_abbot()}</dt>
+							<dd class="mt-[3px] text-sm/normal">{temple.current_abbot}</dd>
+						</div>
+					{/if}
+					{#if temple.aliases.length}
+						<div>
+							<dt class="text-xs text-ink/45">{m.temple_d_aliases()}</dt>
+							<dd class="mt-[3px] text-sm/normal">{temple.aliases.join(' · ')}</dd>
+						</div>
+					{/if}
 				</dl>
 				<div class="flex flex-wrap gap-2">
 					<button
@@ -136,65 +181,20 @@
 					>
 						{m.temple_d_directions()}
 					</a>
-					{#if temple.offerSlug}
-						<a
-							href={localizeHref(`/offer?temple=${temple.offerSlug}`)}
-							class="{pill} basis-full bg-amber text-[#1a1611] hover:bg-[#e6a94e]"
-						>
-							{m.temple_d_offer()}
-						</a>
-					{/if}
 				</div>
 			</div>
 
-			<section class={card} aria-labelledby="tp-schedule">
-				<h2 id="tp-schedule" class={label}>{m.temple_d_schedule()}</h2>
-				<ul class="mt-2 flex flex-col">
-					{#each schedule as e, i (i)}
-						<li
-							class="flex justify-between gap-3 border-b border-ink/7 py-3 text-[13.5px] last:border-b-0"
-						>
-							<span>{e.l()}</span>
-							<span class="font-medium whitespace-nowrap text-gold-deep">{e.t()}</span>
-						</li>
-					{/each}
-				</ul>
-				<a
-					href={localizeHref('/lunar')}
-					class="mt-3 inline-block text-xs font-medium text-gold-deep hover:underline"
-				>
-					{m.temple_d_lunar()} ›
-				</a>
-			</section>
+			{#if amenities.length}
+				<section class={card} aria-labelledby="tp-amenities">
+					<h2 id="tp-amenities" class={label}>{m.temple_d_amenities()}</h2>
+					<ul class="mt-3 flex flex-wrap gap-2">
+						{#each amenities as a (a)}
+							<li class="rounded-full border border-ink/12 px-3 py-1.5 text-[13px]">{a}</li>
+						{/each}
+					</ul>
+				</section>
+			{/if}
 		</aside>
 	</div>
-
-	{#if nearby.length}
-		<section aria-labelledby="tp-nearby">
-			<h2 id="tp-nearby" class="mb-3.5 font-serif text-[28px]">{m.temple_d_nearby()}</h2>
-			<ul class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,240px),1fr))] gap-4">
-				{#each nearby as t (t.id)}
-					<li
-						class="relative overflow-hidden rounded-[22px] border border-ink/8 bg-paper transition-colors focus-within:bg-white hover:bg-white"
-					>
-						<div
-							class="flex h-[120px] items-center justify-center bg-[repeating-linear-gradient(135deg,#efe6d5_0_8px,#f4ede0_8px_16px)] font-mono text-[10.5px] text-ink/40"
-							aria-hidden="true"
-						>
-							{m.temple_photo_label()}
-						</div>
-						<div class="px-4 pt-3.5 pb-4">
-							<h3 class="font-serif text-lg">
-								<a href={localizeHref(`/temples/${t.id}`)} class="after:absolute after:inset-0">
-									{t.name()}
-								</a>
-							</h3>
-							<p class="mt-1 text-xs text-ink/50">{t.place()}</p>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
 </article>
 <!-- eslint-enable svelte/no-navigation-without-resolve -->

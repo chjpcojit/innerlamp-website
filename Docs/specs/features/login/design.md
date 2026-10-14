@@ -72,7 +72,7 @@ Step 3 — Đăng xuất (this feature, action ở /profile)
 ## Quyết định thiết kế đã xác nhận
 
 - Chỉ lỗi 4xx từ BE mới xoá phiên ở hook; sự cố mạng/5xx không đăng xuất người dùng.
-- `il_name` chỉ ghi lúc đăng nhập/đăng ký (chưa có `/me`).
+- `il_name` ghi lúc đăng nhập/đăng ký và được làm mới từ `GET /v1/users/me` khi vào trang chủ.
 - Phân biệt hai credential: `API_KEY` (website, header `x-api-key`) và user token (`Authorization: Bearer`) — xem `AGENTS.md`.
 
 ## Chưa làm

@@ -5,16 +5,6 @@ import { TEMPLE_LIST } from './temples';
 import { PHOTO_LIST } from './photos';
 import { ARTICLE_LIST } from './articles';
 
-export interface EventItem {
-	/** Gregorian date of the event (placeholder until the backend serves events). */
-	date: Date;
-	day: number;
-	month: () => string;
-	name: () => string;
-	detail: () => string;
-	highlight: boolean;
-}
-
 export interface RoutineItem {
 	icon: IconKind;
 	title: () => string;
@@ -22,51 +12,6 @@ export interface RoutineItem {
 	tint: string;
 	tone: string;
 }
-
-const fasting = () => m.events_fasting();
-
-export const EVENTS: EventItem[] = [
-	{
-		date: new Date(2026, 9, 10),
-		day: 10,
-		month: () => m.month_10(),
-		name: () => m.event_1_name(),
-		detail: () => `${m.event_1_lunar()} · ${fasting()}`,
-		highlight: false
-	},
-	{
-		date: new Date(2026, 9, 24),
-		day: 24,
-		month: () => m.month_10(),
-		name: () => m.event_2_name(),
-		detail: () => `${m.event_2_lunar()} · ${fasting()}`,
-		highlight: false
-	},
-	{
-		date: new Date(2026, 9, 28),
-		day: 28,
-		month: () => m.month_10(),
-		name: () => m.event_3_name(),
-		detail: () => `${m.event_3_lunar()} · ${m.event_3_note()}`,
-		highlight: true
-	},
-	{
-		date: new Date(2026, 10, 9),
-		day: 9,
-		month: () => m.month_11(),
-		name: () => m.event_4_name(),
-		detail: () => `${m.event_4_lunar()} · ${fasting()}`,
-		highlight: false
-	},
-	{
-		date: new Date(2026, 10, 23),
-		day: 23,
-		month: () => m.month_11(),
-		name: () => m.event_5_name(),
-		detail: () => `${m.event_5_lunar()} · ${m.event_5_note()}`,
-		highlight: true
-	}
-];
 
 export const ROUTINES: RoutineItem[] = [
 	{

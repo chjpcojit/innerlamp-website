@@ -3,6 +3,7 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Toggle from '$lib/components/ui/Toggle.svelte';
+	import SupportQr from '$lib/components/sections/SupportQr.svelte';
 	import {
 		SUPPORT_AMOUNTS,
 		SUPPORT_CUSTOM,
@@ -20,7 +21,7 @@
 	let message = $state('');
 	let anonymous = $state(false);
 	let error = $state(false);
-	let done = $state(false);
+	let step = $state<'form' | 'qr' | 'done'>('form');
 	let sent = $state({ amount: 0, payment: 0 });
 
 	const amount = $derived(
@@ -40,11 +41,11 @@
 			return;
 		}
 		sent = { amount, payment };
-		done = true;
+		step = 'qr';
 	}
 
 	function again() {
-		done = false;
+		step = 'form';
 		message = '';
 		error = false;
 	}
@@ -57,7 +58,14 @@
 <div
 	class="flex flex-col gap-[22px] rounded-[22px] border border-ink/8 bg-paper p-[clamp(20px,3vw,28px)]"
 >
-	{#if done}
+	{#if step === 'qr'}
+		<SupportQr
+			amount={sent.amount}
+			payment={sent.payment}
+			onback={() => (step = 'form')}
+			onpaid={() => (step = 'done')}
+		/>
+	{:else if step === 'done'}
 		<div class="flex flex-col items-center gap-2.5 py-5 text-center" role="status">
 			<Icon kind="lotus" tone="#6e8f7a" tint="rgba(110,143,122,.16)" size={52} />
 			<h2 class="mt-1.5 font-serif text-[28px]/tight font-medium">{m.sup_done_title()}</h2>

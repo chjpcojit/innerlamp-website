@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import type { PhotoItem } from '$lib/content/photos';
+	import type { GalleryImageDetail, GalleryImageSummary } from '$lib/types/gallery';
 
 	interface Props {
-		photos: PhotoItem[];
+		photos: GalleryImageSummary[];
 		/** Index into `photos`, or `null` when closed. */
 		index: number | null;
 	}
@@ -12,6 +12,32 @@
 
 	let dialog = $state<HTMLDialogElement>();
 	const current = $derived(index === null ? undefined : photos[index]);
+
+	/** Credits (author/license) are only on the detail endpoint: fetched per photo, then kept. */
+	const credits: Record<string, GalleryImageDetail> = {};
+	let loaded = $state<GalleryImageDetail | null>(null);
+	const credit = $derived(loaded?.id === current?.id ? loaded : null);
+
+	$effect(() => {
+		const id = current?.id;
+		if (!id) return;
+		const hit = credits[id];
+		if (hit) {
+			loaded = hit;
+			return;
+		}
+		const ctrl = new AbortController();
+		fetch(`/api/gallery/${encodeURIComponent(id)}`, { signal: ctrl.signal })
+			.then((r) => (r.ok ? (r.json() as Promise<GalleryImageDetail>) : null))
+			.then((d) => {
+				if (!d) return;
+				credits[id] = d;
+				loaded = d;
+			})
+			// Credits are a nicety: a failed or aborted request just leaves them out.
+			.catch(() => {});
+		return () => ctrl.abort();
+	});
 
 	$effect(() => {
 		if (!dialog) return;
@@ -36,6 +62,7 @@
 
 <svelte:window {onkeydown} />
 
+<!-- eslint-disable svelte/no-navigation-without-resolve -- external source link -->
 <dialog
 	bind:this={dialog}
 	aria-label={m.gallery_lightbox_label()}
@@ -53,17 +80,34 @@
 			class="pointer-events-none relative flex h-full flex-col items-center justify-center gap-4 p-4 sm:p-8"
 		>
 			<div
-				class="pointer-events-auto flex h-[min(70vh,720px)] w-[min(1100px,100%)] items-center justify-center rounded-[18px] bg-[repeating-linear-gradient(135deg,#2e2922_0_8px,#26211b_8px_16px)] font-mono text-[11px] text-[#f5eee0]/40"
-				aria-hidden="true"
+				class="pointer-events-auto flex h-[min(70vh,720px)] w-[min(1100px,100%)] items-center justify-center rounded-[18px] bg-[repeating-linear-gradient(135deg,#2e2922_0_8px,#26211b_8px_16px)]"
 			>
-				{m.photo_label()}
+				{#key current.id}
+					<img
+						src={current.image_url}
+						alt={current.title}
+						class="size-full rounded-[18px] object-contain"
+					/>
+				{/key}
 			</div>
 			<div
 				class="pointer-events-auto flex w-[min(1100px,100%)] flex-wrap items-center justify-between gap-4 text-[#f5eee0]"
 			>
 				<div class="min-w-0">
-					<p class="font-serif text-[clamp(22px,5vw,28px)]">{current.name()}</p>
-					<p class="mt-1 text-[13px] text-[#f5eee0]/65">{current.place()} · {current.caption()}</p>
+					<p class="font-serif text-[clamp(22px,5vw,28px)]">{current.title}</p>
+					<p class="mt-1 text-[13px] text-[#f5eee0]/65">{current.location}</p>
+					{#if credit}
+						<p class="mt-1 text-xs text-[#f5eee0]/50">
+							<a
+								href={credit.source_url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="underline-offset-2 hover:underline"
+							>
+								{m.gallery_credit({ author: credit.author, license: credit.license })}
+							</a>
+						</p>
+					{/if}
 				</div>
 				<div class="flex items-center gap-2.5">
 					<span class="text-xs font-medium whitespace-nowrap text-[#f5eee0]/60">
@@ -93,3 +137,4 @@
 		</div>
 	{/if}
 </dialog>
+<!-- eslint-enable svelte/no-navigation-without-resolve -->

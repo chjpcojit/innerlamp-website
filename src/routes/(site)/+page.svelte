@@ -24,9 +24,9 @@
 	{#if !data.user}
 		<GuestPerks />
 	{/if}
-	<EventsRoutines />
-	<BuddhaGrid />
-	<TempleGrid />
-	<PhotoGallery />
-	<ArticleGrid />
+	<EventsRoutines events={data.events} isGuest={!data.user} />
+	<BuddhaGrid items={data.buddhas} />
+	<TempleGrid items={data.temples} />
+	<PhotoGallery items={data.gallery} />
+	<ArticleGrid items={data.articles} />
 </div>

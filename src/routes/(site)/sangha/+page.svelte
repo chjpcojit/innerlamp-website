@@ -5,6 +5,7 @@
 	import SanghaHero from '$lib/components/sections/SanghaHero.svelte';
 	import SanghaMain from '$lib/components/sections/SanghaMain.svelte';
 	import SanghaSide from '$lib/components/sections/SanghaSide.svelte';
+	import SanghaEmpty from '$lib/features/sangha/components/SanghaEmpty.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -14,12 +15,18 @@
 	<meta name="description" content={m.sg_meta_description()} />
 </svelte:head>
 
-{#if data.user}
+{#if data.user && data.profile && !data.profile.ordination_temple}
+	<SanghaEmpty suggestions={data.suggestions} />
+{:else if data.user}
 	<div class="flex flex-col gap-7">
-		<SanghaHero />
+		<SanghaHero temple={data.profile?.ordination_temple} image={data.templeImage} />
 		<div class="flex flex-wrap items-start gap-7">
-			<SanghaMain />
-			<SanghaSide />
+			<SanghaMain events={data.events} schedule={data.schedule} />
+			<SanghaSide
+				fullName={data.profile?.full_name}
+				dharmaName={data.profile?.dharma_name}
+				fallbackName={data.user.name}
+			/>
 		</div>
 	</div>
 {:else}

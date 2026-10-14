@@ -20,14 +20,16 @@ export const PRACTICE_TOOLS: PracticeTool[] = [
 		title: () => m.practice_tool_bell_title(),
 		sub: () => m.practice_tool_bell_sub(),
 		tint: 'rgba(184,134,47,.14)',
-		tone: '#B8862F'
+		tone: '#B8862F',
+		href: '/practice/bell'
 	},
 	{
 		icon: 'beads',
 		title: () => m.practice_tool_mala_title(),
 		sub: () => m.practice_tool_mala_sub(),
 		tint: 'rgba(194,133,127,.16)',
-		tone: '#C2857F'
+		tone: '#C2857F',
+		href: '/practice/mala'
 	},
 	{
 		icon: 'book',

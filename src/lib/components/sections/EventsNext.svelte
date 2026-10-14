@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
-	import type { BuddhistEvent } from '$lib/content/events';
-	import { leftLabel, monthShort } from '$lib/utils/events';
+	import type { CalendarListItem } from '$lib/types/calendar';
+	import { leftLabel, monthShort, parseIsoDate } from '$lib/utils/events';
 
 	interface Props {
-		event: BuddhistEvent;
+		item: CalendarListItem;
 		daysLeft: number;
 	}
 
-	let { event, daysLeft }: Props = $props();
+	let { item, daysLeft }: Props = $props();
+
+	const date = $derived(parseIsoDate(item.solar_date));
 
 	const weekdayFull = new Intl.DateTimeFormat(getLocale(), { dateStyle: 'full' });
 </script>
@@ -24,21 +26,21 @@
 	></div>
 	<div class="relative min-w-[90px] text-center">
 		<p class="font-serif text-[clamp(48px,12vw,64px)]/none font-medium text-amber-light">
-			{event.date.getDate()}
+			{date.getDate()}
 		</p>
 		<p class="mt-1.5 text-xs font-medium tracking-[.12em] text-[#f5eee0]/60 uppercase">
-			{monthShort(event.date)}
+			{monthShort(date)}
 		</p>
 	</div>
 	<div class="relative min-w-0 flex-[1_1_280px]">
 		<p class="text-[10.5px] font-semibold tracking-[.16em] text-[#e8b061]">
 			{m.ev_next_label({ left: leftLabel(daysLeft) })}
 		</p>
-		<h2 class="mt-2 font-serif text-[28px]/tight font-medium text-pretty">{event.name}</h2>
+		<h2 class="mt-2 font-serif text-[28px]/tight font-medium text-pretty">{item.name}</h2>
 		<p class="mt-2 text-[13px] text-[#f5eee0]/70">
-			{weekdayFull.format(event.date)} · {m.ev_lunar_date({
-				day: event.lunarDay,
-				month: event.lunarMonth
+			{weekdayFull.format(date)} · {m.ev_lunar_date({
+				day: item.lunar_date.day,
+				month: item.lunar_date.month
 			})}
 		</p>
 	</div>

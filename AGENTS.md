@@ -16,6 +16,10 @@ silently diverge. Keep it short, current, and actionable.
 >    `git rebase`, `git reset`, `--amend`, or create/delete branches unless the user
 >    explicitly asks for it in that turn. Read-only git commands (`status`, `diff`,
 >    `log`, `show`) are fine. Leave changes uncommitted and tell the user what changed.
+> 3. **Stay on the page/feature being worked on.** Reports and summaries cover only
+>    that page/feature: what changed, where, and what is still needed for it. Do not
+>    bring up other pages, unrelated check/lint errors, or side observations unless
+>    they block the current task or the user asks.
 
 ---
 

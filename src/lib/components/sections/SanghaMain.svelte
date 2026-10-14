@@ -1,17 +1,73 @@
 <script lang="ts">
-	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
-	import {
-		REGISTERED_EVENT_IDS,
-		SANGHA_EVENTS,
-		SANGHA_POSTS,
-		SANGHA_SCHEDULE
-	} from '$lib/content/sangha';
+	import TempleEventList from './TempleEventList.svelte';
+	import { SANGHA_POSTS } from '$lib/content/sangha';
+	import type { TempleEventEntry } from '$lib/types/temple-event';
+	import type { TempleScheduleItem } from '$lib/types/temple-schedule';
 
-	const locale = getLocale();
-	const monthShort = new Intl.DateTimeFormat(locale, { month: 'short' });
+	interface Props {
+		/** This month's events at the user's ordination temple. */
+		events: TempleEventEntry[];
+		/** The temple's weekly practice sessions. */
+		schedule: TempleScheduleItem[];
+	}
 
-	let registered = $state<string[]>([...REGISTERED_EVENT_IDS]);
+	let { events, schedule }: Props = $props();
+
+	const WEEKDAYS = [
+		() => m.weekday_short_0(),
+		() => m.weekday_short_1(),
+		() => m.weekday_short_2(),
+		() => m.weekday_short_3(),
+		() => m.weekday_short_4(),
+		() => m.weekday_short_5(),
+		() => m.weekday_short_6()
+	];
+
+	/** `04:30` → `4:30`, as in the design. */
+	const shortTime = (hhmm: string) => hhmm.replace(/^0(?=\d:)/, '');
+
+	interface ScheduleRow {
+		key: string;
+		time: string | null;
+		title: string;
+		when: string;
+	}
+
+	// Weekday sessions come from the schedule API; lunar-day ones (1st & 15th…) are
+	// LUNAR_MONTHLY temple events, so they are taken from this month's events.
+	const rows = $derived.by((): ScheduleRow[] => {
+		const weekly = schedule.map((s) => ({
+			key: `s-${s.id}`,
+			time: shortTime(s.start_time),
+			title: s.name,
+			when: [
+				s.weekdays.length === 0
+					? m.sg_sched_daily()
+					: m.sg_sched_weekly({ days: s.weekdays.map((d) => WEEKDAYS[d]?.() ?? d).join(', ') }),
+				s.end_time ? m.sg_sched_until({ time: shortTime(s.end_time) }) : '',
+				s.location
+			]
+				.filter(Boolean)
+				.join(' · ')
+		}));
+		const lunar: ScheduleRow[] = [];
+		for (const { event: e, starts_at } of events) {
+			const { kind, lunar_days } = e.recurrence;
+			const key = `e-${e.id}`;
+			if (kind !== 'LUNAR_MONTHLY' || e.status === 'CANCELLED') continue;
+			if (lunar.some((r) => r.key === key)) continue;
+			lunar.push({
+				key,
+				// RFC 3339 already in Vietnam time (`…T19:00:00+07:00`).
+				time: e.is_all_day ? null : shortTime(starts_at.slice(11, 16)),
+				title: e.title,
+				when: m.sg_sched_lunar({ days: lunar_days.join(', ') })
+			});
+		}
+		return [...weekly, ...lunar];
+	});
+
 	let liked = $state<number[]>([]);
 
 	const toggle = <T,>(list: T[], v: T) =>
@@ -23,39 +79,8 @@
 		aria-labelledby="sg-upcoming"
 		class="rounded-[22px] border border-ink/8 bg-paper px-6 py-[22px]"
 	>
-		<div class="flex flex-wrap items-baseline justify-between gap-3">
-			<h2 id="sg-upcoming" class="font-serif text-2xl">{m.sg_upcoming_title()}</h2>
-			<p class="text-[12.5px] text-ink/50">{m.sg_registered_count({ count: registered.length })}</p>
-		</div>
-		<ul class="mt-2">
-			{#each SANGHA_EVENTS as e (e.id)}
-				{@const on = registered.includes(e.id)}
-				<li
-					class="flex flex-wrap items-center gap-[18px] border-b border-ink/7 py-4 last:border-b-0"
-				>
-					<div class="w-14 flex-none text-center">
-						<p class="font-serif text-[29px]/none">{String(e.date.getDate()).padStart(2, '0')}</p>
-						<p class="mt-1 text-[10.5px] font-medium text-ink/45 uppercase">
-							{monthShort.format(e.date)}
-						</p>
-					</div>
-					<div class="min-w-[200px] flex-1">
-						<p class="text-[15px] font-medium">{e.name()}</p>
-						<p class="mt-[3px] text-[12.5px]/normal text-ink/55">{e.meta()}</p>
-					</div>
-					<button
-						type="button"
-						aria-pressed={on}
-						onclick={() => (registered = toggle(registered, e.id))}
-						class="cursor-pointer rounded-full border px-4 py-[9px] text-[12.5px] font-medium whitespace-nowrap transition-colors {on
-							? 'border-sage/40 bg-sage/14 text-sage'
-							: 'border-ink bg-ink text-cream hover:bg-[#3a342c]'}"
-					>
-						{on ? m.sg_registered() : m.sg_register()}
-					</button>
-				</li>
-			{/each}
-		</ul>
+		<h2 id="sg-upcoming" class="font-serif text-2xl">{m.sg_upcoming_title()}</h2>
+		<TempleEventList entries={events} />
 	</section>
 
 	<section
@@ -64,17 +89,23 @@
 	>
 		<h2 id="sg-schedule" class="font-serif text-2xl">{m.sg_schedule_title()}</h2>
 		<p class="mt-1 text-[12.5px] text-ink/50">{m.sg_schedule_hint()}</p>
-		<ul class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,220px),1fr))] gap-2.5">
-			{#each SANGHA_SCHEDULE as r (r.time + r.title())}
-				<li class="flex items-start gap-3.5 rounded-2xl bg-cream px-4 py-3.5">
-					<p class="min-w-[52px] font-serif text-xl/tight text-gold-deep">{r.time}</p>
-					<div class="min-w-0">
-						<p class="text-[13.5px] font-medium">{r.title()}</p>
-						<p class="mt-0.5 text-xs text-ink/52">{r.when()}</p>
-					</div>
-				</li>
-			{/each}
-		</ul>
+		{#if rows.length === 0}
+			<p class="mt-3 text-sm text-ink/55">{m.sg_schedule_empty()}</p>
+		{:else}
+			<ul class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,220px),1fr))] gap-2.5">
+				{#each rows as r (r.key)}
+					<li class="flex items-start gap-3.5 rounded-2xl bg-cream px-4 py-3.5">
+						<p class="min-w-[52px] font-serif text-xl/tight text-gold-deep">
+							{r.time ?? m.temple_ev_all_day()}
+						</p>
+						<div class="min-w-0">
+							<p class="text-[13.5px] font-medium">{r.title}</p>
+							<p class="mt-0.5 text-xs text-ink/52">{r.when}</p>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</section>
 
 	<section aria-labelledby="sg-posts" class="flex flex-col gap-3.5">

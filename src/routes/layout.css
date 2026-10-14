@@ -17,6 +17,7 @@
 	--color-amber: #d9963c;
 	--color-amber-light: #f3c673;
 	--color-night: #161310;
+	--color-maroon: #7a3f38;
 }
 
 body {
@@ -141,6 +142,77 @@ html.il-dark [data-keep-dark='fixed'] {
 	to {
 		opacity: 1;
 		transform: none;
+	}
+}
+
+/* Meditation scene keyframes (prototype). */
+@keyframes il-breathe {
+	0%,
+	100% {
+		transform: scale(0.55);
+		opacity: 0.55;
+	}
+	50% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes il-dawn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes il-fadein {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes il-ripple {
+	0% {
+		transform: scale(0.62);
+		opacity: 0;
+	}
+	15% {
+		opacity: 0.55;
+	}
+	100% {
+		transform: scale(1.55);
+		opacity: 0;
+	}
+}
+
+@keyframes il-drift {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(var(--dx), var(--dy)) scale(1.12);
+	}
+}
+
+@keyframes il-mote {
+	0% {
+		transform: translateY(0);
+		opacity: 0;
+	}
+	20% {
+		opacity: 0.8;
+	}
+	100% {
+		transform: translateY(-160px);
+		opacity: 0;
 	}
 }
 

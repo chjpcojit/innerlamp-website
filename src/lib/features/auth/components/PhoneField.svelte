@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { formatPhone, normalizePhone } from '$lib/utils/phone';
+	import { formatPhone, normalizePhone, PHONE_MAX_LEN, PHONE_MIN_LEN } from '$lib/utils/phone';
 	import { COUNTRIES } from '../data';
 	import CountryPicker from './CountryPicker.svelte';
 
@@ -17,7 +17,7 @@
 	}
 
 	// `valid` is write-only here: it reports validity up to the parent via bind:.
-	// eslint-disable-next-line no-useless-assignment
+	/* eslint-disable no-useless-assignment */
 	let {
 		id,
 		phone = $bindable(''),
@@ -26,13 +26,27 @@
 		label,
 		hint = true
 	}: Props = $props();
+	/* eslint-enable no-useless-assignment */
 
 	let countryIdx = $state(0);
 	let pickerOpen = $state(false);
 
 	const country = $derived(COUNTRIES[countryIdx]);
-	const digits = $derived(normalizePhone(phone, country.dial, country.len));
-	const ok = $derived(digits.length === country.len);
+	const digits = $derived(normalizePhone(phone, country.dial));
+	const ok = $derived(digits.length >= PHONE_MIN_LEN && digits.length <= PHONE_MAX_LEN);
+
+	/** Digits only; at most PHONE_MAX_LEN (+1 for a leading trunk "0"). Pastes with a country code are unwrapped. */
+	function sanitize(raw: string): string {
+		const d = raw.replace(/\D/g, '');
+		const cap = d.startsWith('0') ? PHONE_MAX_LEN + 1 : PHONE_MAX_LEN;
+		return d.length > cap ? normalizePhone(raw, country.dial) : d;
+	}
+
+	function onInput(e: Event & { currentTarget: HTMLInputElement }) {
+		const clean = sanitize(e.currentTarget.value);
+		e.currentTarget.value = clean;
+		phone = clean;
+	}
 
 	$effect(() => {
 		valid = ok;
@@ -67,10 +81,11 @@
 			<span class="h-5 w-px flex-none bg-ink/12" aria-hidden="true"></span>
 			<input
 				{id}
-				bind:value={phone}
-				maxlength={16}
+				value={phone}
+				oninput={onInput}
 				type="tel"
-				inputmode="tel"
+				inputmode="numeric"
+				pattern="[0-9]*"
 				autocomplete="tel-national"
 				placeholder={m.phone_placeholder()}
 				aria-label={label ? undefined : m.phone_label()}

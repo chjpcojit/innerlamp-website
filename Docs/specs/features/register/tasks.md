@@ -1,7 +1,7 @@
 # Tasks — Đăng ký (Register)
 
-Version: 1.1
-Last updated: 2026-10-10
+Version: 1.2
+Last updated: 2026-10-11
 Status: in-progress — Phase 1 xong, Phase 2–3 còn lại
 
 > See `changelog.md` in this folder for the version history of this spec.
@@ -19,6 +19,16 @@ Status: in-progress — Phase 1 xong, Phase 2–3 còn lại
 - [x] `authFail` + `errors.ts` ánh xạ mã lỗi → chuỗi vi/en
 - [x] `startSession` ghi 3 cookie httpOnly; redirect 303 về `/`
 - [x] Mật khẩu không nằm trong payload trả về page
+
+## Phase 1b — Đồng bộ contract BE 2026-10-11 (đã làm)
+
+- [x] `ordination_place` → `ordination_temple_id` (`RegisterRequest`, `AuthUser`, `TempleSelect`, action `request`)
+- [x] Gửi đề xuất chùa `POST /v1/temple-suggestions` sau `verify-otp` (`suggestTemple`, `suggestion` đi qua bước OTP)
+- [x] `AddTempleForm`: địa chỉ bắt buộc (BE yêu cầu), ≤ 500 ký tự
+- [x] `maxlength` họ tên 300 / pháp danh 255; thêm `INVALID_FULL_NAME` / `INVALID_DHARMA_NAME` / `INVALID_TEMPLE`
+- [x] TTL cookie access token lấy từ `expires_in`
+- [ ] Chưa kiểm chứng E2E với BE (chưa chạy thử request-otp/verify-otp/temple-suggestions)
+- [ ] Map `RATE_LIMITED` / `PAYLOAD_TOO_LARGE` riêng (hiện rơi về `auth_err_generic`)
 
 ## Phase 2 — Xử lý lỗi cho đúng spec (pending)
 
@@ -39,7 +49,7 @@ Status: in-progress — Phase 1 xong, Phase 2–3 còn lại
 ## Phase 5 — Bảo mật (từ đối chiếu với BE 2026-10-10, pending)
 
 - [ ] Chặn `password` > 72 byte ở FE (cả client lẫn action server) — BE hiện ra 500
-- [ ] Cắt/chặn `dharma_name`, `ordination_place` ≤ 255 ký tự ở FE và server action
+- [ ] Chặn `dharma_name` ≤ 255 / `full_name` ≤ 300 ký tự ở server action (FE đã có `maxlength`)
 - [ ] Captcha (Turnstile) + rate limit theo IP/SĐT ở server SvelteKit cho `request` và `resend`
 - [ ] Đọc `expires_in` từ `verify-otp` cho TTL cookie (dùng chung với login, thêm vào `AuthSession` type)
 - [ ] Chờ BE: OTP thật (blocker go-live), rate limit theo IP, production `API_KEY`

@@ -72,7 +72,7 @@
 		{ kind: 'calendar', href: '/lunar', label: () => m.home_quick_calendar() },
 		{ kind: 'book', href: '/library', label: () => m.home_quick_sutras() },
 		{ kind: 'mo', href: '/practice', label: () => m.home_quick_bell() },
-		{ kind: 'med', href: '/practice', label: () => m.home_quick_meditate() }
+		{ kind: 'med', href: '/practice/meditate', label: () => m.home_quick_meditate() }
 	] as const;
 
 	const WEEKDAY_SHORT = [

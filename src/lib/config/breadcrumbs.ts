@@ -1,5 +1,4 @@
 import { m } from '$lib/paraglide/messages';
-import { findTemple } from '$lib/content/temples';
 
 export interface Crumb {
 	label: () => string;
@@ -22,6 +21,7 @@ const CALENDAR_TABS = [
 
 const ME_TABS = [
 	{ href: '/profile', label: () => m.crumb_overview() },
+	{ href: '/profile/edit', label: () => m.pf_edit() },
 	{ href: '/notifications', label: () => m.notif_title() },
 	{ href: '/settings', label: () => m.set_title() },
 	{ href: '/memorial', label: () => m.mem_title() }
@@ -44,6 +44,7 @@ const calendar: Crumb = { label: () => m.nav_lunar(), href: '/lunar' };
 const SUBNAV: Record<string, SubNav> = {
 	'/library': { crumbs: [{ label: () => m.nav_library() }], tabs: [] },
 	'/library/buddhas': { crumbs: [home, { label: () => m.buddhas_title() }], tabs: [] },
+	'/library/sutras': { crumbs: [home, { label: () => m.sutras_title() }], tabs: [] },
 	'/library/talks': { crumbs: [home, { label: () => m.talks_title() }], tabs: [] },
 	'/articles': { crumbs: [home, { label: () => m.articles_title() }], tabs: [] },
 	'/gallery': { crumbs: [home, { label: () => m.gallery_title() }], tabs: [] },
@@ -56,6 +57,21 @@ const SUBNAV: Record<string, SubNav> = {
 		],
 		tabs: []
 	},
+	'/practice/bell': {
+		crumbs: [{ label: () => m.nav_practice(), href: '/practice' }, { label: () => m.bell_title() }],
+		tabs: []
+	},
+	'/practice/mala': {
+		crumbs: [{ label: () => m.nav_practice(), href: '/practice' }, { label: () => m.mala_title() }],
+		tabs: []
+	},
+	'/practice/meditate': {
+		crumbs: [
+			{ label: () => m.nav_practice(), href: '/practice' },
+			{ label: () => m.med_meta_title() }
+		],
+		tabs: []
+	},
 	'/offer': { crumbs: [home, { label: () => m.offer_meta_title() }], tabs: [] },
 	'/help': { crumbs: [home, { label: () => m.help_meta_title() }], tabs: SUPPORT_TABS },
 	'/support': { crumbs: [home, { label: () => m.sup_meta_title() }], tabs: SUPPORT_TABS },
@@ -65,6 +81,7 @@ const SUBNAV: Record<string, SubNav> = {
 	'/merit': { crumbs: [home, { label: () => m.mr_meta_title() }], tabs: [] },
 	'/lunar': { crumbs: [{ label: calendar.label }], tabs: CALENDAR_TABS },
 	'/profile': { crumbs: [{ label: me.label }], tabs: ME_TABS },
+	'/profile/edit': { crumbs: [me, { label: () => m.pf_edit() }], tabs: ME_TABS },
 	'/notifications': { crumbs: [me, { label: () => m.notif_title() }], tabs: ME_TABS },
 	'/settings': { crumbs: [me, { label: () => m.set_title() }], tabs: ME_TABS },
 	'/memorial': { crumbs: [me, { label: () => m.mem_title() }], tabs: ME_TABS },
@@ -84,19 +101,55 @@ export function getSubNav(path: string): SubNav | undefined {
 	if (/^\/memorial\/(?!new$)[^/]+$/.test(clean)) {
 		return { crumbs: [me, memorialBook, { label: () => m.mem_form_edit() }], tabs: ME_TABS };
 	}
-	const temple = /^\/temples\/([^/]+)$/.exec(clean);
-	if (temple) {
-		const t = findTemple(temple[1]);
-		if (t) {
-			return {
-				crumbs: [
-					home,
-					{ label: () => m.temples_title(), href: '/temples' },
-					{ label: () => t.name() }
-				],
-				tabs: []
-			};
-		}
+	if (/^\/temples\/[^/]+$/.test(clean)) {
+		return {
+			crumbs: [
+				home,
+				{ label: () => m.temples_title(), href: '/temples' },
+				{ label: () => m.temple_d_crumb() }
+			],
+			tabs: []
+		};
+	}
+	if (/^\/events\/[^/]+$/.test(clean)) {
+		return {
+			crumbs: [
+				calendar,
+				{ label: () => m.crumb_events(), href: '/events' },
+				{ label: () => m.ev_d_crumb() }
+			],
+			tabs: CALENDAR_TABS
+		};
+	}
+	if (/^\/library\/buddhas\/[^/]+$/.test(clean)) {
+		return {
+			crumbs: [
+				home,
+				{ label: () => m.buddhas_title(), href: '/library/buddhas' },
+				{ label: () => m.buddha_d_crumb() }
+			],
+			tabs: []
+		};
+	}
+	if (/^\/library\/talks\/[^/]+$/.test(clean)) {
+		return {
+			crumbs: [
+				home,
+				{ label: () => m.talks_title(), href: '/library/talks' },
+				{ label: () => m.talk_d_crumb() }
+			],
+			tabs: []
+		};
+	}
+	if (/^\/library\/sutras\/[^/]+$/.test(clean)) {
+		return {
+			crumbs: [
+				home,
+				{ label: () => m.sutras_title(), href: '/library/sutras' },
+				{ label: () => m.sutra_d_crumb() }
+			],
+			tabs: []
+		};
 	}
 	return SUBNAV[clean];
 }

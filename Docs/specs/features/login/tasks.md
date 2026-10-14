@@ -28,7 +28,8 @@ Status: in-progress — Phase 1 xong, Phase 2–4 còn lại
 - [ ] Guard người đã đăng nhập mở `/login`/`/signup` *(chờ ⚠️)*
 - [ ] Quay lại trang trước sau đăng nhập *(chờ ⚠️)*
 - [ ] Hợp nhất `401 UNAUTHORIZED` → refresh một lần rồi thử lại, refresh lỗi → `/login` (khi có route Bearer đầu tiên)
-- [ ] Đọc `exp` của JWT cho TTL cookie; cập nhật `il_name` khi có `/me`
+- [ ] Đọc `exp` của JWT cho TTL cookie
+- [x] Cập nhật `il_name` từ `GET /v1/users/me` ở trang chủ
 
 ## Phase 3 — Test & kiểm chứng (pending)
 

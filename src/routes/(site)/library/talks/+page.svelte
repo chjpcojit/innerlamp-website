@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import TalkCatalog from '$lib/components/sections/TalkCatalog.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
@@ -8,4 +11,4 @@
 	<meta name="description" content={m.talks_meta_description()} />
 </svelte:head>
 
-<TalkCatalog />
+<TalkCatalog talks={data.talks} />

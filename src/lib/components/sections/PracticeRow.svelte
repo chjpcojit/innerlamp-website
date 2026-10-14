@@ -20,13 +20,21 @@
 		<div>
 			<h2 class="text-sm font-medium">{m.practice_bead_title()}</h2>
 			<p class="mt-1.5 font-serif text-sm">{m.practice_bead_mantra()}</p>
-			<button
-				type="button"
-				onclick={() => (beads = 0)}
-				class="mt-3 text-xs font-medium text-gold-deep hover:text-gold"
-			>
-				{m.practice_bead_reset()}
-			</button>
+			<div class="mt-3 flex items-center gap-4">
+				<button
+					type="button"
+					onclick={() => (beads = 0)}
+					class="text-xs font-medium text-gold-deep hover:text-gold"
+				>
+					{m.practice_bead_reset()}
+				</button>
+				<a
+					href={localizeHref('/practice/mala')}
+					class="text-xs font-medium text-gold-deep hover:text-gold"
+				>
+					{m.practice_bead_open()}
+				</a>
+			</div>
 			{#if isGuest}
 				<p class="mt-2.5 text-xs text-ink/45">{m.practice_bead_guest_hint()}</p>
 			{/if}

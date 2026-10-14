@@ -18,7 +18,12 @@
 
 {#if data.user}
 	<div class="flex flex-col gap-7">
-		<ProfileHeader name={data.user.name || m.pf_name()} />
+		<ProfileHeader
+			name={data.profile?.full_name || data.user.name || m.pf_name()}
+			dharmaName={data.profile?.dharma_name}
+			temple={data.profile?.ordination_temple?.name}
+			avatarUrl={data.profile?.avatar_url}
+		/>
 		<ProfileStats />
 		<div class="flex flex-wrap items-start gap-6">
 			<div class="flex min-w-0 flex-[1.3_1_460px] flex-col gap-6">

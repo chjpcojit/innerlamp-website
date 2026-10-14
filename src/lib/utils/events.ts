@@ -17,3 +17,9 @@ export function leftLabel(days: number): string {
 export function monthShort(date: Date): string {
 	return new Intl.DateTimeFormat(getLocale(), { month: 'short' }).format(date);
 }
+
+/** Local-midnight Date of a `YYYY-MM-DD` string (no timezone shift). */
+export function parseIsoDate(iso: string): Date {
+	const [y, mo, d] = iso.split('-').map(Number);
+	return new Date(y, mo - 1, d);
+}

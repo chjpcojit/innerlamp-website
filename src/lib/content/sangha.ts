@@ -2,52 +2,6 @@ import { m } from '$lib/paraglide/messages';
 
 /** Placeholder temple data (copied from the design mock) until the backend serves sangha content. */
 
-export interface SanghaEvent {
-	id: string;
-	date: Date;
-	name: () => string;
-	meta: () => string;
-}
-
-export const SANGHA_EVENTS: SanghaEvent[] = [
-	{
-		id: 'retreat',
-		date: new Date(2026, 9, 11),
-		name: () => m.sg_event_1_name(),
-		meta: () => m.sg_event_1_meta()
-	},
-	{
-		id: 'full-moon',
-		date: new Date(2026, 9, 24),
-		name: () => m.sg_event_2_name(),
-		meta: () => m.sg_event_2_meta()
-	},
-	{
-		id: 'quan-yin',
-		date: new Date(2026, 9, 28),
-		name: () => m.sg_event_3_name(),
-		meta: () => m.sg_event_3_meta()
-	},
-	{
-		id: 'kitchen',
-		date: new Date(2026, 9, 31),
-		name: () => m.sg_event_4_name(),
-		meta: () => m.sg_event_4_meta()
-	}
-];
-
-/** Events the visitor has already registered for (mock). */
-export const REGISTERED_EVENT_IDS = ['retreat'];
-
-export const SANGHA_SCHEDULE: { time: string; title: () => string; when: () => string }[] = [
-	{ time: '4:30', title: () => m.sg_sched_1_title(), when: () => m.sg_sched_1_when() },
-	{ time: '17:00', title: () => m.sg_sched_2_title(), when: () => m.sg_sched_2_when() },
-	{ time: '19:30', title: () => m.sg_sched_3_title(), when: () => m.sg_sched_3_when() },
-	{ time: '19:00', title: () => m.sg_sched_4_title(), when: () => m.sg_sched_4_when() },
-	{ time: '8:00', title: () => m.sg_sched_5_title(), when: () => m.sg_sched_5_when() },
-	{ time: '6:30', title: () => m.sg_sched_6_title(), when: () => m.sg_sched_6_when() }
-];
-
 export interface SanghaPost {
 	id: number;
 	initials: string;

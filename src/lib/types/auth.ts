@@ -5,14 +5,18 @@ export interface AuthUser {
 	email: string;
 	/** E.164, e.g. "+84912345678". */
 	phone_number: string;
+	full_name?: string;
 	dharma_name?: string;
-	ordination_place?: string;
+	/** Id from `GET /v1/temples/options`; absent when none was chosen. */
+	ordination_temple_id?: string;
 	created_at: string;
 }
 
 export interface AuthTokens {
 	access_token: string;
 	refresh_token: string;
+	/** Access-token lifetime in seconds. */
+	expires_in?: number;
 }
 
 export interface AuthSession extends AuthTokens {
@@ -23,8 +27,10 @@ export interface RegisterRequest {
 	email: string;
 	password: string;
 	phone_number: string;
+	full_name: string;
 	dharma_name?: string;
-	ordination_place?: string;
+	/** Temple id from `GET /v1/temples/options`; omit when none was chosen. */
+	ordination_temple_id?: string;
 }
 
 export interface OtpChallenge {

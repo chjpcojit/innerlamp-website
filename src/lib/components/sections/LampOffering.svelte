@@ -1,10 +1,31 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte';
+	import { enhance } from '$app/forms';
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import LampVessel from '$lib/components/ui/LampVessel.svelte';
-	import { DEFAULT_LAMP_DAYS, LAMP_DAYS, LAMP_PURPOSES, LAMP_TYPES } from '$lib/content/lamps';
-	import { lamps, type MyLamp } from '$lib/state/lamps.svelte';
+	import {
+		DEFAULT_LAMP_DAYS,
+		LAMP_DAYS,
+		LAMP_PURPOSES,
+		LAMP_TYPES,
+		PRAYER_MAX,
+		RECIPIENT_MAX,
+		lampPurpose,
+		lampType
+	} from '$lib/content/lamps';
+	import { lampErrorMessage } from '$lib/features/lamp/errors';
+	import type { LampError } from '$lib/features/lamp/types';
+	import { lamps } from '$lib/state/lamps.svelte';
+	import type { Lamp, LampDuration } from '$lib/types/lamp';
+	import type { SubmitFunction } from '@sveltejs/kit';
+
+	interface Props {
+		/** Guests can fill the form, but lighting needs an account. */
+		isGuest: boolean;
+	}
+
+	let { isGuest }: Props = $props();
 
 	const IGNITE_MS = 2100;
 	const HERO_MOVE_MS = 950;
@@ -19,11 +40,12 @@
 	let purpose = $state(0);
 	let name = $state('');
 	let wish = $state('');
-	let days = $state<number>(DEFAULT_LAMP_DAYS);
+	let days = $state<LampDuration>(DEFAULT_LAMP_DAYS);
 	let phase = $state<'form' | 'igniting' | 'lit'>('form');
 	/** True after "light another", so the form fields rise in again. */
 	let returned = $state(false);
-	let current = $state<MyLamp | null>(null);
+	let current = $state<Lamp | null>(null);
+	let error = $state<LampError | null>(null);
 
 	/** The lamp column's lamp block; slides between the form and centred layouts. */
 	let hero = $state<HTMLElement>();
@@ -34,31 +56,25 @@
 	const burning = $derived(phase !== 'form');
 	const canShare = $derived(typeof navigator !== 'undefined' && 'share' in navigator);
 
-	const caption = $derived.by(() => {
-		if (!current) return m.lamp_caption_idle();
-		const purposeName = LAMP_PURPOSES[current.purpose]();
-		return current.name
-			? m.lamp_caption_for({ purpose: purposeName, name: current.name })
-			: purposeName;
-	});
+	const caption = $derived(
+		current
+			? m.lamp_caption_for({
+					purpose: lampPurpose(current.intention).name(),
+					name: current.recipient
+				})
+			: m.lamp_caption_idle()
+	);
 	const until = $derived(
 		current
 			? m.lamp_until({
-					date: dateFormat.format(
-						new Date(new Date(current.litAt).getTime() + current.days * 86_400_000)
-					),
-					days: current.days
+					date: dateFormat.format(new Date(current.end_at)),
+					days: current.duration_days
 				})
 			: ''
 	);
 	const templeHref = $derived(
-		localizeHref(`/offer?purpose=lamp&wish=${encodeURIComponent(wishForTemple())}`)
+		localizeHref(`/offer?purpose=lamp&wish=${encodeURIComponent(current?.prayer || caption)}`)
 	);
-
-	function wishForTemple() {
-		if (!current) return '';
-		return current.wish || caption;
-	}
 
 	/**
 	 * FLIP: run `change`, then slide the lamp from where it was to where the new
@@ -81,16 +97,34 @@
 		});
 	}
 
-	function light() {
-		if (phase !== 'form') return;
+	/** The ignition animation always plays in full, however fast the backend answers. */
+	const ignition = () => new Promise<void>((resolve) => (timer = setTimeout(resolve, IGNITE_MS)));
+
+	const light: SubmitFunction = ({ cancel }) => {
+		if (phase !== 'form') return cancel();
 		phase = 'igniting';
-		timer = setTimeout(() => {
-			void moveHero(() => {
-				current = lamps.add({ type, purpose, name: name.trim(), wish: wish.trim(), days });
+		error = null;
+		const ignited = ignition();
+		return async ({ result, update }) => {
+			await ignited;
+			if (result.type !== 'success' || !result.data?.lamp) {
+				phase = 'form';
+				error =
+					result.type === 'failure'
+						? ((result.data?.lampError as LampError | undefined) ?? 'failed')
+						: 'failed';
+				return;
+			}
+			const lamp = result.data.lamp as Lamp;
+			lamps.add(lamp.id, lamp.end_at);
+			await moveHero(() => {
+				current = lamp;
 				phase = 'lit';
 			});
-		}, IGNITE_MS);
-	}
+			// Reloads the garden so the new lamp shows up there.
+			await update({ reset: false });
+		};
+	};
 
 	function again() {
 		void moveHero(() => {
@@ -104,7 +138,7 @@
 
 	async function share() {
 		try {
-			await navigator.share({ title: caption, text: current?.wish || caption });
+			await navigator.share({ title: caption, text: current?.prayer || caption });
 		} catch {
 			// dismissed by the user — nothing to do
 		}
@@ -169,13 +203,10 @@
 		</div>
 
 		{#if phase !== 'lit'}
-			<form
-				class="flex flex-col gap-5"
-				onsubmit={(e) => {
-					e.preventDefault();
-					light();
-				}}
-			>
+			<form method="POST" action="?/light" class="flex flex-col gap-5" use:enhance={light}>
+				<input type="hidden" name="lamp_type" value={LAMP_TYPES[type].code} />
+				<input type="hidden" name="intention" value={LAMP_PURPOSES[purpose].code} />
+				<input type="hidden" name="duration_days" value={days} />
 				<fieldset class="il-motion" style:animation={formRise(1)}>
 					<legend class={label}>{m.lamp_field_type()}</legend>
 					<div class="flex flex-wrap gap-1.5">
@@ -202,7 +233,7 @@
 								onclick={() => (purpose = i)}
 								class="{chip} {purpose === i ? chipOn : chipOff}"
 							>
-								{p()}
+								{p.name()}
 							</button>
 						{/each}
 					</div>
@@ -212,7 +243,9 @@
 					<label for="lamp-name" class={label}>{m.lamp_field_for()}</label>
 					<input
 						id="lamp-name"
+						name="recipient"
 						bind:value={name}
+						maxlength={RECIPIENT_MAX}
 						placeholder={m.lamp_field_for_placeholder()}
 						class={field}
 					/>
@@ -222,7 +255,9 @@
 					<label for="lamp-wish" class={label}>{m.lamp_field_wish()}</label>
 					<textarea
 						id="lamp-wish"
+						name="prayer"
 						bind:value={wish}
+						maxlength={PRAYER_MAX}
 						rows="3"
 						placeholder={m.lamp_field_wish_placeholder()}
 						class="{field} resize-none leading-relaxed"></textarea>
@@ -248,14 +283,30 @@
 					</div>
 				</fieldset>
 
-				<button
-					type="submit"
-					disabled={phase === 'igniting'}
-					style:animation={formRise(6)}
-					class="il-motion cursor-pointer self-start rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] transition-opacity hover:bg-[#e6a94e] disabled:opacity-60"
-				>
-					{phase === 'igniting' ? m.lamp_lighting() : m.lamp_light()}
-				</button>
+				{#if error}
+					<p class="text-[13px] text-[#f0a49e]" role="alert">{lampErrorMessage(error)}</p>
+				{/if}
+
+				{#if isGuest}
+					<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
+					<a
+						href={localizeHref('/login')}
+						style:animation={formRise(6)}
+						class="il-motion self-start rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] hover:bg-[#e6a94e]"
+					>
+						{m.lamp_login()}
+					</a>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+				{:else}
+					<button
+						type="submit"
+						disabled={phase === 'igniting'}
+						style:animation={formRise(6)}
+						class="il-motion cursor-pointer self-start rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] transition-opacity hover:bg-[#e6a94e] disabled:opacity-60"
+					>
+						{phase === 'igniting' ? m.lamp_lighting() : m.lamp_light()}
+					</button>
+				{/if}
 			</form>
 		{:else}
 			<div class="flex flex-col items-center gap-4">
@@ -311,7 +362,7 @@
 	>
 		<div bind:this={hero} class="will-change-transform">
 			<LampVessel
-				type={LAMP_TYPES[current?.type ?? type]}
+				type={current ? lampType(current.lamp_type) : LAMP_TYPES[type]}
 				mode={phase === 'form' ? 'off' : phase === 'igniting' ? 'igniting' : 'lit'}
 			/>
 		</div>
@@ -327,11 +378,11 @@
 			<p class="font-serif text-[22px] font-medium">{caption}</p>
 			{#if current}
 				<p class="mt-2 text-[13px] text-[#e8b061]">{until}</p>
-				{#if current.wish}
+				{#if current.prayer}
 					<blockquote
 						class="mt-3 max-w-[340px] font-serif text-lg/[1.6] text-pretty text-[#f2ebdd]/70 italic"
 					>
-						“{current.wish}”
+						“{current.prayer}”
 					</blockquote>
 				{/if}
 			{/if}
