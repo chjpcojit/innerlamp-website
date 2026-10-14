@@ -3,6 +3,10 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v2.1 (2026-10-14)
+
+- `requirements.md`: hai `⚠️ Not confirmed (product)` đã có câu trả lời ở product v2.1 — AC 17 lấy luật "lựa chọn gần nhất" của FR-MEM-007 (cách đều thì chọn nhắc sớm hơn / giờ sớm hơn); AC 22 lấy chữ "Chưa xóa được. Vui lòng thử lại." của §3.1.1. `design.md`/`tasks.md` chỉ đổi version (task nearest-choice và i18n giữ nguyên, nay đã có giá trị cụ thể).
+
 ## v2.0 (2026-10-14)
 
 - `requirements.md`: theo product v2.0/v2.1 (reminder do server gửi). Header `Product spec` @ v2.1, `Contract` @ bf23f8b (Memorials không đổi từ 5f4ca56), `Implements` thêm FR-MEM-007, FR-MEM-008 (chỉ danh sách thông báo), BR-MEM-11 đầy đủ, bỏ FR-MEM-009. Thêm mục Dependencies (feature `notifications`, `login`). Bỏ biến thể "website ẩn cấu hình nhắc / giữ nguyên khi lưu": AC 9 mặc định nhắc 1 ngày 07:00, AC 16 khối nhắc (lead 0/1/3/7, giờ 06/07/12/19, không có ứng dụng nhắc của máy, không gợi ý push), AC 17 lựa chọn gần nhất cho giá trị cũ, AC 18/20 `POST`/`PUT` gửi cấu hình nhắc của form (bỏ đọc lại `GET` trước `PUT`). AC 3 lối vào từ trang Hồ sơ (§3.6); AC 7 sổ trống không có "Lấy từ gia phả"; AC 2 server lỗi → báo lỗi, không offline; AC 20/22 mục đã bị xoá nơi khác → `mem_flash_gone`; AC 11 tách bốn lỗi ngày mất theo §3.1.1. Mới: AC 26 báo múi giờ trình duyệt làm múi giờ tài khoản, AC 27–28 lời nhắc trong danh sách thông báo (không push), AC 29 công tắc thông báo toàn tài khoản không ảnh hưởng website, AC 31 chữ theo product §3.1.1. Đánh lại số AC (25 → 31). Chín câu hỏi chuyển sang "resolved".
