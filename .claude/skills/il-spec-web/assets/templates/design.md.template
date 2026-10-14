@@ -1,0 +1,61 @@
+# Design — {{feature}}
+
+Version: 1.0
+Last updated: {{date}}
+Status: <!-- mirror requirements.md -->
+
+> See `changelog.md` in this folder for the version history of this spec.
+
+## Overview
+
+<!--
+2–4 câu: route nào, dữ liệu đi đường nào (browser → `+page.server.ts` load/action →
+`$lib/server/api/<resource>.ts` → backend), có dùng phiên (cookie) không, và feature nào đã có làm
+mẫu gần nhất (vd "cùng kiến trúc với login").
+-->
+
+## Layers & components
+
+<!-- tasks.md is broken down from this table. Mark anything not built as "chưa tạo" / "cần sửa". -->
+
+| Layer | File | Responsibility | Trạng thái |
+| --- | --- | --- | --- |
+| Route (UI) | `src/routes/(site)/<!-- path -->/+page.svelte` | Markup, `<svelte:head>` meta, render `data` | <!-- có / chưa tạo --> |
+| Route (server) | `src/routes/(site)/<!-- path -->/+page.server.ts` | `load` (đọc) / `actions` (ghi) gọi `$lib/server/api` | |
+| Feature UI | `src/lib/features/{{feature}}/components/<!-- X -->.svelte` | Presentational; props only (`il-ui`) | |
+| Feature state | `src/lib/features/{{feature}}/state/<!-- x -->.svelte.ts` | Runes state / pure logic (`il-state`) | |
+| API resource | `src/lib/server/api/<!-- resource -->.ts` | Typed functions over `client.ts`, take `event.fetch` | |
+| Types | `src/lib/types/<!-- x -->.ts` | Request/response DTO types shared by UI and API layer | |
+| Session (if any) | `src/lib/server/auth/session.ts`, `src/hooks.server.ts` | Cookie read/write, `locals.user` | |
+| i18n | `messages/vi.json`, `messages/en.json` | Keys `<!-- prefix -->_*` in both files | |
+| Tests | `<!-- foo.spec.ts -->`, `tests/<!-- name -->.e2e.ts` | Per `il-testing` | |
+
+## Route & navigation flow
+
+```
+/<!-- path -->
+  ├─ <!-- action --> ✓ ──▶ <!-- effect --> ──▶ 303 localizeHref('/<!-- … -->')
+  └─ <!-- link --> ──▶ /<!-- … -->
+```
+
+## Step-by-step Flow — <!-- name -->
+
+<!-- Mandatory for 2+ sequential backend calls or side effects. See references/step_by_step_flow.md. -->
+
+```
+Step 1 — <!-- name --> (this feature)
+- Trigger:
+- Pre-condition:
+- Where: <!-- +page.server.ts action `default` / hook / api/+server.ts -->
+- API: <!-- METHOD /v1/... --> (cite openapi; key fields only)
+    - Success →
+    - Failure (<!-- case -->) →
+```
+
+## Session & cookies
+
+<!-- Delete if the feature does not touch the session. Cookie names, TTL source (`expires_in`), flags. -->
+
+## Deliberately stubbed for now
+
+<!-- Any part waiting on an unconfirmed operation or an open ⚠️; point to the tasks.md Phase. Delete if none. -->
