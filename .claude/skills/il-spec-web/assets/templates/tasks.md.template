@@ -1,0 +1,52 @@
+# Tasks — {{feature}}
+
+Version: 1.0
+Last updated: {{date}}
+Status: <!-- mirror requirements.md -->
+
+> See `changelog.md` in this folder for the version history of this spec.
+
+<!--
+Every item traces to a row of design.md's Layers & components table or a Step-by-step Flow step.
+`[x]` only when verified in the code on the date of this version.
+-->
+
+## Phase 1 — UI (`il-ui`)
+
+- [ ] Route `src/routes/(site)/<!-- path -->/+page.svelte` + `<svelte:head>` meta
+- [ ] Feature components under `src/lib/features/{{feature}}/components/`
+- [ ] Every string as a Paraglide key in both `messages/vi.json` and `messages/en.json`
+
+## Phase 2 — State & logic (`il-state`)
+
+- [ ] `src/lib/features/{{feature}}/state/<!-- x -->.svelte.ts` / pure helpers
+- [ ] <!-- only if a BR the site computes has vectors --> Implement BR-XXX-NN per its vector file
+
+## Phase 3 — Server data (contract-gated)
+
+- [ ] Confirm each operation exists in innerlamp-be `docs/specs/api/openapi.yaml` (else hand off to
+      the backend) — cite it, never copy the schema
+- [ ] `src/lib/server/api/<!-- resource -->.ts` typed functions (+ DTO types in `src/lib/types/`)
+- [ ] `+page.server.ts` `load` / `actions`; map backend errors to `fail()` + i18n keys per the
+      Error → UI table
+- [ ] <!-- if session --> cookie/session changes in `src/lib/server/auth/`
+
+## Phase 4 — Tests (`il-testing`)
+
+- [ ] Unit tests for state/logic and the API resource
+- [ ] <!-- vectors --> Run every case of innerlamp-be `docs/product/{{feature}}/rules/<rule>.json` (BR-XXX-NN)
+- [ ] E2E for the main flow and each Error → UI row
+
+## Phase 5 — Quality (`il-quality`)
+
+- [ ] `npm run check && npm run lint && npm run build` pass
+
+## Phase 6 — Documentation
+
+- [ ] Report the Website column status for `docs/product/{{feature}}/product.md` §4.2 to `ba-writer`
+      (this skill does not edit the backend repo)
+- [ ] OKF concept via `il-okf-writer` once the feature is verified end-to-end
+
+## Deferred (not blocking {{feature}})
+
+-
