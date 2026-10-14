@@ -3,6 +3,14 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v2.0 (2026-10-14)
+
+- `requirements.md`: viết lại theo product login v1.2 (ADR-0003): đăng nhập bằng email thay SĐT; bỏ nút mã SMS; giờ mở khoá từ `locked_until`; `redirect` an toàn; refresh single-flight; `401` → refresh → thử lại; phiên hết đưa về `/login?reason=session_ended`; trang mới `/forgot-password` (AC12–AC16); chuyển tiếp IP và User-Agent của khách (AC19). Header `Product spec` / `Contract` / `Implements`; AC1–AC19 gắn ID product. Mục "Bảo mật — đối chiếu FE↔BE" của v1.1 gộp vào AC và tasks.
+- `design.md`: thêm `forgot-password` route, `ForgotPasswordForm`, `OtpTimers.svelte`, `redirect.ts`, `server/auth/refresh.ts`, `apiAuthed`, `sessionEnded`; Step-by-step Flow cho làm mới phiên / phiên hết và quên mật khẩu; bảng cookie (`il_name = dharma_name || full_name`); mục header gửi backend.
+- `tasks.md`: viết lại thành Phase 1–6; task v1.1 chưa làm được gộp vào; `[x]` chỉ cho phần đã kiểm trong code (device web, TTL từ `expires_in`, token httpOnly, đăng xuất).
+- Hand-offs: backend — đọc `X-InnerLamp-Client-IP` khi `x-api-key` hợp lệ (backend login v2.2 AC34, cùng đợt). Product — không có.
+- Reason: anh Đức bỏ SMS (2026-10-14); product login v1.2, backend login v2.1.
+
 ## v1.1 (2026-10-10)
 
 - `requirements.md`: thêm mục "Bảo mật — đối chiếu FE↔BE" (10 điểm BE xác nhận + việc FE/BE cần làm); chuyển 2 câu hỏi vào "resolved" (grace window: không có; `expires_in`: có); cập nhật ⚠️ `API_KEY` production thành "chờ BE".

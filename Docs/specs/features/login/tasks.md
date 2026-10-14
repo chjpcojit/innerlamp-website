@@ -1,54 +1,53 @@
-# Tasks — Đăng nhập (Login / Refresh / Logout)
+# Tasks — login (Đăng nhập, phiên, quên mật khẩu)
 
-Version: 1.1
-Last updated: 2026-10-10
-Status: in-progress — Phase 1 xong, Phase 2–4 còn lại
+Version: 2.0
+Last updated: 2026-10-14
+Status: in-progress (drift) — mirror `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
 
-`[x]` chỉ khi đã kiểm tra tồn tại trong code ngày 2026-10-10.
+`[x]` = đã kiểm trong code ngày 2026-10-14. Task v1.1 chưa làm được gộp vào đây; task v1.1 đã xong
+không lặp lại.
 
-## Phase 1 — Luồng chính (đã làm)
+## Phase 1 — Đăng nhập bằng email
 
-- [x] Route `/login` + `AuthShell` + meta i18n
-- [x] Action `default`: gọi `POST /v1/auth/login`, `device.platform="web"`, `startSession`, redirect 303
-- [x] `LoginForm` + `PhoneField` (nút bị khoá tới khi phone hợp lệ + có mật khẩu)
-- [x] Mã lỗi → chuỗi vi/en qua `authErrorMessage`
-- [x] Hook `handleAuth`: refresh khi thiếu `il_token`; xoá phiên khi BE 4xx, giữ khi mạng/5xx
-- [x] `setTokens` / `startSession` / `endSession` / `getSessionUser`
-- [x] Logout (`/profile?/logout`): BE best-effort + xoá cookie
-- [x] Gỡ code đăng nhập giả (login gọi API thật)
+- [ ] `types/auth.ts`, `server/api/auth.ts`: `login` với `email`.
+- [ ] `login/+page.server.ts`: `load` chặn người có phiên (AC2), đọc `reason`/`redirect`; action theo AC4; `safeRedirect` (AC6).
+- [ ] `features/auth/redirect.ts` + `redirect.spec.ts` (đường dẫn ngoài site, `//evil`, `javascript:` bị bỏ).
+- [ ] `LoginForm.svelte`: ô email, bỏ nút mã SMS, xoá mật khẩu sau lỗi, hiển thị `login_session_ended` / `login_password_changed`, giờ mở khoá theo `locked_until` (AC1, AC3, AC5).
+- [x] Đăng nhập gửi `device.platform = "web"` và `device_model` từ User-Agent (`login/+page.server.ts`) — giữ.
 
-## Phase 2 — Còn lệch spec (pending)
+## Phase 2 — Phiên
 
-- [ ] Ẩn hoặc vô hiệu nút "Gửi mã một lần qua SMS" và link "Quên?" cho đến khi BE có API
-- [ ] `auth_err_login_locked` nhận tham số thời gian từ `details.locked_until` (bỏ "15 phút" hard-code); chuyển `locked_until` qua `authFail`
-- [ ] Tô lỗi theo ô cho `VALIDATION_ERROR` / `INVALID_PHONE|PASSWORD`
-- [ ] Quyết định giữ/xoá mật khẩu sau khi đăng nhập thất bại *(chờ ⚠️)*
-- [ ] Guard người đã đăng nhập mở `/login`/`/signup` *(chờ ⚠️)*
-- [ ] Quay lại trang trước sau đăng nhập *(chờ ⚠️)*
-- [ ] Hợp nhất `401 UNAUTHORIZED` → refresh một lần rồi thử lại, refresh lỗi → `/login` (khi có route Bearer đầu tiên)
-- [ ] Đọc `exp` của JWT cho TTL cookie
-- [x] Cập nhật `il_name` từ `GET /v1/users/me` ở trang chủ
+- [ ] `server/auth/refresh.ts` single-flight + `refresh.spec.ts` (hai request song song chỉ refresh một lần) (AC7).
+- [ ] `client.ts` `apiAuthed`: `401` → refresh → thử lại → `sessionEnded` (AC8).
+- [ ] `session.ts` `sessionEnded`; hook dùng nó khi refresh bị từ chối (AC9).
+- [ ] `startSession`: `il_name = dharma_name || full_name`.
+- [x] TTL `il_token` từ `expires_in` (fallback 15 phút) (`session.ts` `setTokens`).
+- [x] Token chỉ trong cookie httpOnly, không xuống browser (AC10).
+- [x] Đăng xuất có xác nhận, best effort, xoá cookie, về `/` (`ProfileHeader.svelte`, `profile/+page.server.ts`) (AC11).
+- [ ] Trang cần tài khoản: link mời đăng nhập thêm `?redirect=` (AC17).
 
-## Phase 3 — Test & kiểm chứng (pending)
+## Phase 3 — Quên mật khẩu
 
-- [ ] Unit: `session.ts` (cookie options, `startSession` tên hiển thị), hook refresh (4xx vs 5xx/mạng)
-- [ ] E2E: đăng nhập đúng/sai MK, khoá, hết hạn access → tự refresh, refresh bị từ chối, đăng xuất
-- [ ] `npm run check && npm run lint && npm run build` pass *(lint hiện fail do `Docs/`)*
+- [ ] `server/api/auth.ts`: `requestPasswordReset`, `confirmPasswordReset`; types.
+- [ ] `forgot-password/+page.server.ts` + `+page.svelte` theo Step 1–3 (AC12–AC16).
+- [ ] Tách đồng hồ của `SignupOtp.svelte` thành `OtpTimers.svelte`, dùng ở cả hai nơi.
+- [ ] `ForgotPasswordForm.svelte`; kiểm mật khẩu mới bằng `checkPassword` (onboarding Phase 1).
 
-## Phase 5 — Bảo mật (từ đối chiếu với BE 2026-10-10, pending)
+## Phase 4 — Header tới backend + i18n
 
-- [ ] Single-flight refresh trong `handleAuth` (gộp refresh đồng thời cùng token); 401 mà cookie vừa được request khác đổi → thử lại với cookie hiện tại, chỉ xoá khi vẫn 401
-- [ ] TTL cookie từ `expires_in` / `exp` JWT thay `ACCESS_MAX_AGE`; thêm `expires_in` vào `AuthSession`/`AuthTokens`
-- [ ] Forward `User-Agent` trình duyệt khi gọi login (hiện `device_model` lấy từ UA nhưng header gửi tới BE là của server FE)
-- [ ] Captcha (Turnstile) + rate limit theo IP/SĐT cho login
-- [ ] Parse `locked_until` RFC 3339 (có offset), hiển thị mốc giờ
-- [ ] `__Host-` cookie prefix ở prod; HSTS, CSP, Referrer-Policy trong `hooks.server.ts`
-- [ ] Luồng 401 → refresh một lần → thử lại (gộp với mục Phase 2)
-- [ ] Chờ BE: grace window refresh, rate limit theo IP, siết CORS, trần mật khẩu, production `API_KEY` + rotate, TTL production
+- [ ] `client.ts`: `X-InnerLamp-Client-IP` (IP khách, từ `event.getClientAddress()`) + `User-Agent` trình duyệt (AC19).
+- [ ] `errors.ts`: `RATE_LIMITED`, `SESSION_ENDED`.
+- [ ] i18n theo bảng ở `design.md` (vi + en cùng key).
 
-## Phase 4 — Tài liệu & vận hành
+## Phase 5 — Test
 
-- [ ] Cập nhật `.assumptions.md`: bỏ mục "Mock login" và sửa "Logged-in detection"
-- [ ] Xin `API_KEY` production từ BE (lưu ý TD-001)
+- [ ] `tests/login.e2e.ts`: đăng nhập email, sai thông tin đồng nhất, khoá hiển thị giờ, `redirect`, người có phiên mở `/login`.
+- [ ] `tests/forgot-password.e2e.ts`: email có / không có tài khoản trông như nhau; đặt lại xong phiên ở trình duyệt khác bị báo hết.
+
+## Phase 6 — Chất lượng + tài liệu
+
+- [ ] `npm run check && npm run lint && npm run build` sạch.
+- [ ] Cập nhật cột Website ở product §4.2 khi xong (báo `ba-writer`).
+- [ ] Hardening chưa làm từ v1.1 (`__Host-` cookie ở prod, HSTS, CSP, Referrer-Policy) — giữ làm việc riêng, không chặn spec này.
