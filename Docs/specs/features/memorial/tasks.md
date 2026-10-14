@@ -1,6 +1,6 @@
 # Tasks — memorial (Sổ giỗ chạp)
 
-Version: 2.0
+Version: 2.1
 Last updated: 2026-10-14
 Status: in-progress (drift) — UI, khối nhắc và logic tính kỳ giỗ có; lưu trữ còn `localStorage`, chưa gọi backend; báo múi giờ và lời nhắc trong danh sách thông báo chờ contract; chưa có test
 

@@ -1,6 +1,6 @@
 # Design — memorial (Sổ giỗ chạp)
 
-Version: 2.0
+Version: 2.1
 Last updated: 2026-10-14
 Status: in-progress (drift) — mirror `requirements.md`
 

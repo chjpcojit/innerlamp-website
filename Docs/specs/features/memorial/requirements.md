@@ -1,6 +1,6 @@
 # Requirements — memorial (Sổ giỗ chạp)
 
-Version: 2.0
+Version: 2.1
 Last updated: 2026-10-14
 Status: in-progress (drift) — giao diện sổ, form thêm/sửa (có khối nhắc), preview và hàm tính kỳ giỗ đã có; **sổ đang nằm trong `localStorage` của trình duyệt, chưa gọi backend** (lệch BR-MEM-01). Còn: chuyển sang `/v1/memorials` qua `$lib/server/api`, cấu hình nhắc gửi lên backend, báo múi giờ (chờ contract), nhắc trong danh sách thông báo (phụ thuộc feature notifications), tháng nhuận, khoảng năm 1900→nay, kiểm ngày mất, hỏi xác nhận khi xoá, chữ theo product §3.1.1, test chạy vector.
 Feature folder: `src/routes/(site)/memorial/`, `src/lib/components/sections/Memorial{Book,Form}.svelte`, `src/lib/state/memorial.svelte.ts`, `src/lib/utils/memorial{,-format}.ts`, `src/lib/content/memorial.ts`, `src/lib/types/memorial.ts`
@@ -64,7 +64,7 @@ Là một người dùng đã đăng nhập, tôi muốn ghi lại người thâ
 15. WHEN form được gửi (action trên server), THE SYSTEM SHALL kiểm lại AC 11, 13, 14, 16 ở server trước khi gọi backend (không tin dữ liệu browser). (platform)
 16. WHILE nhắc đang bật trong form, THE SYSTEM SHALL cho chọn đúng một lead trong bốn lựa chọn và đúng một giờ trong bốn lựa chọn của BR-MEM-11 (chip `mem_remind_on_day` / `mem_remind_before`, giờ dạng `HH:mm`); WHEN người dùng tắt nhắc, THE SYSTEM SHALL ẩn hai nhóm lựa chọn đó; THE SYSTEM SHALL NOT hiển thị lựa chọn thêm vào ứng dụng nhắc/lịch của máy và SHALL NOT hiển thị gợi ý bật thông báo đẩy (website không có push). (FR-MEM-007, BR-MEM-11, FR-MEM-008 §3.6)
 17. WHEN mở `/memorial/[id]` của một mục có lead hoặc giờ nhắc ngoài các lựa chọn (tạo trước v2.0), THE SYSTEM SHALL hiển thị lựa chọn gần nhất, không gửi gì cho tới khi người dùng lưu; WHEN người dùng lưu, THE SYSTEM SHALL gửi lựa chọn đang hiển thị. (FR-MEM-007)
-    > ⚠️ Not confirmed (product): "lựa chọn gần nhất" khi cách đều hai lựa chọn — lead 2 (1 hay 3), lead 5 (3 hay 7), giờ 09:30 (07:00 hay 12:00), 15:30 (12:00 hay 19:00) — và giờ khuya như 23:00 tính gần 19:00 hay 06:00 hôm sau? — chặn hàm `nearestReminderChoice` (tasks Phase 2) và test của nó; hand back to ba-writer in innerlamp-be.
+    "Lựa chọn gần nhất" theo product FR-MEM-007 @ v2.1: số ngày gần nhất, cách đều thì chọn nhắc sớm hơn (2 → 3, 5 → 7); giờ gần nhất, cách đều thì chọn giờ sớm hơn (09:30 → 07:00, 15:30 → 12:00); trước 06:00 → 06:00, sau 19:00 → 19:00. Tóm tắt nhắc trong sổ hiện cùng lựa chọn đó.
 18. WHEN người dùng lưu mục mới hợp lệ, THE SYSTEM SHALL gọi `POST /v1/memorials` từ action với ngày mất theo dạng của contract (biết năm → đổi sang ngày dương trước khi gửi, kể cả tháng nhuận, theo BR-MEM-10; không rõ năm → ngày/tháng/nhuận theo lịch đã nhập) và cấu hình nhắc của form (tắt → không nhắc; bật → lead và giờ đã chọn), không gửi field nào ngoài các field product định nghĩa, rồi:
     - on success: về `/memorial` và hiện `mem_flash_saved`;
     - on failure (409 `MEMORIAL_LIMIT_REACHED`): ở lại form, giữ dữ liệu, hiện `mem_err_full`, không thêm gì;
@@ -82,7 +82,7 @@ Là một người dùng đã đăng nhập, tôi muốn ghi lại người thâ
 22. WHEN người dùng bấm `mem_delete` ở form sửa, THE SYSTEM SHALL hỏi xác nhận trước (hộp thoại `mem_confirm_delete_*`; không có JS thì một khối xác nhận), rồi:
     - WHEN người dùng huỷ: không gọi backend, mục còn nguyên;
     - WHEN người dùng xác nhận: gọi `DELETE /v1/memorials/{id}` từ action; on success về `/memorial` và hiện `mem_flash_deleted` với tên; on failure (404 — đã bị xoá nơi khác) về `/memorial` và hiện `mem_flash_gone`, sổ không còn mục đó; on failure (mạng / 5xx) ở lại, hiện `mem_err_delete`, mục còn nguyên. (FR-MEM-005, BR-MEM-12)
-    > ⚠️ Not confirmed (product): product §3.1.1 không có câu cho "xoá không thành công" (FR-MEM-005 không có kịch bản server lỗi) — chặn chữ của `mem_err_delete`; hành vi (ở lại, mục còn nguyên) là quyết định platform; hand back to ba-writer in innerlamp-be.
+    Chữ của `mem_err_delete` theo product §3.1.1 @ v2.1: "Chưa xóa được. Vui lòng thử lại."
 
 ### Chung
 
