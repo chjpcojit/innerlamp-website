@@ -1,6 +1,6 @@
 # Tasks — calendar (Sự kiện Phật giáo)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — lịch lễ, chi tiết (có trước/sau) và khối trang chủ chạy với backend thật nhưng chỉ cho người đã đăng nhập; công khai, lễ lớn, khối trang chủ theo tầng chờ backend v3.0; chưa có test
 
@@ -80,7 +80,7 @@ Status: in-progress (drift) — lịch lễ, chi tiết (có trước/sau) và k
 ## Phase 6 — Documentation
 
 - [ ] Báo trạng thái cột Website của innerlamp-be `docs/product/calendar/product.md` §4.2 cho `ba-writer` (skill này không sửa repo backend) — xem `changelog.md` v1.0 "Drift"
-- [ ] Gỡ mục "Events page (`/events`)" lỗi thời trong `.assumptions.md` (bước dọn tài liệu cũ, làm riêng)
+- [x] Gỡ mục "Events page (`/events`)" lỗi thời trong `.assumptions.md` (bước dọn tài liệu cũ, 2026-10-15)
 - [ ] OKF concept qua `il-okf-writer` khi feature đã kiểm chứng end-to-end
 
 ## Deferred (not blocking calendar)

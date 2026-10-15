@@ -3,6 +3,10 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v1.1 (2026-10-15)
+
+- Bước dọn tài liệu cũ: gỡ mục "Events page (`/events`)" khỏi `.assumptions.md` (mô tả `content/events.ts` cục bộ đã không còn; nay là spec này). `tasks.md` tick mục tương ứng. `requirements.md` / `design.md` không đổi.
+
 ## v1.0 (initial) (2026-10-15)
 
 - `requirements.md`: spec đầu tiên, viết retroactively từ code đang chạy (đọc 2026-10-15: `src/routes/(site)/events/`, `src/routes/(site)/+page.server.ts`, `src/lib/server/api/calendar.ts`, `src/lib/types/calendar.ts`, `src/lib/utils/events.ts`, các section `Events*`, `EventDetail`) và đối chiếu với product spec innerlamp-be `docs/product/calendar/product.md` @ v1.1; phần chưa có viết prospective. Header `Product spec` / `Contract` / `Implements`; 27 tiêu chí EARS gắn `BR-CAL-*` / `FR-CAL-*` / `NFR-CAL-*` hoặc `(platform)`; bảng Error → UI có cột "Hiện trạng code"; Dependencies (backend v3.0, feature lunar).
