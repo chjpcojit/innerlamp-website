@@ -1,6 +1,6 @@
 # Tasks — temple (Chùa Việt Nam)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — trang chủ, danh bạ phân trang và trang chùa chạy với backend; tìm/lọc, trạng thái mở/đóng, các khối mới của trang chùa, gỡ "Theo dõi" và dữ liệu mẫu chưa làm; tìm/lọc và trường mới chờ openapi; chưa có test
 
@@ -95,7 +95,7 @@ i18n
 ## Phase 6 — Documentation
 
 - [ ] Báo trạng thái cột Website của innerlamp-be `docs/product/temple/product.md` §4.2 cho `ba-writer` (skill này không sửa repo backend)
-- [ ] Gỡ mục "Catalogue pages" (phần `/temples`) và "Temple detail" lỗi thời trong `.assumptions.md` (bước dọn tài liệu cũ, làm riêng)
+- [x] Gỡ mục "Catalogue pages" (phần `/temples`) và "Temple detail" lỗi thời trong `.assumptions.md` — v1.1 (mục "Temple detail" xoá; mục "Catalogue pages" ghi `/temples` nay theo spec này)
 - [ ] OKF concept qua `il-okf-writer` khi feature đã kiểm chứng end-to-end
 
 ## Deferred (not blocking temple)

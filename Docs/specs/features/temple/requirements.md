@@ -1,6 +1,6 @@
 # Requirements — temple (Chùa Việt Nam)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — khối chùa nổi bật ở trang chủ, danh bạ `/temples` phân trang và trang chùa `/temples/[id]` đang chạy với backend; còn: tìm theo tên + lọc miền, trang 12 chùa, bỏ nút "Theo dõi" (đang lưu `localStorage`), trạng thái mở/đóng theo giờ Việt Nam, các khối "Đang cập nhật"/"Không có", liên hệ, bỏ dữ liệu mẫu ở trang chủ, test chạy vector. Phần tìm/lọc và trường mới ở chi tiết chờ backend cập nhật `openapi.yaml`.
 Feature folder: `src/routes/(site)/temples/`, `src/routes/api/temples/`, `src/lib/components/sections/Temple{Grid,Catalog,Detail,Events}.svelte`, `src/lib/server/api/temples.ts`, `src/lib/types/temple.ts`, `src/lib/utils/temple-labels.ts`, `src/lib/features/temple/` (mới)

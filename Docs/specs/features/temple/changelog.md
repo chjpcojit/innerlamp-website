@@ -3,6 +3,13 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v1.1 (2026-10-15)
+
+Bước 4 của quy trình tài liệu: gỡ ghi chú cũ về chùa sau khi product spec v1.1 và spec bốn platform được duyệt. Không đổi yêu cầu hay thiết kế.
+
+- `.assumptions.md`: xoá mục "Temple detail (`/temples/[slug]`)"; mục "Catalogue pages" ghi `/temples` nay theo spec này, ghi chú chỉ còn cho ba trang kia. Hiện trạng code lệch (nút theo dõi, cúng dường, dữ liệu mẫu) vẫn nằm ở `requirements.md` và các task `[ ]`.
+- `tasks.md` (1.0 → 1.1): mục dọn `.assumptions.md` đánh `[x]`. `requirements.md`, `design.md` (1.0 → 1.1): no change needed, verified — chỉ header.
+
 ## v1.0 (initial) (2026-10-15)
 
 - `requirements.md`: spec đầu tiên của feature trên website. Retroactive cho phần đang chạy (khối chùa nổi bật ở `/`, danh bạ `/temples` theo `?page=`, trang chùa `/temples/[id]`, proxy `/api/temples` cho ô chọn chùa — đọc code ngày 2026-10-15), prospective cho phần mới của product v1.1 (tìm + lọc miền theo URL, trạng thái mở/đóng theo giờ Việt Nam, khối "Đang cập nhật"/"Không có", liên hệ, bỏ "Theo dõi"). Header `Product spec` @ v1.1, `Contract` openapi @ a8a016b + backend spec v2.0 (f3bb584) cho phần chưa có trong openapi, `Implements` mọi ID có cột Website khác `n/a`. 34 tiêu chí EARS, mỗi tiêu chí gắn `FR-TPL-*` / `BR-TPL-*` / `NFR-TPL-*` hoặc `(platform)`; bảng Error → UI có cột "Hiện trạng code".
