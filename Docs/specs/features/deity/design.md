@@ -1,6 +1,6 @@
-# Design — deity (Chư Phật & Bồ Tát)
+# Design — deity (Chư Phật & Bồ Tát — Buddhas & Bodhisattvas)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — mirror `requirements.md`
 
@@ -8,194 +8,196 @@ Status: in-progress (drift) — mirror `requirements.md`
 
 ## Overview
 
-Ba bề mặt, đều công khai, không đọc cookie phiên: khối nổi bật trên `/` và `/library`, danh mục
-`/library/buddhas` (`?type=`, `?page=`) và trang vị `/library/buddhas/[id]`. Dữ liệu đi đường chuẩn:
-browser → `load` trong `+page.server.ts` → `$lib/server/api/deities.ts` → backend (`x-api-key`).
-Cùng kiến trúc với `temple` (danh bạ theo URL, trang chi tiết qua `load`); phần tương tác chỉ ở
-browser là đếm ngày (sau mount), thu gọn đại nguyện / tiểu sử, và chia sẻ. Code mới (logic thuần,
-component thẻ vía, chia sẻ) vào `src/lib/features/deity/`; ba section hiện có giữ tên và chỗ.
+Three surfaces, all public, none reads the session cookie: the featured block on `/` and `/library`,
+the catalogue `/library/buddhas` (`?type=`, `?page=`) and the deity page `/library/buddhas/[id]`. Data
+takes the standard path: browser → `load` in `+page.server.ts` → `$lib/server/api/deities.ts` →
+backend (`x-api-key`). Same architecture as `temple` (URL-driven directory, detail page via `load`);
+the only browser-side interactions are the countdown (after mount), collapsing great vows (đại nguyện)
+/ biography, and share. New code (pure logic, the feast-day card component, share) goes into
+`src/lib/features/deity/`; the three existing sections keep their names and places.
 
 ## Layers & components
 
-| Layer | File | Responsibility | Trạng thái |
+| Layer | File | Responsibility | Status |
 | --- | --- | --- | --- |
-| Route (server) | `src/routes/(site)/+page.server.ts` | `loadTopDeities` → 6 vị đầu (`HOME_DEITY_COUNT`); lỗi → `null` | có — cần: comment "falls back to static content" sai nghĩa mới (khối rỗng) |
-| Route (server) | `src/routes/(site)/library/+page.server.ts` | Như trên (`LIBRARY_DEITY_COUNT` 6) | có — cần: như trên |
-| Route (UI) | `src/routes/(site)/library/buddhas/+page.svelte` | Meta, `BuddhaCatalog` | có |
-| Route (server) | `src/routes/(site)/library/buddhas/+page.server.ts` | Chuẩn hoá `?page`/`?type` (307), gọi `listDeities`, vượt cuối → 307 trang cuối, lỗi → `deities: null` | có ✓ |
-| Route (UI) | `src/routes/(site)/library/buddhas/[id]/+page.svelte` | Meta, `BuddhaDetail` | có — cần: truyền `sutras` |
-| Route (server) | `src/routes/(site)/library/buddhas/[id]/+page.server.ts` | `getDeity` ∥ `listDeitySutras` (Step 2); 404 → `error(404)`; lỗi khác → `error(502)` (⚠️ AC 14) | có — cần: gọi `/sutras` song song, lỗi `/sutras` → `sutras: []` |
-| Route (server) | `src/routes/(site)/practice/mala/+page.server.ts` | `?deity=` → `getDeity` → `mantra` (Step 3) | chưa tạo |
-| Route (UI) | `src/routes/(site)/practice/mala/+page.svelte` | Truyền `data.mantra` cho `MalaChant` | có — cần: prop |
-| Section | `src/lib/components/sections/BuddhaGrid.svelte` | Khối nổi bật: thẻ + "Xem tất cả"; rỗng → `buddhas_block_empty` | có — cần: bỏ nhánh `BUDDHAS` mẫu, thêm dòng vía, trạng thái rỗng |
-| Section | `src/lib/components/sections/BuddhaCatalog.svelte` | Chip, thẻ, `Pagination`, trạng thái rỗng/lỗi | có — cần: dòng vía thay `pure_land`, trạng thái `buddhasEmpty` có "Thử lại" + "Xem lịch lễ vía" |
-| Section | `src/lib/components/sections/BuddhaDetail.svelte` | Trang vị theo bảng "Thứ tự khối" | có — cần: sắp lại khối, 3 thẻ thần chú, thẻ vía, đại nguyện / tiểu sử thu gọn, kinh liên quan, hai hành động, chú thích cuối; bỏ khối `lunar_memorial_days` |
-| Section | `src/lib/components/sections/MalaChant.svelte` | Prop `mantra?: string` thay cho `m.practice_bead_mantra()` cố định | có — cần: prop |
-| Feature UI | `src/lib/features/deity/components/DeityCard.svelte` | Thẻ dùng chung cho khối nổi bật và danh mục (ảnh/giữ chỗ, nhãn loại, tên, đức hạnh, dòng vía) | chưa tạo (gộp hai bản thẻ đang lặp) |
-| Feature UI | `src/lib/features/deity/components/DeityViaCard.svelte` | Thẻ vía kế tiếp + danh sách `via_events` + "Lịch lễ"; nhãn đếm sau mount | chưa tạo |
-| Feature UI | `src/lib/features/deity/components/DeityShareButton.svelte` | Web Share → clipboard → thông báo (`aria-live`) | chưa tạo |
-| Feature logic | `src/lib/features/deity/utils.ts` | `deityKindLabel(type)` (một chỗ thay 3 bản `kindLabel`), `viaShort(lunar_date)` ("dd/MM", nhuận), `viaMonthName(month)`, `shareText(deity)`, `visibleVows(vows, expanded)` | chưa tạo |
-| Shared logic | `src/lib/utils/events.ts` `countdown` | BR-CAL-13 — thuộc spec `calendar` (Phase 2 ở đó), deity chỉ dùng | chưa có (dependency) |
-| API resource | `src/lib/server/api/deities.ts` | `getTopDeities`, `listDeities`, `getDeity`, `listDeitySutras` | có — cần: comment "20 per page" → đọc `page_size`; `listDeitySutras` được dùng |
-| Types | `src/lib/types/deity.ts` | DTO; thêm `DeityVia`, `DeityViaEvent`, `next_via` trên `DeitySummary`, `via_events` trên `DeityDetail` đúng tên field của backend v3.0 AC 29 / requirements bảng API; `lunar_memorial_days` giữ trong type nhưng không dùng | có — cần: field mới (khi openapi có) |
-| Static content | `src/lib/content/buddhas.ts`, `BUDDHAS` trong `src/lib/content/home.ts`, key `buddha_1..9`, `buddha_*_role` | Nội dung mẫu | gỡ (FR-DTY-010) — kiểm không còn chỗ dùng trước khi xoá key |
-| i18n | `messages/vi.json`, `messages/en.json` | Bảng "i18n keys" | cần sửa / thêm |
-| Tests | `src/lib/features/deity/utils.spec.ts`, `src/routes/(site)/library/buddhas/page.server.spec.ts`, `tests/deity.e2e.ts` | Theo `il-testing` | chưa tạo |
+| Route (server) | `src/routes/(site)/+page.server.ts` | `loadTopDeities` → first 6 entries (`HOME_DEITY_COUNT`); failure → `null` | exists — needs: the comment "falls back to static content" is wrong under the new meaning (empty block) |
+| Route (server) | `src/routes/(site)/library/+page.server.ts` | As above (`LIBRARY_DEITY_COUNT` 6) | exists — needs: as above |
+| Route (UI) | `src/routes/(site)/library/buddhas/+page.svelte` | Meta, `BuddhaCatalog` | exists |
+| Route (server) | `src/routes/(site)/library/buddhas/+page.server.ts` | Normalise `?page`/`?type` (307), call `listDeities`, past the end → 307 last page, failure → `deities: null` | exists ✓ |
+| Route (UI) | `src/routes/(site)/library/buddhas/[id]/+page.svelte` | Meta, `BuddhaDetail` | exists — needs: pass `sutras` |
+| Route (server) | `src/routes/(site)/library/buddhas/[id]/+page.server.ts` | `getDeity` ∥ `listDeitySutras` (Step 2); 404 → `error(404)`; other failure → `error(502)` (⚠️ AC 14) | exists — needs: call `/sutras` in parallel, `/sutras` failure → `sutras: []` |
+| Route (server) | `src/routes/(site)/practice/mala/+page.server.ts` | `?deity=` → `getDeity` → `mantra` (Step 3) | not created |
+| Route (UI) | `src/routes/(site)/practice/mala/+page.svelte` | Pass `data.mantra` to `MalaChant` | exists — needs: prop |
+| Section | `src/lib/components/sections/BuddhaGrid.svelte` | Featured block: cards + "Xem tất cả" (View all); empty → `buddhas_block_empty` | exists — needs: drop the sample `BUDDHAS` branch, add the feast-day line, empty state |
+| Section | `src/lib/components/sections/BuddhaCatalog.svelte` | Chips, cards, `Pagination`, empty/error state | exists — needs: feast-day line instead of `pure_land`, `buddhasEmpty` state with "Thử lại" (Try again) + "Xem lịch lễ vía" (View the feast-day calendar) |
+| Section | `src/lib/components/sections/BuddhaDetail.svelte` | Deity page per the "Block order" table | exists — needs: reorder blocks, 3 mantra cards, feast-day card, collapsed great vows / biography, related sutras, two actions, footer note; drop the `lunar_memorial_days` block |
+| Section | `src/lib/components/sections/MalaChant.svelte` | Prop `mantra?: string` instead of the fixed `m.practice_bead_mantra()` | exists — needs: prop |
+| Feature UI | `src/lib/features/deity/components/DeityCard.svelte` | Card shared by the featured block and the catalogue (image/placeholder, type label, name, virtue, feast-day line) | not created (merges the two duplicated card versions) |
+| Feature UI | `src/lib/features/deity/components/DeityViaCard.svelte` | Next-feast-day card + `via_events` list + "Lịch lễ" (Ceremony calendar); countdown label after mount | not created |
+| Feature UI | `src/lib/features/deity/components/DeityShareButton.svelte` | Web Share → clipboard → announcement (`aria-live`) | not created |
+| Feature logic | `src/lib/features/deity/utils.ts` | `deityKindLabel(type)` (one place replacing 3 copies of `kindLabel`), `viaShort(lunar_date)` ("dd/MM", leap), `viaMonthName(month)`, `shareText(deity)`, `visibleVows(vows, expanded)` | not created |
+| Shared logic | `src/lib/utils/events.ts` `countdown` | BR-CAL-13 — belongs to the `calendar` spec (Phase 2 there), deity only uses it | not built (dependency) |
+| API resource | `src/lib/server/api/deities.ts` | `getTopDeities`, `listDeities`, `getDeity`, `listDeitySutras` | exists — needs: comment "20 per page" → read `page_size`; `listDeitySutras` gets used |
+| Types | `src/lib/types/deity.ts` | DTOs; add `DeityVia`, `DeityViaEvent`, `next_via` on `DeitySummary`, `via_events` on `DeityDetail` with the exact field names of backend v3.0 AC 29 / the requirements API table; `lunar_memorial_days` stays in the type but unused | exists — needs: new fields (once openapi has them) |
+| Static content | `src/lib/content/buddhas.ts`, `BUDDHAS` in `src/lib/content/home.ts`, keys `buddha_1..9`, `buddha_*_role` | Sample content | remove (FR-DTY-010) — check nothing still uses them before deleting the keys |
+| i18n | `messages/vi.json`, `messages/en.json` | "i18n keys" table | to change / add |
+| Tests | `src/lib/features/deity/utils.spec.ts`, `src/routes/(site)/library/buddhas/page.server.spec.ts`, `tests/deity.e2e.ts` | Per `il-testing` | not created |
 
-### Thứ tự khối của trang vị (FR-DTY-005)
+### Block order of the deity page (FR-DTY-005)
 
-| # | Khối | Nguồn | Ẩn khi |
+| # | Block | Source | Hidden when |
 | --- | --- | --- | --- |
-| 0 | Link quay lại `buddha_d_back` → `/library/buddhas` | — | — |
-| 1 | Ảnh (giữ chỗ khi `image_url` trống) + nhãn loại + `pure_land` trên ảnh | summary | `pure_land` trống → chỉ ẩn dòng đó |
-| 2 | `<h1>` `name_vi`, `title_honorific`, `name_sanskrit` · `name_chinese` | summary | từng trường trống |
-| 3 | Thẻ vía `DeityViaCard` | `next_via`, `via_events` | `next_via` là `null` |
-| 4 | Đức hạnh (`buddha_d_virtue`) + nguồn kinh (`buddha_d_source`) | `core_virtue`, `canonical_source` | cả hai trống |
-| 5 | "Tiểu sử" (`buddha_d_biography`), thu gọn + `buddha_d_read_more` / `buddha_d_read_less` | `biography_summary` | trống |
-| 6 | "Đại nguyện" (`buddha_d_vows`), 5 + `buddha_d_vows_more` / `buddha_d_vows_less` | `great_vows` | `[]` |
-| 7 | "Hình tượng" (`buddha_d_iconography`) | `iconography.*` | mọi trường trống |
-| 8 | "Thần chú & danh hiệu" (`buddha_d_mantras`): thẻ "Danh hiệu" (`buddha_d_title_card`, `title_honorific`), "Thần chú" (`buddha_d_mantra_card`: Hán Việt rồi Phạn), "Đà-la-ni" (`buddha_d_dharani`: tên + trích) | `title_honorific`, `mantras.*` | từng thẻ trống; cả ba trống → cả khối (hành động vẫn hiện ở cuối khối nếu có) |
-| 9 | Hành động: "Trì niệm với tràng hạt" (khi có `short_mantra_sino_vietnamese`), "Chia sẻ" | — | — |
-| 10 | "Kinh liên quan" (`buddha_d_sutras`) | `/sutras` `items` | `[]` hoặc lỗi |
-| 11 | Chú thích `buddha_d_footer` | — | — |
+| 0 | Back link `buddha_d_back` → `/library/buddhas` | — | — |
+| 1 | Image (placeholder when `image_url` is empty) + type label + `pure_land` on the image | summary | `pure_land` empty → only that line is hidden |
+| 2 | `<h1>` `name_vi`, `title_honorific`, `name_sanskrit` · `name_chinese` | summary | each field when empty |
+| 3 | Feast-day card `DeityViaCard` | `next_via`, `via_events` | `next_via` is `null` |
+| 4 | Virtue (`buddha_d_virtue`) + scriptural source (`buddha_d_source`) | `core_virtue`, `canonical_source` | both empty |
+| 5 | "Tiểu sử" (Biography) (`buddha_d_biography`), collapsed + `buddha_d_read_more` / `buddha_d_read_less` | `biography_summary` | empty |
+| 6 | "Đại nguyện" (Great vows) (`buddha_d_vows`), 5 + `buddha_d_vows_more` / `buddha_d_vows_less` | `great_vows` | `[]` |
+| 7 | "Hình tượng" (Iconography) (`buddha_d_iconography`) | `iconography.*` | every field empty |
+| 8 | "Thần chú & danh hiệu" (Mantras & titles) (`buddha_d_mantras`): card "Danh hiệu" (Title) (`buddha_d_title_card`, `title_honorific`), "Thần chú" (Mantra) (`buddha_d_mantra_card`: Sino-Vietnamese (Hán Việt) then Sanskrit), "Đà-la-ni" (Dharani) (`buddha_d_dharani`: name + excerpt) | `title_honorific`, `mantras.*` | each card when empty; all three empty → the whole block (actions still show at the end of the block if present) |
+| 9 | Actions: "Trì niệm với tràng hạt" (Chant with the mala) (when `short_mantra_sino_vietnamese` is present), "Chia sẻ" (Share) | — | — |
+| 10 | "Kinh liên quan" (Related sutras) (`buddha_d_sutras`) | `/sutras` `items` | `[]` or failure |
+| 11 | Note `buddha_d_footer` | — | — |
 
-> ⚠️ Not confirmed: khối hành động (#9) khi cả ba thẻ thần chú trống — hiện riêng hay ẩn cùng khối; mặc định: nút "Chia sẻ" vẫn hiện (FR-DTY-009 không có điều kiện), mala tự ẩn vì không có câu niệm.
+> ⚠️ Not confirmed: the actions block (#9) when all three mantra cards are empty — shown on its own or hidden with the block; default: the "Chia sẻ" (Share) button still shows (FR-DTY-009 has no condition), the mala button hides itself because there is no chant text.
 
 ## Route & navigation flow
 
 ```
 /  ,  /library
-  ├─ thẻ vị ──────────────▶ /library/buddhas/{id}
+  ├─ deity card ──────────▶ /library/buddhas/{id}
   └─ "Xem tất cả" ────────▶ /library/buddhas
 
 /library/buddhas[?type=buddha|bodhisattva][&page=N]
-  ├─ ?page / ?type sai ──▶ 307 URL chuẩn
+  ├─ bad ?page / ?type ──▶ 307 canonical URL
   ├─ page > total_pages ─▶ 307 ?page=total_pages
-  ├─ chip ───────────────▶ ?type=… (trang 1)
-  ├─ số trang ───────────▶ ?page=N (giữ type)
-  ├─ thẻ vị ─────────────▶ /library/buddhas/{id}
-  └─ rỗng/lỗi: "Thử lại" ▶ cùng URL (GET) · "Xem lịch lễ vía" ▶ /events
+  ├─ chip ───────────────▶ ?type=… (page 1)
+  ├─ page number ────────▶ ?page=N (keep type)
+  ├─ deity card ─────────▶ /library/buddhas/{id}
+  └─ empty/error: "Thử lại" ▶ same URL (GET) · "Xem lịch lễ vía" ▶ /events
 
 /library/buddhas/{id}
   ├─ 404 ────────────────▶ +error.svelte (err_404_*)
-  ├─ lỗi khác ───────────▶ +error.svelte (err_data_*, "Thử lại" = reload)
+  ├─ other failure ──────▶ +error.svelte (err_data_*, "Thử lại" = reload)
   ├─ "Lịch lễ" ──────────▶ /events
   ├─ "Trì niệm…" ────────▶ /practice/mala?deity={id}
-  ├─ kinh ───────────────▶ /library/sutras/{sutra.id}
+  ├─ sutra ──────────────▶ /library/sutras/{sutra.id}
   └─ "Chia sẻ" ──────────▶ (browser) navigator.share | clipboard
 ```
 
-Mọi href nội bộ qua `localizeHref()`.
+Every internal href goes through `localizeHref()`.
 
-## Step-by-step Flow — Danh mục
+## Step-by-step Flow — Catalogue
 
 ```
-Step 1 — Chuẩn hoá URL (this feature)
+Step 1 — Normalise the URL (this feature)
 - Trigger: request GET /library/buddhas
 - Pre-condition: —
 - Where: library/buddhas/+page.server.ts `load`
-- API: không gọi
-    - ?page không phải số nguyên ≥ 1 hoặc ?type lạ → 307 URL chuẩn (giữ filter hợp lệ)
-    - hợp lệ → Step 2
+- API: no call
+    - ?page not an integer ≥ 1 or unknown ?type → 307 canonical URL (keep a valid filter)
+    - valid → Step 2
 
-Step 2 — Đọc một trang (this feature)
-- Trigger: sau Step 1
-- Pre-condition: page ≥ 1, type ∈ {BUDDHA, BODHISATTVA} hoặc không có
-- Where: cùng `load`
-- API: GET /v1/deities?page=N[&type=T] (không gửi `date`, ⚠️ requirements AC 17)
-    - Success, items > 0 → { deities, filter }; thẻ hiện `next_via` (backend v3.0 AC 2, 24)
-    - Success, items = [] và page > 1 và total_pages > 0 → 307 ?page=total_pages
-    - Success, total = 0 → trạng thái `buddhasEmpty`
-    - Failure (ApiError bất kỳ) → { deities: null } → trạng thái `buddhasEmpty` có "Thử lại"
-    - Failure (không phải ApiError) → ném lại (lỗi lập trình)
+Step 2 — Read one page (this feature)
+- Trigger: after Step 1
+- Pre-condition: page ≥ 1, type ∈ {BUDDHA, BODHISATTVA} or absent
+- Where: same `load`
+- API: GET /v1/deities?page=N[&type=T] (no `date` sent, ⚠️ requirements AC 17)
+    - Success, items > 0 → { deities, filter }; cards show `next_via` (backend v3.0 AC 2, 24)
+    - Success, items = [] and page > 1 and total_pages > 0 → 307 ?page=total_pages
+    - Success, total = 0 → `buddhasEmpty` state
+    - Failure (any ApiError) → { deities: null } → `buddhasEmpty` state with "Thử lại" (Try again)
+    - Failure (not an ApiError) → rethrow (programming error)
 ```
 
-## Step-by-step Flow — Trang vị
+## Step-by-step Flow — Deity page
 
 ```
-Step 1 — Đọc vị và kinh liên quan, song song (this feature)
+Step 1 — Read the deity and related sutras, in parallel (this feature)
 - Trigger: request GET /library/buddhas/{id}
 - Pre-condition: —
 - Where: library/buddhas/[id]/+page.server.ts `load` (Promise.allSettled)
-- API: GET /v1/deities/{id}  ∥  GET /v1/deities/{id}/sutras (trang 1, không role)
-    - Detail success → deity (dùng `next_via`, `via_events`; bỏ qua `lunar_memorial_days`)
+- API: GET /v1/deities/{id}  ∥  GET /v1/deities/{id}/sutras (page 1, no role)
+    - Detail success → deity (uses `next_via`, `via_events`; ignores `lunar_memorial_days`)
     - Detail 404 DEITY_NOT_FOUND → error(404)
-    - Detail lỗi khác → error(502) → màn hình lỗi gốc có "Thử lại" (⚠️ requirements AC 14)
-    - Sutras success → sutras = items (thứ tự giữ nguyên)
-    - Sutras lỗi bất kỳ (kể cả 404 khi detail thành công) → sutras = [], log; trang vẫn render
+    - Detail other failure → error(502) → root error screen with "Thử lại" (Try again) (⚠️ requirements AC 14)
+    - Sutras success → sutras = items (order kept)
+    - Sutras any failure (including 404 when detail succeeded) → sutras = [], log; the page still renders
 
-Step 2 — Đếm ngày vía (this feature, browser)
-- Trigger: `DeityViaCard` mount
+Step 2 — Feast-day countdown (this feature, browser)
+- Trigger: `DeityViaCard` mounts
 - Pre-condition: deity.next_via ≠ null
-- Where: `DeityViaCard.svelte`: `today` = `$state` gán trong `onMount` (ngày local của máy);
-  nhãn = `countdown(today, next_via.solar_date)` (calendar `utils/events.ts`) trong `$derived`
-- API: không gọi
-    - SSR / trước mount → không render nhãn đếm
-    - Sau mount → "Hôm nay" / "Ngày mai" / "Còn n ngày" (/"Đã qua" nếu lệch ngày, ⚠️ AC 17)
+- Where: `DeityViaCard.svelte`: `today` = `$state` assigned in `onMount` (the device's local date);
+  label = `countdown(today, next_via.solar_date)` (calendar `utils/events.ts`) in `$derived`
+- API: no call
+    - SSR / before mount → countdown label not rendered
+    - After mount → "Hôm nay" (Today) / "Ngày mai" (Tomorrow) / "Còn n ngày" (n days left) (/"Đã qua" (Past) if the date is off, ⚠️ AC 17)
 
-Step 3 — Mở tràng hạt với câu niệm (practice, do feature này thêm)
-- Trigger: bấm "Trì niệm với tràng hạt" → GET /practice/mala?deity={id}
-- Pre-condition: vị có `short_mantra_sino_vietnamese` (nút chỉ hiện khi có)
-- Where: practice/mala/+page.server.ts `load` (mới)
+Step 3 — Open the mala with the chant text (practice, added by this feature)
+- Trigger: press "Trì niệm với tràng hạt" (Chant with the mala) → GET /practice/mala?deity={id}
+- Pre-condition: the deity has `short_mantra_sino_vietnamese` (the button only shows when present)
+- Where: practice/mala/+page.server.ts `load` (new)
 - API: GET /v1/deities/{id}
-    - Success, có câu niệm → { mantra } → MalaChant hiện câu đó, count 0 (state mới mỗi lần mở trang)
-    - Success không có câu niệm / 404 / lỗi → { mantra: null } → câu mặc định `practice_bead_mantra`
-    - Không có ?deity → không gọi API, như hôm nay
+    - Success, chant text present → { mantra } → MalaChant shows that text, count 0 (fresh state every page open)
+    - Success without chant text / 404 / failure → { mantra: null } → default text `practice_bead_mantra`
+    - No ?deity → no API call, as today
 ```
 
-## Chia sẻ (FR-DTY-009, browser)
+## Share (FR-DTY-009, browser)
 
-`DeityShareButton` (chỉ chạy trong browser, nút là `<button type="button">`):
+`DeityShareButton` (runs only in the browser, the button is `<button type="button">`):
 
-1. `text = shareText(deity)` — `name_vi`, xuống dòng, `short_mantra_sino_vietnamese`, rồi
-   `short_mantra_sanskrit` khi có (giá trị trống bỏ qua, BR-DTY-04). Link trang: ⚠️ requirements AC 24.
-2. Có `navigator.share` → `share({ title: name_vi, text })`; `AbortError` (khách huỷ) → không làm gì;
-   lỗi khác → bước 3.
-3. `navigator.clipboard.writeText(text)` → thông báo `buddha_d_share_copied` trong vùng `aria-live`;
-   lỗi → `buddha_d_share_failed`.
+1. `text = shareText(deity)` — `name_vi`, a line break, `short_mantra_sino_vietnamese`, then
+   `short_mantra_sanskrit` when present (empty values skipped, BR-DTY-04). Page link: ⚠️ requirements AC 24.
+2. `navigator.share` available → `share({ title: name_vi, text })`; `AbortError` (visitor cancelled) → do nothing;
+   other failure → step 3.
+3. `navigator.clipboard.writeText(text)` → announce `buddha_d_share_copied` in an `aria-live` region;
+   failure → `buddha_d_share_failed`.
 
-Mẫu có sẵn: `LampOffering.svelte` (`navigator.share`), `OfferQr.svelte` (clipboard).
+Existing patterns: `LampOffering.svelte` (`navigator.share`), `OfferQr.svelte` (clipboard).
 
 ## Session & cookies
 
-Không dùng. Mọi route của feature công khai; không đọc `il_token`, không đổi `locals.user`.
+Not used. Every route of the feature is public; does not read `il_token`, does not change `locals.user`.
 
 ## SEO
 
-`/library/buddhas` và `/library/buddhas/[id]` là trang công khai, index được; `?type=`/`?page=` là
-URL chuẩn (Step 1). Màn hình lỗi gốc đã `noindex`. Không prerender (dữ liệu và `next_via` đổi theo
-ngày).
+`/library/buddhas` and `/library/buddhas/[id]` are public, indexable pages; `?type=`/`?page=` are
+canonical URLs (Step 1). The root error screen is already `noindex`. No prerendering (data and
+`next_via` change by date).
 
 ## i18n keys
 
-| Key | Dùng ở | ID | Thay đổi |
+| Key | Used in | ID | Change |
 | --- | --- | --- | --- |
-| `buddha_kind_deva` | Nhãn loại | BR-DTY-01 | sửa vi "Thiên hộ pháp" → "Chư Thiên"; en "Dharma protector (Deva)" → "Deva" (chữ en do website đề xuất) |
-| `buddha_kind_future` | — | — | kiểm chỗ dùng; không dùng → xoá |
-| `buddha_via` | Dòng vía trên thẻ ("Vía {date} âm lịch") | BR-DTY-06 | giữ |
-| `buddha_via_leap` | Dòng vía khi tháng nhuận | BR-CAL-08 | thêm (⚠️ requirements AC 2) |
-| `buddhas_block_empty` | Khối nổi bật rỗng/lỗi | FR-DTY-010 | thêm (⚠️ requirements AC 3) |
-| `buddhas_empty_title`, `buddhas_empty_hint`, `buddhas_empty_calendar` | Trạng thái `buddhasEmpty` | FR-DTY-010 | thêm (vi theo prototype: "Chưa có thông tin chư Phật", "Chưa tải được tiểu sử và đại nguyện của chư Phật, Bồ Tát. Kiểm tra kết nối rồi thử lại.", "Xem lịch lễ vía") |
-| `err_retry` | "Thử lại" ở danh mục | FR-DTY-010 | dùng lại |
-| `buddhas_load_error`, `buddhas_empty` | Dòng lỗi/rỗng cũ | — | xoá sau khi thay |
-| `buddha_d_via_next`, `buddha_d_via_month` ("Tháng {month}"), `buddha_d_via_month_1` … `_12` ("Giêng", "Hai" … "Chạp"), `buddha_d_via_leap`, `buddha_d_via_all`, `buddha_d_via_calendar` ("Lịch lễ") | Thẻ vía | FR-DTY-006 | thêm (có thể dùng lại `lunar_month_*` nếu chữ khớp — `lunar_month_1` hôm nay là "Một", không phải "Giêng") |
-| `ev_left_today`, `ev_left_tomorrow`, `ev_left_days`, `ev_left_past` | Nhãn đếm | BR-CAL-13 | của spec `calendar` (dùng lại, không tạo key riêng) |
-| `buddha_d_memorial` | Khối "Ngày vía" cũ | — | xoá khi thẻ vía thay |
-| `buddha_d_read_more`, `buddha_d_read_less` | Tiểu sử | FR-DTY-005 | thêm |
-| `buddha_d_vows_more` ("Xem đủ {count} đại nguyện"), `buddha_d_vows_less` ("Thu gọn") | Đại nguyện | BR-DTY-07 | thêm |
-| `buddha_d_title_card` ("Danh hiệu"), `buddha_d_mantra_card` ("Thần chú") | Thẻ thần chú | FR-DTY-005 | thêm; `buddha_d_mantra_vi`, `buddha_d_mantra_sa`, `buddha_d_dharani_text` giữ hoặc xoá theo bố cục mới |
-| `buddha_d_mala` ("Trì niệm với tràng hạt") | Hành động | FR-DTY-008 | thêm |
-| `buddha_d_share` ("Chia sẻ"), `buddha_d_share_copied`, `buddha_d_share_failed` | Chia sẻ | FR-DTY-009 | thêm |
-| `buddha_d_sutras` ("Kinh liên quan") | Khối kinh | FR-DTY-007 | thêm |
-| `buddha_d_footer` ("Nội dung do Ban biên tập tổng hợp từ kinh điển") | Chân trang | BR-DTY-08 | thêm |
-| `buddha_d_image_placeholder` | `alt`/aria của ảnh giữ chỗ (nếu cần) | BR-DTY-04 | thêm khi `il-ui` cần |
-| `buddha_1` … `buddha_9`, `buddha_*_role` | Nội dung mẫu | — | xoá cùng `content/buddhas.ts` (kiểm `grep` trước) |
+| `buddha_kind_deva` | Type label | BR-DTY-01 | change vi "Thiên hộ pháp" (Dharma-protector deva) → "Chư Thiên" (Devas); en "Dharma protector (Deva)" → "Deva" (en text proposed by the website) |
+| `buddha_kind_future` | — | — | check usages; unused → delete |
+| `buddha_via` | Feast-day line on the card ("Vía {date} âm lịch" (Feast day {date} lunar)) | BR-DTY-06 | keep |
+| `buddha_via_leap` | Feast-day line for a leap month | BR-CAL-08 | add (⚠️ requirements AC 2) |
+| `buddhas_block_empty` | Featured block empty/failed | FR-DTY-010 | add (⚠️ requirements AC 3) |
+| `buddhas_empty_title`, `buddhas_empty_hint`, `buddhas_empty_calendar` | `buddhasEmpty` state | FR-DTY-010 | add (vi per the prototype: "Chưa có thông tin chư Phật" (No information on the Buddhas yet), "Chưa tải được tiểu sử và đại nguyện của chư Phật, Bồ Tát. Kiểm tra kết nối rồi thử lại." (Couldn't load the biographies and great vows of the Buddhas and Bodhisattvas. Check your connection and try again.), "Xem lịch lễ vía" (View the feast-day calendar)) |
+| `err_retry` | "Thử lại" (Try again) in the catalogue | FR-DTY-010 | reuse |
+| `buddhas_load_error`, `buddhas_empty` | Old error/empty line | — | delete once replaced |
+| `buddha_d_via_next`, `buddha_d_via_month` ("Tháng {month}" (Month {month})), `buddha_d_via_month_1` … `_12` ("Giêng" (first), "Hai" (second) … "Chạp" (twelfth)), `buddha_d_via_leap`, `buddha_d_via_all`, `buddha_d_via_calendar` ("Lịch lễ" (Ceremony calendar)) | Feast-day card | FR-DTY-006 | add (may reuse `lunar_month_*` if the text matches — `lunar_month_1` today is "Một" (One), not "Giêng") |
+| `ev_left_today`, `ev_left_tomorrow`, `ev_left_days`, `ev_left_past` | Countdown label | BR-CAL-13 | belong to the `calendar` spec (reused, no separate keys) |
+| `buddha_d_memorial` | Old "Ngày vía" (Feast days) block | — | delete once the feast-day card replaces it |
+| `buddha_d_read_more`, `buddha_d_read_less` | Biography | FR-DTY-005 | add |
+| `buddha_d_vows_more` ("Xem đủ {count} đại nguyện" (See all {count} great vows)), `buddha_d_vows_less` ("Thu gọn" (Collapse)) | Great vows | BR-DTY-07 | add |
+| `buddha_d_title_card` ("Danh hiệu" (Title)), `buddha_d_mantra_card` ("Thần chú" (Mantra)) | Mantra cards | FR-DTY-005 | add; `buddha_d_mantra_vi`, `buddha_d_mantra_sa`, `buddha_d_dharani_text` kept or deleted depending on the new layout |
+| `buddha_d_mala` ("Trì niệm với tràng hạt" (Chant with the mala)) | Action | FR-DTY-008 | add |
+| `buddha_d_share` ("Chia sẻ" (Share)), `buddha_d_share_copied`, `buddha_d_share_failed` | Share | FR-DTY-009 | add |
+| `buddha_d_sutras` ("Kinh liên quan" (Related sutras)) | Sutras block | FR-DTY-007 | add |
+| `buddha_d_footer` ("Nội dung do Ban biên tập tổng hợp từ kinh điển" (Content compiled by the editorial board from the scriptures)) | Footer | BR-DTY-08 | add |
+| `buddha_d_image_placeholder` | `alt`/aria of the placeholder image (if needed) | BR-DTY-04 | add when `il-ui` needs it |
+| `buddha_1` … `buddha_9`, `buddha_*_role` | Sample content | — | delete together with `content/buddhas.ts` (check with `grep` first) |
 
 ## Deliberately stubbed for now
 
-- `next_via` / `via_events` / trang 12: chưa có trong `openapi.yaml` (backend deity v3.0 Phase 8–10).
-  Cho tới khi có, thẻ không có dòng vía và trang vị giữ khối `lunar_memorial_days` hiện tại (chỉ
-  ngày âm); khi contract có `via_events` thì thay hẳn bằng `DeityViaCard` và không đọc
-  `lunar_memorial_days` nữa (deprecated, backend v3.0 AC 30). Tasks Phase 3.
-- `countdown` chung: chờ spec `calendar` Phase 2; thẻ vía render được không có nhãn đếm trong lúc chờ.
-- `/events` còn chặn khách (spec `calendar`) — link "Lịch lễ" vẫn trỏ về đó.
+- `next_via` / `via_events` / page of 12: not yet in `openapi.yaml` (backend deity v3.0 Phases 8–10).
+  Until then, cards have no feast-day line and the deity page keeps the current `lunar_memorial_days`
+  block (lunar dates only); once the contract has `via_events`, replace it entirely with
+  `DeityViaCard` and stop reading `lunar_memorial_days` (deprecated, backend v3.0 AC 30). Tasks Phase 3.
+- Shared `countdown`: waiting for the `calendar` spec Phase 2; the feast-day card renders without the
+  countdown label in the meantime.
+- `/events` still blocks guests (`calendar` spec) — the "Lịch lễ" (Ceremony calendar) link still points there.
