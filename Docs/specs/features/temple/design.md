@@ -1,6 +1,6 @@
 # Design — temple (Chùa Việt Nam)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — mirror `requirements.md`
 
