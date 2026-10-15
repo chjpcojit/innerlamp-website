@@ -9,19 +9,19 @@ Status: <!-- mirror requirements.md -->
 ## Overview
 
 <!--
-2–4 câu: route nào, dữ liệu đi đường nào (browser → `+page.server.ts` load/action →
-`$lib/server/api/<resource>.ts` → backend), có dùng phiên (cookie) không, và feature nào đã có làm
-mẫu gần nhất (vd "cùng kiến trúc với login").
+2–4 sentences: which route, which data path (browser → `+page.server.ts` load/action →
+`$lib/server/api/<resource>.ts` → backend), whether it uses the session (cookies), and which existing
+feature is the closest model (e.g. "same architecture as login").
 -->
 
 ## Layers & components
 
-<!-- tasks.md is broken down from this table. Mark anything not built as "chưa tạo" / "cần sửa". -->
+<!-- tasks.md is broken down from this table. Mark anything not built as "not created" / "needs change". -->
 
-| Layer | File | Responsibility | Trạng thái |
+| Layer | File | Responsibility | Status |
 | --- | --- | --- | --- |
-| Route (UI) | `src/routes/(site)/<!-- path -->/+page.svelte` | Markup, `<svelte:head>` meta, render `data` | <!-- có / chưa tạo --> |
-| Route (server) | `src/routes/(site)/<!-- path -->/+page.server.ts` | `load` (đọc) / `actions` (ghi) gọi `$lib/server/api` | |
+| Route (UI) | `src/routes/(site)/<!-- path -->/+page.svelte` | Markup, `<svelte:head>` meta, render `data` | <!-- exists / not created --> |
+| Route (server) | `src/routes/(site)/<!-- path -->/+page.server.ts` | `load` (read) / `actions` (write) call `$lib/server/api` | |
 | Feature UI | `src/lib/features/{{feature}}/components/<!-- X -->.svelte` | Presentational; props only (`il-ui`) | |
 | Feature state | `src/lib/features/{{feature}}/state/<!-- x -->.svelte.ts` | Runes state / pure logic (`il-state`) | |
 | API resource | `src/lib/server/api/<!-- resource -->.ts` | Typed functions over `client.ts`, take `event.fetch` | |

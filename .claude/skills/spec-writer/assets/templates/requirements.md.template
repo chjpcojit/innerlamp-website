@@ -10,11 +10,11 @@ Implements: <!-- BR-XXX-01, FR-XXX-001..004 — the IDs whose Website column is 
 
 > See `changelog.md` in this folder for the version history of this spec.
 
-<!-- Retroactive: "Spec này được viết retroactively từ code đang chạy." Route: `/<path>` (`/en/<path>`). -->
+<!-- Retroactive: "This spec was written retroactively from the running code." Route: `/<path>` (`/en/<path>`). -->
 
 ## User Story
 
-<!-- Một câu, tiếng Việt: Là <ai>, tôi muốn <làm gì>, để <mục tiêu>. Lấy từ product spec, không viết lại nghĩa. -->
+<!-- One sentence, in English: As a <actor>, I want <action>, so that <goal>. Take it from the product spec; do not change its meaning. -->
 
 ## Acceptance Criteria (EARS notation)
 
@@ -27,19 +27,19 @@ design.md's Step-by-step Flow. See references/ears_notation.md.
 
 - WHEN <!-- trigger -->, THE SYSTEM SHALL <!-- behavior -->. (<!-- FR-XXX-001 -->)
 
-## Dữ liệu & API (gọi từ SvelteKit server)
+## Data & API (called from the SvelteKit server)
 
-<!-- Cite operations; never paste schemas. Header chung: `x-api-key` từ `API_KEY`; Bearer từ cookie nếu cần. -->
+<!-- Cite operations; never paste schemas. Common headers: `x-api-key` from `API_KEY`; Bearer from the cookie when needed. -->
 
-| Thao tác | Operation (openapi) | Gọi từ | Ghi chú |
+| Action | Operation (openapi) | Called from | Notes |
 | --- | --- | --- | --- |
-| <!-- Đăng nhập --> | <!-- `POST /v1/auth/login` --> | <!-- action `default` --> | <!-- … --> |
+| <!-- Sign in --> | <!-- `POST /v1/auth/login` --> | <!-- action `default` --> | <!-- … --> |
 
 ## Error → UI mapping
 
-| Operation | Failure case | Visitor sees | Hiện trạng code |
+| Operation | Failure case | Visitor sees | Code status |
 | --- | --- | --- | --- |
-| <!-- `POST /v1/...` --> | <!-- 401 INVALID_CREDENTIALS --> | <!-- key `auth_err_…` --> | <!-- ✓ / lệch / chưa có --> |
+| <!-- `POST /v1/...` --> | <!-- 401 INVALID_CREDENTIALS --> | <!-- key `auth_err_…` --> | <!-- ✓ / differs / missing --> |
 
 ## Out of scope
 

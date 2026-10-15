@@ -30,8 +30,8 @@ Then:
   for Website).
 - Stubs (a button with no action, a link to a route that doesn't exist, localStorage instead of the
   backend) go under Pending with their tasks.md Phase.
-- `tasks.md`: `[x]` only for what you read and verified; record the date ("`[x]` chỉ khi đã kiểm tra
-  tồn tại trong code ngày …").
+- `tasks.md`: `[x]` only for what you read and verified; record the date ("`[x]` only when verified
+  to exist in the code on …").
 - `changelog.md`: `v1.0 (initial)` saying it was written retroactively.
 
 ## Mixed
