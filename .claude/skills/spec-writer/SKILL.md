@@ -1,9 +1,9 @@
 ---
-name: il-spec-web
+name: spec-writer
 description: This skill should be used when the user wants a written spec (requirements, design, or task breakdown) for an InnerLamp website feature — the SvelteKit platform spec (layer 2), which starts from the cross-platform product spec innerlamp-be `docs/product/<feature>/product.md` (written by `ba-writer` in the backend repo) and the backend contract innerlamp-be `docs/specs/api/openapi.yaml`, citing both instead of copying them — before, during, or retroactively after building it. It covers the convention under `Docs/specs/features/<feature>/` (requirements.md, design.md, tasks.md) plus a changelog.md: a header citing the product spec version and the BR-/FR- IDs it implements, EARS acceptance criteria each tagged with its product ID, an error → UI mapping table, a design that follows this repo's data path (browser → SvelteKit server `load`/actions → `$lib/server/api/*` → backend, cookies for tokens, Paraglide for every string), a mandatory Step-by-step Flow for any flow with 2+ sequential backend calls, a strict one-way cascade (requirements → design → tasks), version headers + changelog entries on every update, and the rule that any unanswered question is recorded inline as "⚠️ Not confirmed" — never guessed. Docs-only: it never writes Svelte/TS code (that is `il-ui`, `il-state`, `il-testing`), never decides product questions (hand back to `ba-writer`), and never writes to `Docs/Knowledge/` (OKF, `il-okf-writer`).
 ---
 
-# InnerLamp Website Spec Writer (`il-spec-web`)
+# InnerLamp Website Spec Writer (`spec-writer`)
 
 ## Overview
 
@@ -27,7 +27,7 @@ These files are **layer 2** of InnerLamp's documentation stack. Above them sit t
 product spec in the backend repo, innerlamp-be `docs/product/<feature>/product.md` (layer 0, owned
 by `ba-writer`, which exists only in that repo), and the API contract innerlamp-be
 `docs/specs/api/openapi.yaml` (layer 1, owned by the backend). The backend, iOS and Android repos
-have their own layer-2 spec skills (`il-spec-be`, `il-spec-ios`, `il-spec-android`) citing the same
+have their own layer-2 spec skills (each also named `spec-writer`) citing the same
 documents. Read `references/upstream_product_spec.md` once — it is the shared rulebook.
 
 **Language.** Language follows the repo's Language policy in AGENTS.md, which overrides this skill.
