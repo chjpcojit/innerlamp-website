@@ -1,7 +1,7 @@
 # Design — onboarding (Đăng ký trên website)
 
-Version: 1.0
-Last updated: 2026-10-14
+Version: 1.1
+Last updated: 2026-10-15
 Status: in-progress (drift) — mirror `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
