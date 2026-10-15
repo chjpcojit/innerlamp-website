@@ -1,6 +1,6 @@
 # Tasks — article (Bài viết Phật pháp hay — Dharma articles)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — mirror `requirements.md`
 
@@ -68,7 +68,7 @@ to a row of the Layers & components table or a Step in `design.md`; "AC n" is a 
 ## Phase 6 — Documentation
 
 - [ ] Report the Website column of `docs/product/article/product.md` §4.2 to `ba-writer` (this skill does not edit the backend repo): FR-ART-004 and BR-ART-05 / BR-ART-07 are `drift` on the website (order, initials, empty category, broken image), not `done`
-- [ ] Clean up `.assumptions.md` once the spec is approved: line 12 "Catalogue pages" (the `/articles` part — sample data, client-side topic filter, no detail pages — is stale) and line 23 "Home re-check" (the sentence "per-item detail links on … articles (no detail pages)" is stale)
+- [x] Clean up `.assumptions.md` (v1.1, docs pipeline step 4; both notes now point here): line 12 "Catalogue pages" (the `/articles` part — sample data, client-side topic filter, no detail pages — is stale) and line 23 "Home re-check" (the sentence "per-item detail links on … articles (no detail pages)" is stale)
 - [ ] OKF concept via `il-okf-writer` once the feature is checked end-to-end
 
 ## Deferred (not blocking article)

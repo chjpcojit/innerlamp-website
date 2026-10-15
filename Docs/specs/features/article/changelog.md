@@ -3,6 +3,16 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v1.1 (2026-10-15)
+
+Step 4 of the docs pipeline: retire the old article notes now that product spec v1.0 and the four
+platform specs are approved. No requirement or design change.
+
+- `.assumptions.md`: line 12 "Catalogue pages" now hands `/articles` to this spec; line 23 "Home
+  re-check" drops articles from the "no detail pages" list and points here.
+- `tasks.md` (1.0 → 1.1): the Phase 6 cleanup item is ticked. `requirements.md`, `design.md`
+  (1.0 → 1.1): no change needed, verified — header only.
+
 ## v1.0 (initial) (2026-10-15)
 
 - `requirements.md`: first spec of the feature on the website. Retroactive for the running part (featured block of 4 on `/`, list `/articles` with `?page=`, large first card, URL normalisation, past the end → last page, page `/articles/[id]` with source + summary notice and `lang` — code read 2026-10-15), prospective for the rest of product v1.0. Header `Product spec` @ v1.0, `Contract` openapi @ a8a016b plus the planned `GET /v1/articles/{id}/related` (`articlesRelated`) from backend article `design.md` v3.0 (3bc0ace), not yet in openapi; `Implements` every ID whose Website column is not `n/a` (FR-ART-009 excluded) and cites ADR-0004. 28 EARS criteria tagged `FR-ART-*` / `BR-ART-*` / `NFR-ART-*` or `(platform)`; Error → UI table with a "Current code state" column.
