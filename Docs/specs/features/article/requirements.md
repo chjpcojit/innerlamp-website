@@ -1,6 +1,6 @@
 # Requirements — article (Bài viết Phật pháp hay — Dharma articles)
 
-Version: 1.0
+Version: 1.1
 Last updated: 2026-10-15
 Status: in-progress (drift) — the featured block on `/` (first 4 of `top`), the list `/articles` (page numbers `?page=`, large first card, URL normalisation, past the end → last page) and the page `/articles/[id]` run against the real backend. Remaining: no static sample content on the home block, card and page alignment (images, missing values, block order, author initials), "Đọc tiếp" (read next) from the planned related-articles read, Share (Web Share → copy link), the ADR-0004 association files, tests.
 Feature folder: `src/routes/(site)/articles/`, `src/routes/(site)/+page.server.ts` (featured block), `src/lib/components/sections/{ArticleGrid,ArticleCatalog,ArticleDetail}.svelte`, `src/lib/components/ui/ArticleCover.svelte`, `src/lib/server/api/articles.ts`, `src/lib/types/article.ts`, `src/lib/utils/article.ts`; new: `src/lib/features/article/`, `src/routes/.well-known/`
