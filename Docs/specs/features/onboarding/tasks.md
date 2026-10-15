@@ -1,7 +1,7 @@
 # Tasks — onboarding (Đăng ký trên website)
 
-Version: 1.0
-Last updated: 2026-10-14
+Version: 1.1
+Last updated: 2026-10-15
 Status: in-progress (drift) — mirror `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
@@ -41,4 +41,4 @@ Status: in-progress (drift) — mirror `requirements.md`.
 
 - [ ] `npm run check && npm run lint && npm run build` sạch.
 - [ ] Cập nhật cột Website ở product §4.2 khi xong (báo `ba-writer`).
-- [ ] Xoá `Docs/specs/features/register/` ở bước dọn tài liệu cũ.
+- [x] Xoá `Docs/specs/features/register/` ở bước dọn tài liệu cũ (2026-10-15).

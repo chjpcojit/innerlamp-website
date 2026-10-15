@@ -1,7 +1,7 @@
 # Requirements — onboarding (Đăng ký trên website)
 
-Version: 1.0
-Last updated: 2026-10-14
+Version: 1.1
+Last updated: 2026-10-15
 Status: in-progress (drift) — luồng `/signup` hai bước đang chạy với backend theo SĐT + OTP qua SMS; phải chuyển sang mã qua email theo product v1.2. Chưa có code cho v1.0 của spec này.
 Feature folder: `src/routes/(auth)/signup/`, `src/lib/features/auth/`, `src/lib/server/api/auth.ts`, `src/lib/types/auth.ts`
 Product spec: innerlamp-be `docs/product/onboarding/product.md` @ v1.2 (ADR-0003 — Accepted)
