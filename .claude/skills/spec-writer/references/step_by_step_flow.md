@@ -26,25 +26,25 @@ Step N — <name> (this feature | <other feature>, out of scope)
 
 Steps owned by another feature say so and link that feature's design instead of duplicating it.
 
-## Worked example (from `Docs/specs/features/login/design.md`)
+## Worked example (adapted in English from `Docs/specs/features/login/design.md`)
 
 ```
-Step 1 — Đăng nhập (this feature)
-- Trigger: bấm "Đăng nhập", phone hợp lệ + password không rỗng
-- Pre-condition: server kiểm lại phone/password không rỗng
+Step 1 — Sign in (this feature)
+- Trigger: visitor presses `login_submit` with a valid phone and a non-empty password
+- Pre-condition: the server re-checks that phone/password are non-empty
 - Where: `src/routes/(auth)/login/+page.server.ts` action `default`
 - API: POST /v1/auth/login (phone_number, password, device{platform:"web", device_model})
-    - Success → startSession (3 cookie), 303 về `/`
-    - Failure (INVALID_CREDENTIALS 401) → fail, ở /login, một thông báo chung
-    - Failure (LOGIN_LOCKED 429) → fail, thông báo khoá
+    - Success → startSession (3 cookies), 303 to `/`
+    - Failure (INVALID_CREDENTIALS 401) → fail, stay on /login, one generic message
+    - Failure (LOGIN_LOCKED 429) → fail, locked message
 
-Step 2 — Làm mới phiên (hooks.server.ts, mỗi request)
-- Trigger: request tới server khi thiếu `il_token` và còn `il_refresh`
+Step 2 — Refresh the session (hooks.server.ts, every request)
+- Trigger: a request reaches the server with no `il_token` but an `il_refresh` cookie
 - Where: `src/hooks.server.ts` `handleAuth`
 - API: POST /v1/auth/refresh ({refresh_token})
-    - Success → setTokens, tiếp tục request
-    - Failure (4xx) → endSession, thành khách
-    - Failure (mạng / 5xx) → giữ cookie, thử lại ở request sau
+    - Success → setTokens, continue the request
+    - Failure (4xx) → endSession, visitor becomes a guest
+    - Failure (network / 5xx) → keep the cookies, retry on the next request
 ```
 
 ## Unconfirmed steps

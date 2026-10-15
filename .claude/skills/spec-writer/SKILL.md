@@ -20,7 +20,8 @@ Generates and maintains the spec for one website feature under `Docs/specs/featu
 - `changelog.md` — one shared version history for the three files above.
 
 The existing `Docs/specs/features/login/` and `register/` are the worked examples for tone and
-shape (English headings, Vietnamese prose, tables for API and errors). Read one before writing.
+shape (headings, tables for API and errors). Read one before writing; their Vietnamese prose
+predates the Language policy and is rewritten in English the next time each file is edited.
 
 These files are **layer 2** of InnerLamp's documentation stack. Above them sit the cross-platform
 product spec in the backend repo, innerlamp-be `docs/product/<feature>/product.md` (layer 0, owned
@@ -29,9 +30,13 @@ by `ba-writer`, which exists only in that repo), and the API contract innerlamp-
 have their own layer-2 spec skills (`il-spec-be`, `il-spec-ios`, `il-spec-android`) citing the same
 documents. Read `references/upstream_product_spec.md` once — it is the shared rulebook.
 
-**Language.** Headings, EARS keywords (`WHEN` / `THE SYSTEM SHALL`), table headers and version
-headers stay in English as templated; prose, user story and notes are Vietnamese, like the existing
-files. Quote user-facing copy by its Paraglide key (`login_submit`), not by hardcoded text.
+**Language.** Language follows the repo's Language policy in AGENTS.md, which overrides this skill.
+Everything written into the spec files is English: headings, EARS keywords (`WHEN` /
+`THE SYSTEM SHALL`), table headers, version headers, prose, the user story and notes. Editing an
+existing Vietnamese spec file rewrites it in English in the same change. Quote user-facing copy by
+its Paraglide key (`login_submit`); when the Vietnamese text is quoted too, keep it as written in
+`messages/vi.json` with an English gloss. Questions and reports to the user stay Vietnamese
+("anh"/"em"), technical terms in English.
 
 **This skill never writes code** and never touches `src/`, `messages/` or `Docs/Knowledge/`.
 
@@ -50,7 +55,7 @@ files. Quote user-facing copy by its Paraglide key (`login_submit`), not by hard
    pasted in; the error → UI table names only what the visitor sees for each case. An operation not
    in `openapi.yaml` is `⚠️ Not confirmed` and a hand-off to the backend, never an assumed shape.
 3. **Backend work is not tracked here.** Something the backend must change goes to the report as a
-   hand-off item (and, if it is a product question, to `ba-writer`) — never as a "Việc BE cần làm"
+   hand-off item (and, if it is a product question, to `ba-writer`) — never as a "Backend to-do"
    list inside this repo's spec.
 4. **The design follows this repo's architecture (`AGENTS.md`).** Backend calls happen only on the
    SvelteKit server (`+page.server.ts` `load`/actions, hooks, `src/routes/api/*/+server.ts`) through
@@ -110,7 +115,7 @@ Copy `assets/templates/*` to `Docs/specs/features/<feature>/` (replace `{{featur
 
 | Template                   | Key sections                                                                                                                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `requirements.md.template` | Header (product spec / contract / implements), User Story, EARS criteria with tags, Dữ liệu & API (operations cited), Error → UI mapping, Out of scope, Pending, Open questions |
+| `requirements.md.template` | Header (product spec / contract / implements), User Story, EARS criteria with tags, Data & API (operations cited), Error → UI mapping, Out of scope, Pending, Open questions    |
 | `design.md.template`       | Overview, Layers & components (with status column), Route & navigation flow, Step-by-step Flow, Session/cookies, i18n keys, Deliberately stubbed                                |
 | `tasks.md.template`        | Phases from the Layers table: UI → state → server data → tests → quality → docs                                                                                                 |
 | `changelog.md.template`    | `v1.0 (initial)`                                                                                                                                                                |
