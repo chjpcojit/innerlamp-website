@@ -1,103 +1,118 @@
-# Requirements — onboarding (Đăng ký trên website)
+# Requirements — onboarding (Website sign-up)
 
-Version: 1.1
-Last updated: 2026-10-15
-Status: in-progress (drift) — luồng `/signup` hai bước đang chạy với backend theo SĐT + OTP qua SMS; phải chuyển sang mã qua email theo product v1.2. Chưa có code cho v1.0 của spec này.
+Version: 1.7
+Last updated: 2026-10-17
+Status: in-progress — the two-step `/signup` flow runs with email OTP; the phone (`phone_country` + national number), error-mapping and country-list changes of 2026-10-16 are in code. Remaining work is listed in `tasks.md`.
 Feature folder: `src/routes/(auth)/signup/`, `src/lib/features/auth/`, `src/lib/server/api/auth.ts`, `src/lib/types/auth.ts`
-Product spec: innerlamp-be `docs/product/onboarding/product.md` @ v1.2 (ADR-0003 — Accepted)
-Contract: innerlamp-be `docs/specs/features/onboarding/requirements.md` @ v8.0 §API contract (6d8cd78). `openapi.yaml` chưa có hình dạng mới — backend cập nhật khi handler chạy thật.
+Product spec: innerlamp-be `docs/product/onboarding/product.md` @ v1.7 (ADR-0003 — Accepted; v1.7 defines the refusal at the code step (AC21); v1.6 defines the `REGISTRATION_IN_PROGRESS` screen, v1.3–v1.5 changed no requirement)
+Contract: innerlamp-be `docs/specs/api/openapi.yaml` @ 2.1.1 (uncommitted backend working tree as of 2026-10-16): register `request-otp` / `resend-otp` / `verify-otp`, `X-InnerLamp-Client-IP`, `429 RATE_LIMITED` with `Retry-After`.
 Implements: BR-ONB-04, BR-ONB-05, BR-ONB-06, BR-ONB-07, BR-ONB-08, BR-ONB-09, BR-ONB-10, BR-ONB-11, FR-ONB-003, FR-ONB-004, FR-ONB-005, FR-ONB-006, FR-ONB-007, FR-ONB-008, FR-ONB-009, FR-ONB-010, NFR-ONB-01, NFR-ONB-02, NFR-ONB-03
 
 > See `changelog.md` in this folder for the version history of this spec.
 
-Spec này thay `../register/` (SĐT + SMS, sẽ xoá ở bước dọn tài liệu cũ). Slug theo product spec là
-`onboarding`; URL vẫn là `/signup` (`/en/signup`). Không áp dụng cho website: BR-ONB-01…03,
-FR-ONB-001, FR-ONB-002 (màn giới thiệu, chỉ app — product §3.6).
+This spec replaces `../register/` (phone + SMS; removed in the old-docs cleanup). The product spec
+slug is `onboarding`; the URL stays `/signup` (`/en/signup`). Not applicable to the website: BR-ONB-01…03,
+FR-ONB-001, FR-ONB-002 (intro screens, app only — product §3.6).
 
-Luật nghiệp vụ (độ dài, danh sách nước, chính sách mã, nội dung thông báo) nằm ở product spec, không
-nhắc lại ở đây; file này chỉ nói website hiện thực chúng thế nào.
+Business rules (lengths, country list, code policy, message wording) live in the product spec and are
+not repeated here; this file only says how the website implements them.
 
 ## User Story
 
-Là một khách, tôi muốn tạo tài khoản bằng email, mật khẩu, số điện thoại và họ tên rồi nhập mã gửi tới
-email, để được đăng nhập ngay và dùng các tính năng dành cho thành viên.
+As a visitor, I want to create an account with my email, password, phone number and full name, then
+enter the code sent to my email, so that I am signed in immediately and can use member features.
 
 ## Acceptance Criteria (EARS notation)
 
-### Form đăng ký (bước 1)
+### Sign-up form (step 1)
 
-1. WHEN khách mở `/signup`, THE SYSTEM SHALL hiển thị form: họ tên, pháp danh (tuỳ chọn, để trống, có nút gợi ý), nơi xuất gia (danh sách chùa hoặc "Cư sĩ tu tại gia", có đề xuất chùa), số điện thoại (chọn nước + số), email, mật khẩu (có gợi ý độ mạnh) và ô đồng ý điều khoản có link `/terms` và `/privacy`. (FR-ONB-003, FR-ONB-004, BR-ONB-07, BR-ONB-11)
-2. WHEN người đã đăng nhập mở `/signup`, THE SYSTEM SHALL chuyển tới `localizeHref('/')` từ `load` của server. (FR-ONB-003 §3.6)
-3. WHEN người dùng chọn nước, THE SYSTEM SHALL chỉ cho chọn 12 nước của BR-ONB-04 (mặc định Việt Nam) và kiểm số theo đúng số chữ số của nước đó; bản kiểm trong browser chỉ để báo sớm, server backend là nơi quyết định. (BR-ONB-04)
-4. WHEN email, mật khẩu, họ tên hoặc pháp danh chưa đúng BR-ONB-05/06/07, THE SYSTEM SHALL báo lỗi ngay dưới ô đó và vô hiệu nút gửi; mật khẩu đếm theo **ký tự** sau NFC (không đếm byte), 8–64. (BR-ONB-05, BR-ONB-06, BR-ONB-07)
-5. WHILE chưa tick đồng ý điều khoản, THE SYSTEM SHALL vô hiệu nút gửi. (BR-ONB-11)
-6. WHEN thanh độ mạnh mật khẩu hiển thị, THE SYSTEM SHALL chỉ coi nó là gợi ý, không bao giờ chặn gửi. (BR-ONB-06, §3.6)
-7. WHEN người dùng gửi form hợp lệ, THE SYSTEM SHALL gọi `POST /v1/auth/register/request-otp` từ form action với `phone_country` + số đã gõ (không tự ghép E.164), rồi:
-   - on success: sang bước nhập mã, hiển thị email đã gửi, đồng hồ thời hạn theo `expires_in_seconds` và chờ gửi lại theo `resend_after_seconds`;
-   - on failure: ở lại bước 1, giữ mọi giá trị (trừ không đưa mật khẩu vào payload trả về), báo lỗi ở đúng ô theo bảng Error → UI. (FR-ONB-003, BR-ONB-08, BR-ONB-09)
-8. WHEN email đã có tài khoản, THE SYSTEM SHALL hiển thị y hệt email mới (backend đã trả giống nhau), không có chữ hay đường nào khác. (BR-ONB-08, NFR-ONB-01)
-9. WHEN backend trả `PHONE_TAKEN`, THE SYSTEM SHALL hiển thị `auth_err_phone_taken` dưới ô số điện thoại kèm link `/login`. (FR-ONB-005)
+1. WHEN a visitor opens `/signup`, THE SYSTEM SHALL show the form: full name, dharma name (optional, empty by default, with a suggest button), place of ordination (a temple list or "lay practitioner at home", with temple suggestion), phone number (country + number), email, password (with a strength hint) and a terms checkbox linking to `/terms` and `/privacy`. (FR-ONB-003, FR-ONB-004, BR-ONB-07, BR-ONB-11)
+2. WHEN a signed-in user opens `/signup`, THE SYSTEM SHALL redirect to `localizeHref('/')` from the server `load`. (FR-ONB-003 §3.6)
+3. WHEN the visitor picks a country, THE SYSTEM SHALL offer only the 12 countries of BR-ONB-04 (default Vietnam) and validate the number against that country's digit count; the browser check is early feedback only, the backend decides. (BR-ONB-04)
+4. WHEN email, password, full name or dharma name do not satisfy BR-ONB-05/06/07, THE SYSTEM SHALL show an error directly under that field and disable the submit button; the password is counted in **characters** after NFC (not bytes), 8–64. (BR-ONB-05, BR-ONB-06, BR-ONB-07)
+5. WHILE the terms are not ticked, THE SYSTEM SHALL disable the submit button. (BR-ONB-11)
+6. WHEN the password strength bar is shown, THE SYSTEM SHALL treat it as a hint only and never block submission. (BR-ONB-06, §3.6)
+7. WHEN the visitor submits a valid form, THE SYSTEM SHALL call `POST /v1/auth/register/request-otp` from the form action with `phone_country` (the ISO code of the chosen country) and `phone_number` (the national digits after `normalizePhone`, trunk `0` stripped; no `+`, no country code, no E.164 assembled by the site), then:
+   - on success: go to the code step, show the email the code was sent to, an expiry timer from `expires_in_seconds` and a resend wait from `resend_after_seconds`;
+   - on failure: stay on step 1, keep every value (the password is not echoed back in the returned payload), and show the error at the right field per the Error → UI table. (FR-ONB-003, BR-ONB-08, BR-ONB-09)
+8. WHEN the email already has an account, THE SYSTEM SHALL show exactly what it shows for a new email (the backend answers identically), with no different text or path. (BR-ONB-08, NFR-ONB-01)
+9. WHEN the backend returns `PHONE_TAKEN`, THE SYSTEM SHALL show `auth_err_phone_taken` under the phone field with a link to `/login`. (FR-ONB-005)
 
-### Nhập mã (bước 2)
+### Code entry (step 2)
 
-10. WHEN người dùng nhập đủ 6 chữ số và xác nhận, THE SYSTEM SHALL gọi `POST /v1/auth/register/verify-otp` với email + mã, rồi on success đặt cookie phiên (như `../login/`), gửi đề xuất chùa nếu có (AC14) và chuyển tới `localizeHref('/')`. (FR-ONB-007, §3.6)
-11. WHILE còn thời hạn, THE SYSTEM SHALL đếm ngược theo số backend trả; WHEN hết, hiển thị "mã đã hết hạn" và nhấn mạnh "Gửi lại mã". WHILE chưa tới lúc gửi lại, nút "Gửi lại mã" bị khoá và hiển thị số giây còn lại; WHEN gửi lại, gọi `POST /v1/auth/register/resend-otp` và đặt lại hai đồng hồ theo response. (FR-ONB-008, BR-ONB-09)
-12. WHEN người dùng chọn "Đổi email", THE SYSTEM SHALL quay về form bước 1 với mọi ô như đã nhập. (FR-ONB-009)
-13. WHEN backend trả `PENDING_REGISTRATION_EXPIRED`, THE SYSTEM SHALL hiển thị `auth_err_pending_expired` và quay về bước 1 với mọi ô như đã nhập. (FR-ONB-010)
-14. WHEN người dùng đã đề xuất chùa và tài khoản vừa được tạo, THE SYSTEM SHALL gửi `POST /v1/temple-suggestions` một lần (lỗi không làm hỏng đăng ký): tên, tỉnh và phường **bắt buộc** chọn từ danh sách đơn vị hành chính, địa chỉ đường **tuỳ chọn**. (FR-ONB-006, BR-ONB-10)
-15. WHEN tải lại trang ở bước 2, THE SYSTEM SHALL quay về bước 1 (không giữ trạng thái mã ở client). (platform)
+10. WHEN the visitor enters all 6 digits and confirms, THE SYSTEM SHALL call `POST /v1/auth/register/verify-otp` with email + code, then on success set the session cookies (as in `../login/`), send the temple suggestion if any (AC14) and redirect to `localizeHref('/')`. (FR-ONB-007, §3.6)
+11. WHILE the code is valid, THE SYSTEM SHALL count down from the number the backend returned; WHEN it expires, show "code expired" and emphasise "Resend code". WHILE it is not yet time to resend, the "Resend code" button is locked and shows the seconds left; WHEN resending, call `POST /v1/auth/register/resend-otp` and reset both timers from the response. (FR-ONB-008, BR-ONB-09)
+12. WHEN the visitor chooses "Change email", THE SYSTEM SHALL return to the step 1 form with every field as entered. (FR-ONB-009)
+13. WHEN the backend returns `PENDING_REGISTRATION_EXPIRED`, THE SYSTEM SHALL show `auth_err_pending_expired` and return to step 1 with every field as entered. (FR-ONB-010)
+14. WHEN the visitor suggested a temple and the account was just created, THE SYSTEM SHALL send `POST /v1/temple-suggestions` once (a failure does not break sign-up): name, province and ward are **required** and chosen from the administrative-unit list, street address is **optional**. (FR-ONB-006, BR-ONB-10)
+15. WHEN the page is reloaded on step 2, THE SYSTEM SHALL return to step 1 (no code state is kept on the client). (platform)
 
-### Chung
+### General
 
-16. WHEN hiển thị lỗi, THE SYSTEM SHALL chỉ dùng chuỗi Paraglide, không bao giờ hiện `error.message` của backend; giờ mở khoá (`locked_until`) hiển thị theo giờ địa phương của trình duyệt. (NFR-ONB-02, platform)
-17. WHEN backend trả `429 RATE_LIMITED`, THE SYSTEM SHALL hiển thị "thử lại sau" kèm thời gian từ `retry_after_seconds`. (NFR-ONB-02)
-18. WHEN form action trả kết quả, THE SYSTEM SHALL không đưa mật khẩu, mã hay token vào payload trả về trang, và không log chúng. (NFR-ONB-03)
-19. WHEN chạy unit test, THE SYSTEM SHALL qua mọi case của `rules/phone-number.json`, `rules/email.json`, `rules/password.json`, `rules/names.json` với các hàm kiểm của website. (BR-ONB-04…07)
+16. WHEN showing an error, THE SYSTEM SHALL use only Paraglide strings and never the backend `error.message`; unlock times (`locked_until`) are shown in the browser's local time. (NFR-ONB-02, platform)
+17. WHEN the backend returns `429 RATE_LIMITED`, THE SYSTEM SHALL show a "try again later" message with the wait from `retry_after_seconds` (`auth_err_rate_limited_wait`), falling back to `auth_err_rate_limited` when the value is absent. (NFR-ONB-02)
+18. WHEN a form action returns a result, THE SYSTEM SHALL not put the password, the code or a token into the payload returned to the page, and not log them. (NFR-ONB-03)
+19. WHEN unit tests run, THE SYSTEM SHALL pass every case of `rules/phone-number.json`, `rules/email.json`, `rules/password.json`, `rules/names.json` with the website's validation functions. (BR-ONB-04…07)
+20. WHEN the backend returns `REGISTRATION_IN_PROGRESS` (409: this email has a pending registration whose code is still valid and the submitted details differ — phone, full name, dharma name, temple or password), THE SYSTEM SHALL stay on step 1 with every value kept (the password is not echoed back in the returned payload) and show `auth_err_registration_in_progress` ("Vui lòng chờ N giây rồi thử lại" / "Please wait N seconds and try again") with N taken from `retry_after_seconds` — never a number chosen by the site; no email is sent, the pending registration and its earlier code stay as they were, and the old code can still be entered. The result is identical for an email with and without an account. WHEN the same details are submitted again, THE SYSTEM SHALL treat it as AC7 (a new code, the code step opens). (BR-ONB-08, FR-ONB-003)
 
-## Dữ liệu & API (gọi từ SvelteKit server)
+21. WHEN `verify-otp` returns `PHONE_TAKEN` (another account took the number while the code was pending) or `INVALID_TEMPLE` (the chosen temple no longer exists), no account or session has been created, so THE SYSTEM SHALL return to step 1 with every field as entered and show the error at the right field per the Error → UI table (`auth_err_phone_taken` with the sign-in link under the phone field; the choose-again error under the place-of-ordination field). (BR-ONB-08, FR-ONB-005, FR-ONB-004)
 
-| Thao tác | Endpoint | Ghi chú |
-| --- | --- | --- |
-| Gửi form | `POST /v1/auth/register/request-otp` | Thay body SĐT bằng email + `phone_country` |
-| Gửi lại mã | `POST /v1/auth/register/resend-otp` | Path mới (thay `/v1/auth/resend-otp`) |
-| Xác nhận mã | `POST /v1/auth/register/verify-otp` | Trả phiên như login |
-| Đề xuất chùa | `POST /v1/temple-suggestions` | Không đổi; `address` tuỳ chọn |
-| Danh sách chùa / đơn vị hành chính | `GET /v1/temples/options`, `GET /v1/administrative-units/new/*` | Không đổi |
+## Data & API (called from the SvelteKit server)
 
-Hình dạng request/response: xem contract ở header. Mọi call kèm `x-api-key` và IP của khách (xem `../login/design.md` "Header gửi backend").
+| Operation                          | Endpoint                                                        | Notes                                                                       |
+| ---------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Submit form                        | `POST /v1/auth/register/request-otp`                            | Email + `phone_country` + national `phone_number` (no `+`, no country code) |
+| Resend code                        | `POST /v1/auth/register/resend-otp`                             | New path (replaces `/v1/auth/resend-otp`)                                   |
+| Verify code                        | `POST /v1/auth/register/verify-otp`                             | Returns a session like login                                                |
+| Suggest temple                     | `POST /v1/temple-suggestions`                                   | Unchanged; `address` optional                                               |
+| Temple / administrative-unit lists | `GET /v1/temples/options`, `GET /v1/administrative-units/new/*` | Unchanged                                                                   |
+
+Request/response shapes and error codes: see the contract in the header. Every call carries `x-api-key`
+and the visitor's IP via `X-InnerLamp-Client-IP` (see `../login/design.md`, "Headers sent to the backend"). Sending a code (first code and resend) and verifying draw on per-IP budgets shared by route group, and the code cycle allows four codes (first plus three resends) before `OTP_SEND_LIMITED`; the screens only show the resulting errors per the table below.
 
 ## Error → UI mapping
 
-| Trường hợp | Người dùng thấy |
-| --- | --- |
-| `INVALID_EMAIL` / `INVALID_PHONE` / `INVALID_PASSWORD` / `INVALID_FULL_NAME` / `INVALID_DHARMA_NAME` | Lỗi dưới đúng ô (`auth_err_invalid_*`) |
-| `INVALID_TEMPLE` | Lỗi ở ô nơi xuất gia, mời chọn lại |
-| `VALIDATION_ERROR` | `auth_err_validation` chung |
-| `PHONE_TAKEN` | `auth_err_phone_taken` dưới ô số + link `/login` |
-| `OTP_RESEND_TOO_SOON` | Đồng hồ gửi lại theo `retry_after_seconds` |
-| `OTP_SEND_LIMITED` | `auth_err_otp_limited` kèm giờ `locked_until`; vẫn nhập được mã cuối |
-| `OTP_INVALID` | `auth_err_otp_invalid` |
-| `OTP_EXPIRED` | `auth_err_otp_expired`, nhấn mạnh "Gửi lại mã" |
-| `OTP_LOCKED` | `auth_err_otp_locked` kèm giờ `locked_until`, khoá ô nhập tới lúc đó |
-| `PENDING_REGISTRATION_EXPIRED` | `auth_err_pending_expired`, về bước 1 (AC13) |
-| `RATE_LIMITED` | `auth_err_rate_limited` kèm thời gian chờ |
-| `EMAIL_SEND_FAILED`, 5xx, `INVALID_API_KEY` | `auth_err_generic`, log server |
-| `NETWORK_ERROR` | `auth_err_network` |
+| Case                                                                                                 | The visitor sees                                                                                                |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `INVALID_EMAIL` / `INVALID_PHONE` / `INVALID_PASSWORD` / `INVALID_FULL_NAME` / `INVALID_DHARMA_NAME` | Error under the right field (`auth_err_invalid_*`)                                                              |
+| `INVALID_TEMPLE`                                                                                     | Error on the place-of-ordination field, asking to choose again                                                  |
+| `VALIDATION_ERROR`                                                                                   | Generic `auth_err_validation`                                                                                   |
+| `PHONE_TAKEN` (step 1, or step 2 per AC21)                                                           | `auth_err_phone_taken` under the phone field + link to `/login`; from step 2, back to step 1 with fields kept   |
+| `REGISTRATION_IN_PROGRESS`                                                                           | `auth_err_registration_in_progress` on step 1, fields kept, wait from `retry_after_seconds` when present (AC20) |
+| `OTP_RESEND_TOO_SOON`                                                                                | Resend timer from `retry_after_seconds`                                                                         |
+| `OTP_SEND_LIMITED`                                                                                   | `auth_err_otp_limited` with the `locked_until` time; the last code can still be entered                         |
+| `OTP_INVALID`                                                                                        | `auth_err_otp_invalid`                                                                                          |
+| `OTP_EXPIRED`                                                                                        | `auth_err_otp_expired`, "Resend code" emphasised                                                                |
+| `OTP_LOCKED`                                                                                         | `auth_err_otp_locked` with the `locked_until` time, code input locked until then                                |
+| `PENDING_REGISTRATION_EXPIRED`                                                                       | `auth_err_pending_expired`, back to step 1 (AC13)                                                               |
+| `RATE_LIMITED`                                                                                       | `auth_err_rate_limited_wait` with the wait in seconds; `auth_err_rate_limited` when no wait is given            |
+| `EMAIL_SEND_FAILED`                                                                                  | `auth_err_email_send_failed`                                                                                    |
+| 5xx, `INVALID_DEVICE`, `INVALID_API_KEY`                                                             | `auth_err_generic`, logged on the server                                                                        |
+| `NETWORK_ERROR`                                                                                      | `auth_err_network`                                                                                              |
 
 ## Out of scope
 
-- Đăng nhập, phiên, quên mật khẩu → `../login/`.
-- Màn giới thiệu, chuyển hướng khi mở app → chỉ app.
-- Đổi email / SĐT, xoá tài khoản, Google/Apple → để sau (product §1.2).
+- Login, session, forgot password → `../login/`.
+- Intro screens, redirect when opening the app → app only.
+- Change email / phone, delete account, Google/Apple → later (product §1.2).
 
 ## Pending (not yet implemented)
 
-Toàn bộ thay đổi từ SMS sang email — `tasks.md` Phase 1–5.
+The whole move from SMS to email — `tasks.md` Phases 1–5. Not yet run against a real backend server. Also open: `OTP_LOCKED` / `OTP_SEND_LIMITED`
+do not yet show the unlock time (AC16, Error → UI table).
+
+## Open assumptions
+
+- The site sends the digits after `normalizePhone` (trunk `0` stripped) as `phone_number`; the backend accepts this (it strips one leading `0` and ignores spaces, `.`, `-`). Recorded 2026-10-16; if the backend rule changes, the sent value must be revisited.
 
 ## Open questions (resolved)
 
-- ~~Mật khẩu có giữ khi "Đổi số"/"Đổi email"?~~ → Giữ mọi ô (FR-ONB-009 "every field as the user left it"). Resolved 2026-10-14.
-- ~~`PENDING_REGISTRATION_EXPIRED` có điền lại ô?~~ → Có, mọi ô (FR-ONB-010). Resolved 2026-10-14.
-- ~~Người đã đăng nhập mở `/signup`?~~ → Về trang chủ (product §3.6). Resolved 2026-10-14.
-- ~~Captcha / rate limit ở server SvelteKit?~~ → Không làm ở website; backend giới hạn theo IP của khách mà website chuyển tiếp (backend login v2.2 AC34). Resolved 2026-10-14.
-- ~~"Một nguồn" cho điều khoản (BR-ONB-11)?~~ → Trang `/terms` và `/privacy` của website là nguồn; app mở các trang đó (cách hiển thị do từng nền tảng). Đề xuất của Claude, anh Đức duyệt qua PR này; iOS/Android theo cùng nguồn. Resolved 2026-10-14.
+- ~~Screen for `PHONE_TAKEN` / `INVALID_TEMPLE` at the code step?~~ → Back to step 1, every value kept, error at the related field; no account is created (product v1.7 BR-ONB-08 / FR-ONB-005 / FR-ONB-004, decided by anh Đức; matches AC21). Resolved 2026-10-17.
+
+- ~~What does the visitor see on `REGISTRATION_IN_PROGRESS`?~~ → Stay on the form, every value kept, "wait N seconds" with N from the backend, no email, nothing changed (product v1.6 BR-ONB-08 / FR-ONB-003, decided by anh Đức). Resolved 2026-10-16.
+
+- ~~Is the password kept on "Change phone"/"Change email"?~~ → Every field is kept (FR-ONB-009 "every field as the user left it"). Resolved 2026-10-14.
+- ~~Does `PENDING_REGISTRATION_EXPIRED` refill the fields?~~ → Yes, all fields (FR-ONB-010). Resolved 2026-10-14.
+- ~~What happens when a signed-in user opens `/signup`?~~ → Redirect to the home page (product §3.6). Resolved 2026-10-14.
+- ~~Captcha / rate limit on the SvelteKit server?~~ → Not done on the website; the backend limits by the visitor IP that the website forwards (backend login v2.2 AC34). Resolved 2026-10-14.
+- ~~"Single source" for the terms (BR-ONB-11)?~~ → The website's `/terms` and `/privacy` pages are the source; the app opens those pages (presentation is per platform). Claude's proposal, approved by anh Đức via this PR; iOS/Android follow the same source. Resolved 2026-10-14.

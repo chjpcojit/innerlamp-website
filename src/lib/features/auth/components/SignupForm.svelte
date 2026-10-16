@@ -6,7 +6,8 @@
 	import { passwordScore } from '$lib/utils/password';
 	import { enhance } from '$app/forms';
 	import { DHARMA_NAMES } from '../data';
-	import { authErrorMessage } from '../errors';
+	import { authErrorMessage, errorContext } from '../errors';
+	import { checkPassword } from '../validation';
 	import PhoneField from './PhoneField.svelte';
 	import SignupOtp from './SignupOtp.svelte';
 	import AddTempleForm from './AddTempleForm.svelte';
@@ -19,7 +20,7 @@
 		form?: {
 			error?: string;
 			step?: 'otp';
-			phone?: string;
+			email?: string;
 			resendAfter?: number;
 			expiresIn?: number;
 			suggestion?: TempleSuggestion | null;
@@ -28,10 +29,10 @@
 
 	let { form }: Props = $props();
 
-	// Step 2 (SMS code) shows once the backend has accepted step 1; "change number" returns.
+	// Step 2 (emailed code) shows once the backend has accepted step 1; "change email" returns.
 	let backed = $state(false);
 	let busy = $state(false);
-	const otpStep = $derived(form?.step === 'otp' && !!form.phone && !backed);
+	const otpStep = $derived(form?.step === 'otp' && !!form.email && !backed);
 
 	let fullName = $state('');
 	let name = $state('');
@@ -44,7 +45,8 @@
 	let addingTemple = $state(false);
 	let phone = $state('');
 	let phoneOk = $state(false);
-	let e164 = $state('');
+	let national = $state('');
+	let iso = $state('');
 	let email = $state('');
 	let password = $state('');
 	let showPassword = $state(false);
@@ -53,8 +55,8 @@
 	const emailOk = $derived(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email));
 	const emailErr = $derived(!!email && !emailOk);
 	const score = $derived(passwordScore(password));
-	// The backend counts bytes, not characters.
-	const passwordOk = $derived(new TextEncoder().encode(password).length >= 8);
+	// 8–64 characters after NFC (BR-ONB-06).
+	const passwordOk = $derived(checkPassword(password) === 'ok');
 	const canSubmit = $derived(
 		fullName.trim().length >= 2 && agree && phoneOk && emailOk && passwordOk && !busy
 	);
@@ -79,20 +81,21 @@
 	const href = (path: string) => resolve(localizeHref(path) as Pathname);
 
 	const field = 'rounded-2xl border bg-paper px-4 py-3';
-	const label = 'text-[11px] text-ink/45';
+	const label = 'text-xs text-ink/45';
 	const input =
 		'min-w-0 flex-1 border-0 bg-transparent p-0 text-[15px] text-ink outline-none placeholder:text-ink/35';
 	const check =
 		'size-[18px] flex-none rounded-full bg-sage flex items-center justify-center transition-opacity';
 </script>
 
-{#if otpStep && form?.phone}
+{#if otpStep && form?.email}
 	<SignupOtp
-		phone={form.phone}
+		email={form.email}
 		resendAfter={form.resendAfter}
 		expiresIn={form.expiresIn}
 		suggestion={form.suggestion}
 		error={form.error}
+		errorContext={errorContext(form)}
 		onback={() => (backed = true)}
 	/>
 {:else}
@@ -126,7 +129,8 @@
 			};
 		}}
 	>
-		<input type="hidden" name="phone_number" value={e164} />
+		<input type="hidden" name="phone_number" value={national} />
+		<input type="hidden" name="phone_country" value={iso} />
 		{#if pendingTemple?.ward_code}
 			<!-- Sent to the backend for review once the account is created. -->
 			<input type="hidden" name="suggest_name" value={pendingTemple.name} />
@@ -134,8 +138,8 @@
 			<input type="hidden" name="suggest_ward_code" value={pendingTemple.ward_code} />
 			<input type="hidden" name="suggest_address" value={pendingTemple.address} />
 		{/if}
-		<h1 class="font-serif text-[31px]/[1.22]">{m.signup_title()}</h1>
-		<p class="mt-2.5 text-[13.5px]/[1.65] text-ink/50">{m.signup_subtitle()}</p>
+		<h1 class="font-serif text-[40px]/[1.22]">{m.signup_title()}</h1>
+		<p class="mt-2.5 text-[13px]/[1.65] text-ink/52">{m.signup_subtitle()}</p>
 
 		<div class="mt-[22px] flex flex-col gap-2.5">
 			<!-- Full name -->
@@ -159,7 +163,10 @@
 			<!-- Dharma name -->
 			<div class="{field} flex items-center gap-3 border-ink/12">
 				<label class="flex min-w-0 flex-1 flex-col">
-					<span class={label}>{m.signup_name_label()}</span>
+					<span class="flex items-baseline gap-2">
+						<span class={label}>{m.signup_name_label()}</span>
+						<span class="text-[10.5px] text-ink/38">{m.signup_name_optional()}</span>
+					</span>
 					<input
 						bind:value={name}
 						name="dharma_name"
@@ -215,7 +222,8 @@
 				id="signup-phone"
 				bind:phone
 				bind:valid={phoneOk}
-				bind:e164
+				bind:national
+				bind:iso
 				label={m.phone_label()}
 			/>
 
@@ -304,15 +312,29 @@
 
 		<div class="mt-[18px] border-t border-ink/8 pt-4">
 			{#if form?.error && !form.step}
-				<p class="mb-3 ml-1 text-xs text-[#9A5F58]" role="alert">{authErrorMessage(form.error)}</p>
+				<p
+					class="mb-4 rounded-[14px] border border-[#A4442E]/18 bg-[#A4442E]/7 px-3.5 py-3 text-[13px]/[1.55] text-pretty text-[#A4442E]"
+					role="alert"
+				>
+					{authErrorMessage(form.error, errorContext(form))}
+					{#if form.error === 'PHONE_TAKEN'}
+						<a href={href('/login')} class="font-medium underline">{m.login_submit()}</a>
+					{/if}
+				</p>
 			{/if}
 			<button
 				type="submit"
 				disabled={!canSubmit}
-				class="h-[54px] w-full rounded-full text-[15px] font-medium transition-colors {canSubmit
+				class="flex h-[54px] w-full items-center justify-center rounded-full text-[15px] font-medium transition-colors {canSubmit
 					? 'cursor-pointer bg-ink text-[#F7F2E8] shadow-[0_8px_24px_rgba(34,30,25,.16)]'
 					: 'cursor-not-allowed bg-ink/12 text-ink/38'}"
 			>
+				{#if busy}
+					<span
+						class="mr-2.5 size-[15px] animate-spin rounded-full border-2 border-[#F7F2E8]/35 border-t-[#F7F2E8]"
+						aria-hidden="true"
+					></span>
+				{/if}
 				{m.signup_submit()}
 			</button>
 			<a href={href('/login')} class="mt-3.5 block text-center text-[13px] text-ink/45"

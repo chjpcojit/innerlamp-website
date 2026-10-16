@@ -3,37 +3,30 @@
 	import { enhance } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
 	import type { TempleSuggestionRequest } from '$lib/types/temple';
-	import { COUNTRIES } from '../data';
-	import { authErrorMessage } from '../errors';
+	import { authErrorMessage, type ErrorContext } from '../errors';
 
 	interface Props {
-		/** E.164, e.g. "+84949123456". */
-		phone: string;
+		/** Address the code was emailed to. */
+		email: string;
 		/** Seconds until the code may be resent (from the backend). */
 		resendAfter?: number;
 		/** Seconds the code stays valid (from the backend). */
 		expiresIn?: number;
 		error?: string;
+		/** Extra data for `error` (wait seconds, unlock time). */
+		errorContext?: ErrorContext;
 		/** Proposed temple to submit after the account is created; round-trips untouched. */
 		suggestion?: TempleSuggestionRequest | null;
 		onback: () => void;
 	}
 
-	let { phone, resendAfter, expiresIn, error, suggestion, onback }: Props = $props();
+	let { email, resendAfter, expiresIn, error, errorContext, suggestion, onback }: Props = $props();
 
 	const LENGTH = 6;
 	const DEFAULT_EXPIRES = 90;
 	const DEFAULT_RESEND = 60;
 
 	const suggestionJson = $derived(suggestion ? JSON.stringify(suggestion) : '');
-
-	// "+84 949 ••• 456": enough to recognise the number without printing it in full.
-	const masked = $derived.by(() => {
-		const dial = COUNTRIES.find((c) => phone.startsWith(c.dial))?.dial;
-		if (!dial) return phone;
-		const national = phone.slice(dial.length);
-		return `${dial} ${national.slice(0, 3)} ••• ${national.slice(-3)}`;
-	});
 
 	let code = $state('');
 	let busy = $state(false);
@@ -88,10 +81,7 @@
 	<h1 class="font-serif text-[40px]/[1.2]">{m.signup_otp_title()}</h1>
 	<p class="mt-2.5 text-[13px]/[1.65] text-pretty text-ink/55">
 		{m.signup_otp_subtitle()}
-		<span class="font-medium whitespace-nowrap text-ink">{masked}</span>.
-		<button type="button" onclick={onback} class="cursor-pointer font-medium text-gold-deep">
-			{m.signup_otp_change_phone()}
-		</button>
+		<span class="font-medium [word-break:break-all] text-ink">{email}</span>.
 	</p>
 
 	<form
@@ -111,7 +101,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="phone_number" value={phone} />
+		<input type="hidden" name="email" value={email} />
 		<input type="hidden" name="temple_suggestion" value={suggestionJson} />
 
 		<div class="relative mt-[26px]">
@@ -168,7 +158,7 @@
 				class="mt-3.5 rounded-xl bg-[#A4442E]/8 px-3.5 py-2.5 text-[13px] text-[#A4442E]"
 				role="alert"
 			>
-				{authErrorMessage(error)}
+				{authErrorMessage(error, errorContext)}
 			</p>
 		{/if}
 
@@ -205,7 +195,7 @@
 				}
 			}}
 	>
-		<input type="hidden" name="phone_number" value={phone} />
+		<input type="hidden" name="email" value={email} />
 		<input type="hidden" name="temple_suggestion" value={suggestionJson} />
 		{#if wait === 0}
 			<button type="submit" class="mt-3.5 cursor-pointer text-[13px] font-medium text-gold-deep">

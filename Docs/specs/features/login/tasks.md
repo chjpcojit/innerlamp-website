@@ -1,53 +1,61 @@
-# Tasks — login (Đăng nhập, phiên, quên mật khẩu)
+# Tasks — login (sign-in, session, forgot password)
 
-Version: 2.0
-Last updated: 2026-10-14
-Status: in-progress (drift) — mirror `requirements.md`.
+Version: 2.3
+Last updated: 2026-10-17
+Status: in-progress — mirrors `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
 
-`[x]` = đã kiểm trong code ngày 2026-10-14. Task v1.1 chưa làm được gộp vào đây; task v1.1 đã xong
-không lặp lại.
+`[x]` = verified in code on 2026-10-17 (exercised against a mock backend; no real BE server run yet). Unfinished v1.1 tasks are merged in here; finished v1.1 tasks
+are not repeated.
 
-## Phase 1 — Đăng nhập bằng email
+## Phase 1 — Sign-in by email
 
-- [ ] `types/auth.ts`, `server/api/auth.ts`: `login` với `email`.
-- [ ] `login/+page.server.ts`: `load` chặn người có phiên (AC2), đọc `reason`/`redirect`; action theo AC4; `safeRedirect` (AC6).
-- [ ] `features/auth/redirect.ts` + `redirect.spec.ts` (đường dẫn ngoài site, `//evil`, `javascript:` bị bỏ).
-- [ ] `LoginForm.svelte`: ô email, bỏ nút mã SMS, xoá mật khẩu sau lỗi, hiển thị `login_session_ended` / `login_password_changed`, giờ mở khoá theo `locked_until` (AC1, AC3, AC5).
-- [x] Đăng nhập gửi `device.platform = "web"` và `device_model` từ User-Agent (`login/+page.server.ts`) — giữ.
+- [x] `types/auth.ts`, `server/api/auth.ts`: `login` with `email` and `device`.
+- [x] `login/+page.server.ts`: `load` blocks signed-in users (AC2) and reads `reason`/`redirect`; redirect after sign-in via `safeRedirect` (AC4, AC6).
+- [x] `features/auth/redirect.ts` (off-site paths, `//evil`, `javascript:` are dropped; checked by a one-off script).
+- [ ] `redirect.spec.ts` — the project has no unit-test runner yet (`il-testing`).
+- [x] `LoginForm.svelte`: email field, no SMS-code button, "Forgot password?" link, submit disabled while empty (AC1, AC3).
+- [x] `LoginForm.svelte` + `errors.ts`: unlock time from `locked_until` via `errorContext(form)` (AC5).
+- [x] `LoginForm.svelte`: clear the password after a failure; show `login_session_ended` / `login_password_changed`.
+- [x] Sign-in sends `device.platform = "web"` and `device_model` from the User-Agent (`login/+page.server.ts`) — kept.
 
-## Phase 2 — Phiên
+## Phase 2 — Session
 
-- [ ] `server/auth/refresh.ts` single-flight + `refresh.spec.ts` (hai request song song chỉ refresh một lần) (AC7).
-- [ ] `client.ts` `apiAuthed`: `401` → refresh → thử lại → `sessionEnded` (AC8).
-- [ ] `session.ts` `sessionEnded`; hook dùng nó khi refresh bị từ chối (AC9).
-- [ ] `startSession`: `il_name = dharma_name || full_name`.
-- [x] TTL `il_token` từ `expires_in` (fallback 15 phút) (`session.ts` `setTokens`).
-- [x] Token chỉ trong cookie httpOnly, không xuống browser (AC10).
-- [x] Đăng xuất có xác nhận, best effort, xoá cookie, về `/` (`ProfileHeader.svelte`, `profile/+page.server.ts`) (AC11).
-- [ ] Trang cần tài khoản: link mời đăng nhập thêm `?redirect=` (AC17).
+- [x] `server/auth/refresh.ts` single-flight (AC7).
+- [ ] `refresh.spec.ts` (two parallel requests refresh only once) — no unit-test runner yet.
+- [x] `401` → refresh → retry → session ended, implemented in `handleFetch` instead of an `apiAuthed` wrapper (AC8).
+- [x] `hooks.server.ts` `handleSessionEnded` + `locals.sessionEnded` when refresh is rejected or a retry is still `401` (AC9).
+- [x] `503 SERVICE_UNAVAILABLE` is passed through, cookies kept (AC8); the page shows its existing error state. A dedicated `auth_err_generic` message for it is not built.
+- [x] `startSession`: `il_name = dharma_name || full_name`.
+- [x] `il_token` TTL from `expires_in` (fallback 15 minutes) (`session.ts` `setTokens`).
+- [x] Tokens only in httpOnly cookies, never sent to the browser (AC10).
+- [x] Sign-out with confirmation, best effort, clear cookies, back to `/` (`ProfileHeader.svelte`, `profile/+page.server.ts`) (AC11).
+- [ ] Pages that need an account: sign-in invitation link adds `?redirect=` (AC17).
 
-## Phase 3 — Quên mật khẩu
+## Phase 3 — Forgot password
 
-- [ ] `server/api/auth.ts`: `requestPasswordReset`, `confirmPasswordReset`; types.
-- [ ] `forgot-password/+page.server.ts` + `+page.svelte` theo Step 1–3 (AC12–AC16).
-- [ ] Tách đồng hồ của `SignupOtp.svelte` thành `OtpTimers.svelte`, dùng ở cả hai nơi.
-- [ ] `ForgotPasswordForm.svelte`; kiểm mật khẩu mới bằng `checkPassword` (onboarding Phase 1).
+- [x] `server/api/auth.ts`: `requestPasswordReset`, `confirmPasswordReset`; types.
+- [x] `forgot-password/+page.server.ts` + `+page.svelte` following Steps 1–3 (AC12–AC16): timers from `expires_in_seconds` / `resend_after_seconds`; after confirm `endSession` and 303 to `/login?reason=password_changed`; `OTP_EXPIRED` is shown like an expired code.
+- [x] Timers extracted to `features/auth/otp-timers.svelte.ts` and used by the forgot-password form.
+- [ ] Switch `SignupOtp.svelte` to `OtpTimers` (still has its own copy).
+- [x] `ForgotPasswordForm.svelte`; the new password is checked with `checkPassword` (`features/auth/validation.ts`).
 
-## Phase 4 — Header tới backend + i18n
+## Phase 4 — Headers to the backend + i18n
 
-- [ ] `client.ts`: `X-InnerLamp-Client-IP` (IP khách, từ `event.getClientAddress()`) + `User-Agent` trình duyệt (AC19).
-- [ ] `errors.ts`: `RATE_LIMITED`, `SESSION_ENDED`.
-- [ ] i18n theo bảng ở `design.md` (vi + en cùng key).
+- [x] `hooks.server.ts` `handleFetch`: `X-InnerLamp-Client-IP` from `event.getClientAddress()` on every request to `API_BASE_URL` (AC19, client IP part).
+- [x] Forward the browser's `User-Agent` to the backend (AC19, User-Agent part) in `handleFetch`.
+- [x] `errors.ts`: `authErrorMessage(code, ctx)`, `ErrorContext`, `errorContext`; mappings `LOGIN_LOCKED` (with/without time), `RATE_LIMITED` (with/without seconds), `REGISTRATION_IN_PROGRESS`, `EMAIL_SEND_FAILED`, `INVALID_DEVICE`, `INVALID_API_KEY`; `authFail` returns `lockedUntil` and `retryAfter` (AC5, AC18).
+- [ ] `errors.ts`: `SESSION_ENDED` for actions (POST) and `/api/*` calls.
+- [x] i18n per the table in `design.md`: `auth_err_*`, `login_session_ended`, `login_password_changed`, `forgot_*` exist in vi + en.
 
-## Phase 5 — Test
+## Phase 5 — Tests
 
-- [ ] `tests/login.e2e.ts`: đăng nhập email, sai thông tin đồng nhất, khoá hiển thị giờ, `redirect`, người có phiên mở `/login`.
-- [ ] `tests/forgot-password.e2e.ts`: email có / không có tài khoản trông như nhau; đặt lại xong phiên ở trình duyệt khác bị báo hết.
+- [ ] `tests/login.e2e.ts`: email sign-in, uniform wrong-credentials message, lockout shows the time, `redirect`, signed-in user opening `/login`.
+- [ ] `tests/forgot-password.e2e.ts`: email with / without an account looks the same (including the `OTP_EXPIRED` on confirm); fifth code request shows the send-limit message; after a reset, a session in another browser is reported as ended and a locked email signs in with the new password. Runs against a real backend, not yet tried.
 
-## Phase 6 — Chất lượng + tài liệu
+## Phase 6 — Quality + docs
 
-- [ ] `npm run check && npm run lint && npm run build` sạch.
-- [ ] Cập nhật cột Website ở product §4.2 khi xong (báo `ba-writer`).
-- [ ] Hardening chưa làm từ v1.1 (`__Host-` cookie ở prod, HSTS, CSP, Referrer-Policy) — giữ làm việc riêng, không chặn spec này.
+- [ ] `npm run check && npm run lint && npm run build` clean.
+- [ ] Update the Website column in product §4.2 when done (tell `ba-writer`).
+- [ ] Hardening not done since v1.1 (`__Host-` cookie in prod, HSTS, CSP, Referrer-Policy) — kept as separate work, does not block this spec.

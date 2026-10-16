@@ -42,18 +42,20 @@ function suggestionFromJson(form: FormData): TempleSuggestionRequest | null {
 }
 
 export const actions: Actions = {
-	// Step 1: validate + send the SMS code. The password is never echoed back to the page.
+	// Step 1: validate + email the verification code. The password is never echoed back to the page.
 	request: async ({ request, fetch }) => {
 		const form = await request.formData();
 		const phone = text(form, 'phone_number');
+		const phoneCountry = text(form, 'phone_country');
 		const fullName = text(form, 'full_name');
 		const email = text(form, 'email');
 		const password = String(form.get('password') ?? '');
-		if (!phone || fullName.length < 2 || !email || !password)
+		if (!phone || !phoneCountry || fullName.length < 2 || !email || !password)
 			return fail(400, { error: 'VALIDATION_ERROR' });
 
 		try {
 			const challenge = await requestRegisterOtp(fetch, {
+				phone_country: phoneCountry,
 				phone_number: phone,
 				email,
 				password,
@@ -63,7 +65,7 @@ export const actions: Actions = {
 			});
 			return {
 				step: 'otp' as const,
-				phone,
+				email,
 				resendAfter: challenge.resend_after_seconds,
 				expiresIn: challenge.expires_in_seconds,
 				suggestion: readSuggestion({
@@ -80,35 +82,39 @@ export const actions: Actions = {
 
 	resend: async ({ request, fetch }) => {
 		const form = await request.formData();
-		const phone = text(form, 'phone_number');
+		const email = text(form, 'email');
 		const suggestion = suggestionFromJson(form);
 		try {
-			const challenge = await resendRegisterOtp(fetch, phone);
+			const challenge = await resendRegisterOtp(fetch, email);
 			return {
 				step: 'otp' as const,
-				phone,
+				email,
 				resendAfter: challenge.resend_after_seconds,
 				expiresIn: challenge.expires_in_seconds,
 				suggestion
 			};
 		} catch (e) {
-			return authFail(e, { step: 'otp' as const, phone, suggestion });
+			return authFail(e, { step: 'otp' as const, email, suggestion });
 		}
 	},
 
 	// Step 2: confirm the code; the backend creates the account and logs the user in.
 	verify: async ({ request, fetch, cookies }) => {
 		const form = await request.formData();
-		const phone = text(form, 'phone_number');
+		const email = text(form, 'email');
 		const code = text(form, 'otp_code');
 		const suggestion = suggestionFromJson(form);
 		if (!/^\d{6}$/.test(code))
-			return fail(400, { error: 'OTP_INVALID', step: 'otp' as const, phone, suggestion });
+			return fail(400, { error: 'OTP_INVALID', step: 'otp' as const, email, suggestion });
 
 		try {
-			startSession(cookies, await verifyRegisterOtp(fetch, phone, code));
+			startSession(cookies, await verifyRegisterOtp(fetch, email, code));
 		} catch (e) {
-			return authFail(e, { step: 'otp' as const, phone, suggestion });
+			// No account exists yet: a number or temple that went stale while the code was pending
+			// sends the visitor back to step 1 with every field kept (AC21).
+			if (e instanceof ApiError && ['PHONE_TAKEN', 'INVALID_TEMPLE'].includes(e.code))
+				return authFail(e);
+			return authFail(e, { step: 'otp' as const, email, suggestion });
 		}
 
 		// Best effort: a rejected proposal (rate limit, validation) must not undo the sign-up.

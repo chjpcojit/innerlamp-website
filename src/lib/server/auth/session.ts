@@ -33,10 +33,10 @@ export function setTokens(cookies: Cookies, tokens: AuthTokens): void {
 	cookies.set(REFRESH_COOKIE, tokens.refresh_token, cookieOptions(REFRESH_MAX_AGE));
 }
 
-/** Persist a backend session: tokens plus the display name (dharma name, else phone). */
+/** Persist a backend session: tokens plus the display name (dharma name, else full name). */
 export function startSession(cookies: Cookies, session: AuthSession): void {
 	setTokens(cookies, session);
-	const name = session.user.dharma_name || session.user.phone_number;
+	const name = session.user.dharma_name || session.user.full_name || '';
 	cookies.set(NAME_COOKIE, name, cookieOptions(REFRESH_MAX_AGE));
 }
 

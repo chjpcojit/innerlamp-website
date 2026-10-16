@@ -8,6 +8,7 @@ export function authFail(e: unknown, extra: Record<string, unknown> = {}) {
 		error: e.code,
 		retryAfter:
 			typeof e.details.retry_after_seconds === 'number' ? e.details.retry_after_seconds : undefined,
+		lockedUntil: typeof e.details.locked_until === 'string' ? e.details.locked_until : undefined,
 		...extra
 	});
 }
