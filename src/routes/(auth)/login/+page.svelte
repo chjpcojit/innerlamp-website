@@ -4,7 +4,7 @@
 	import AuthShell from '$lib/components/layout/AuthShell.svelte';
 	import LoginForm from '$lib/features/auth/components/LoginForm.svelte';
 
-	let { form }: PageProps = $props();
+	let { form, data }: PageProps = $props();
 </script>
 
 <svelte:head>
@@ -13,5 +13,5 @@
 </svelte:head>
 
 <AuthShell>
-	<LoginForm {form} />
+	<LoginForm {form} notice={data.notice} redirectTo={data.redirectTo} />
 </AuthShell>

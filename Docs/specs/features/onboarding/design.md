@@ -1,84 +1,98 @@
-# Design — onboarding (Đăng ký trên website)
+# Design — onboarding (Website sign-up)
 
-Version: 1.1
-Last updated: 2026-10-15
-Status: in-progress (drift) — mirror `requirements.md`.
+Version: 1.7
+Last updated: 2026-10-17
+Status: in-progress (drift) — mirrors `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
 
 ## Overview
 
-Giữ kiến trúc của `/signup` hiện tại: một trang, hai bước trong cùng `+page.svelte`, ba form action
-(`request`, `resend`, `verify`) gọi backend qua `$lib/server/api/auth.ts`; cookie phiên do
-`$lib/server/auth/session.ts` đặt (như `../login/`). Thay đổi chính: định danh của lượt đăng ký là
-**email** (thay SĐT), số điện thoại gửi dạng `phone_country` + số đã gõ, luật kiểm đổi theo product
-v1.2, đề xuất chùa không bắt buộc địa chỉ đường, thêm `load` chặn người đã đăng nhập.
+Keep the architecture of the current `/signup`: one page, two steps inside the same `+page.svelte`,
+three form actions (`request`, `resend`, `verify`) calling the backend through `$lib/server/api/auth.ts`;
+session cookies are set by `$lib/server/auth/session.ts` (as in `../login/`). Main changes: the
+identity of a registration attempt is the **email** (replacing the phone), the phone is sent as
+`phone_country` + national digits, the validation rules follow product v1.2, the temple suggestion no
+longer requires a street address, and a `load` blocks signed-in users.
+
+Phone sending (changed 2026-10-16): `PhoneField` exposes bindable `national` (the digits after
+`normalizePhone`, trunk `0` stripped) and `iso` (the chosen country); `SignupForm` posts them as hidden
+fields `phone_number` and `phone_country`. The site no longer assembles E.164 for the request. The
+backend expects the national number without `+` or country code (see the contract in `requirements.md`).
+
+Every backend request carries `X-InnerLamp-Client-IP`, added in `handleFetch` of `src/hooks.server.ts`
+(see `../login/design.md`, "Headers sent to the backend").
 
 ## Layers & components
 
-| Layer | File | Responsibility | Trạng thái |
-| --- | --- | --- | --- |
-| Route (UI) | `src/routes/(auth)/signup/+page.svelte` | `<svelte:head>`, render `SignupForm` | có, không đổi |
-| Route (server) | `src/routes/(auth)/signup/+page.server.ts` | `load`: có phiên → 303 `/`. Actions `request` / `resend` / `verify` theo email; echo các ô (trừ mật khẩu) về form khi lỗi; gửi đề xuất chùa sau `verify` | cần sửa |
-| Feature UI | `src/lib/features/auth/components/SignupForm.svelte` | Ô họ tên (bắt buộc, ≥ 1 ký tự), pháp danh (tuỳ chọn, rỗng mặc định), email, mật khẩu (8–64 ký tự), lỗi theo ô | cần sửa |
-| Feature UI | `src/lib/features/auth/components/PhoneField.svelte`, `CountryPicker.svelte` | Chọn nước từ bảng 12 nước; kiểm số theo nước; gửi `phone_country` + số đã gõ | cần sửa |
-| Feature UI | `src/lib/features/auth/components/SignupOtp.svelte` | Hiển thị email; hai đồng hồ theo response; "Đổi email"; khoá ô khi `OTP_LOCKED`; nhấn mạnh gửi lại khi hết hạn | cần sửa |
-| Feature UI | `src/lib/features/auth/components/AddTempleForm.svelte` | Tỉnh, phường bắt buộc từ danh sách; địa chỉ đường tuỳ chọn | cần sửa |
-| Feature logic | `src/lib/features/auth/data.ts` | `COUNTRIES` = 12 nước của BR-ONB-04 kèm số chữ số (bỏ Trung Quốc, thêm Malaysia) | cần sửa |
-| Feature logic | `src/lib/features/auth/validation.ts` | Hàm thuần `checkPhone(country, typed)`, `checkEmail`, `checkPassword` (đếm ký tự sau NFC), `checkNames` — dùng ở UI và test vector | chưa tạo |
-| Feature logic | `src/lib/features/auth/errors.ts` | Map mã lỗi → key; mã → ô (`fieldOf(code)`); thêm `RATE_LIMITED`, `EMAIL_SEND_FAILED`; bỏ `EMAIL_TAKEN` | cần sửa |
-| API resource | `src/lib/server/api/auth.ts` | `requestRegisterOtp(body)`, `resendRegisterOtp(email)` → `register/resend-otp`, `verifyRegisterOtp(email, code)` | cần sửa |
-| Types | `src/lib/types/auth.ts` | `RegisterRequest` có `email`, `phone_country`, `phone_number` (đã gõ) | cần sửa |
-| Types | `src/lib/types/temple.ts` | `TempleSuggestionRequest.address` tuỳ chọn | cần sửa |
-| i18n | `messages/vi.json`, `messages/en.json` | `signup_otp_subtitle` nói email; `signup_otp_change_email` thay `signup_otp_change_phone`; `signup_email_note` bỏ "biên nhận cúng dường"; `auth_err_rate_limited`; bỏ `auth_err_email_taken`, `country_cn`; thêm `country_my` | cần sửa |
-| Tests | `src/lib/features/auth/validation.spec.ts`, `tests/signup.e2e.ts` | Vector product (AC19); E2E hai bước với backend dev (mã dev) | chưa tạo |
+| Layer          | File                                                                         | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                              | Status                                                                             |
+| -------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Route (UI)     | `src/routes/(auth)/signup/+page.svelte`                                      | `<svelte:head>`, renders `SignupForm`                                                                                                                                                                                                                                                                                                                                                                                                       | exists, unchanged                                                                  |
+| Route (server) | `src/routes/(auth)/signup/+page.server.ts`                                   | `load`: session → 303 `/`. Actions `request` / `resend` / `verify` keyed by email; echo fields (except password) on error; send the temple suggestion after `verify`. `request` requires `phone_country` and passes `phone_country` + `phone_number` to `requestRegisterOtp`                                                                                                                                                                | partly done (phone fields); `load` guard and temple `address` optional still to do |
+| Feature UI     | `src/lib/features/auth/components/SignupForm.svelte`                         | Full name (required, ≥ 1 char), dharma name (optional, empty), email, password (8–64 chars), per-field errors; posts hidden `phone_number` = `national` and `phone_country` = `iso`; passes `errorContext` to errors and to `SignupOtp`                                                                                                                                                                                                     | partly done (phone posting, `errorContext`)                                        |
+| Feature UI     | `src/lib/features/auth/components/PhoneField.svelte`, `CountryPicker.svelte` | Choose a country from the 12-country table; bindable `national` and `iso`; per-country digit validation                                                                                                                                                                                                                                                                                                                                     | partly done (`national`/`iso`); per-country validation still to do                 |
+| Feature UI     | `src/lib/features/auth/components/SignupOtp.svelte`                          | Shows the email; two timers from the response; "Change email"; locks the input on `OTP_LOCKED`; emphasises resend on expiry; `errorContext` prop for the wait/unlock data                                                                                                                                                                                                                                                                   | partly done (`errorContext` prop); rest to do                                      |
+| Feature UI     | `src/lib/features/auth/components/AddTempleForm.svelte`                      | Province, ward required from the list; street address optional                                                                                                                                                                                                                                                                                                                                                                              | to change                                                                          |
+| Feature logic  | `src/lib/features/auth/data.ts`                                              | `COUNTRIES` = the 12 countries of BR-ONB-04 (`VN`, `US`, `JP`, `KR`, `TH`, `SG`, `MY`, `TW`, `AU`, `DE`, `FR`, `CA`; China removed, Malaysia added)                                                                                                                                                                                                                                                                                         | list done; per-country digit counts to do                                          |
+| Feature logic  | `src/lib/features/auth/validation.ts`                                        | Pure functions `checkPhone(country, typed)`, `checkEmail`, `checkPassword` (count characters after NFC), `checkNames` — used by the UI and the vector tests                                                                                                                                                                                                                                                                                 | not created                                                                        |
+| Feature logic  | `src/lib/features/auth/errors.ts`                                            | Error code → Paraglide key via `authErrorMessage(code, ctx)`; `ErrorContext` (`lockedUntil`, `retryAfter`) and `errorContext(data)` read from an action result; `RATE_LIMITED` (`auth_err_rate_limited_wait` with `{seconds}`, fallback `auth_err_rate_limited`), `REGISTRATION_IN_PROGRESS`, `EMAIL_SEND_FAILED`; `INVALID_DEVICE` and `INVALID_API_KEY` → `auth_err_generic`; `EMAIL_TAKEN` removed; code → field mapping `fieldOf(code)` | mapping done; `fieldOf` to do                                                      |
+| API resource   | `src/lib/server/api/auth.ts`                                                 | `requestRegisterOtp(body)`, `resendRegisterOtp(email)` → `register/resend-otp`, `verifyRegisterOtp(email, code)`                                                                                                                                                                                                                                                                                                                            | done                                                                               |
+| Types          | `src/lib/types/auth.ts`                                                      | `RegisterRequest` has `email`, `phone_country`, `phone_number` (national, as typed — no `+`, no country code)                                                                                                                                                                                                                                                                                                                               | done                                                                               |
+| Types          | `src/lib/types/temple.ts`                                                    | `TempleSuggestionRequest.address` optional                                                                                                                                                                                                                                                                                                                                                                                                  | to verify/change                                                                   |
+| i18n           | `messages/vi.json`, `messages/en.json`                                       | `country_my` (replaces `country_cn`); `auth_err_rate_limited`, `auth_err_rate_limited_wait`, `auth_err_registration_in_progress`, `auth_err_email_send_failed`; `auth_err_email_taken` removed; still to do: `signup_otp_subtitle` about email, `signup_otp_change_email` replacing `signup_otp_change_phone`, `signup_email_note` without the donation-receipt wording                                                                     | partly done                                                                        |
+| Tests          | `src/lib/features/auth/validation.spec.ts`, `tests/signup.e2e.ts`            | Product vectors (AC19); two-step E2E against the dev backend (dev code)                                                                                                                                                                                                                                                                                                                                                                     | not created                                                                        |
 
 ## Route & navigation flow
 
 ```
-/signup  (load: có phiên → 303 /)
-  ├─ ?/request ✓ ──▶ bước mã (cùng trang)
-  │    ├─ ?/resend ✓ ──▶ đặt lại hai đồng hồ
-  │    ├─ ?/verify ✓ ──▶ cookie phiên ──▶ (đề xuất chùa) ──▶ 303 localizeHref('/')
-  │    ├─ "Đổi email" ──▶ bước 1, giữ mọi ô
-  │    └─ PENDING_REGISTRATION_EXPIRED ──▶ bước 1, giữ mọi ô
-  └─ link "đã có tài khoản" ──▶ /login
+/signup  (load: session → 303 /)
+  ├─ ?/request ✓ ──▶ code step (same page)
+  │    ├─ REGISTRATION_IN_PROGRESS ──▶ stay on step 1, fields kept, "wait N seconds" from retry_after_seconds (AC20)
+  │    ├─ verify PHONE_TAKEN / INVALID_TEMPLE ──▶ back to step 1, fields kept, error at the field (AC21)
+  │    ├─ ?/resend ✓ ──▶ reset both timers
+  │    ├─ ?/verify ✓ ──▶ session cookies ──▶ (temple suggestion) ──▶ 303 localizeHref('/')
+  │    ├─ "Change email" ──▶ step 1, fields kept
+  │    └─ PENDING_REGISTRATION_EXPIRED ──▶ step 1, fields kept
+  └─ "already have an account" link ──▶ /login
 ```
 
-## Step-by-step Flow — Đăng ký
+## Step-by-step Flow — Sign-up
 
 ```
-Step 1 — Gửi form (this feature)
-- Trigger: người dùng gửi form bước 1 hợp lệ.
-- Pre-condition: không có phiên (load đã chặn).
+Step 1 — Submit the form (this feature)
+- Trigger: the visitor submits a valid step 1 form.
+- Pre-condition: no session (load already blocks).
 - Where: `+page.server.ts` action `request`.
 - API: POST /v1/auth/register/request-otp {email, password, phone_country, phone_number, full_name, dharma_name?, ordination_temple_id?}
-    - Success → trả {step:'otp', email, expiresIn, resendAfter, fields (không mật khẩu), suggestion?}
-    - Failure → fail(status, {error, field, retryAfter?, lockedUntil?, fields}) — ở lại bước 1.
+    - phone_country = ISO of the chosen country; phone_number = national digits after normalizePhone (trunk 0 stripped), no "+" and no country code.
+    - Success → return {step:'otp', email, expiresIn, resendAfter, fields (no password), suggestion?}
+    - Failure → fail(status, {error, field, retryAfter?, lockedUntil?, fields}) — stay on step 1. REGISTRATION_IN_PROGRESS is one such failure (AC20).
 
-Step 2 — Gửi lại (tuỳ chọn, lặp được)
+Step 2 — Resend (optional, repeatable)
 - Where: action `resend`. API: POST /v1/auth/register/resend-otp {email}
-    - Success → đồng hồ mới. Failure PENDING_REGISTRATION_EXPIRED → về bước 1 (Step 1 fields); khác → ở lại bước mã.
+    - Success → new timers. Failure PENDING_REGISTRATION_EXPIRED → back to step 1 (Step 1 fields); otherwise stay on the code step.
 
-Step 3 — Xác nhận mã (this feature)
+Step 3 — Verify the code (this feature)
 - Where: action `verify`. API: POST /v1/auth/register/verify-otp {email, otp_code}
     - Success → startSession(cookies, session) (login design) → Step 4.
-    - Failure → fail(..., {step:'otp', ...}); PENDING_REGISTRATION_EXPIRED → về bước 1.
+    - Failure → fail(..., {step:'otp', ...}); PENDING_REGISTRATION_EXPIRED → back to step 1.
 
-Step 4 — Đề xuất chùa (best effort, chỉ khi có)
+Step 4 — Temple suggestion (best effort, only when present)
 - API: POST /v1/temple-suggestions {name, province_code, ward_code, address?}
-    - Mọi kết quả → 303 localizeHref('/'). Lỗi chỉ log.
+    - Any result → 303 localizeHref('/'). Errors are only logged.
 ```
 
-Mật khẩu chỉ đi trong Step 1; các ô khác (trừ mật khẩu) được echo qua kết quả action để giữ form khi
-quay về bước 1. Ở bước 1 sau khi quay lại, ô mật khẩu còn giá trị vì state của component không bị huỷ
-(cùng trang); tải lại trang thì mất (AC15).
+The password travels only in Step 1; the other fields (except the password) are echoed through the
+action result so the form is kept when returning to step 1. After returning to step 1 the password
+field still holds its value because component state is not destroyed (same page); a page reload loses
+it (AC15).
 
 ## Session & cookies
 
-Dùng `startSession` của `../login/design.md` (cookie `il_token`, `il_refresh`, `il_name`).
+Uses `startSession` from `../login/design.md` (cookies `il_token`, `il_refresh`, `il_name`).
 
 ## Deliberately stubbed for now
 
-- Backend chưa chạy contract mới (backend onboarding v8.0 `tasks.md`): website build xong trước sẽ chỉ
-  test được với backend sau khi backend làm xong; E2E (Phase 4) chạy sau đó.
+- The backend has not yet shipped the new contract (backend onboarding `tasks.md`), and the updated
+  `openapi.yaml` is an uncommitted backend working-tree change as of 2026-10-16: the website can be
+  built first but is only testable against the backend once the backend is done; E2E (Phase 4) runs after that.

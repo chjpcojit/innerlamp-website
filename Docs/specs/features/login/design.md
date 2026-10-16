@@ -1,114 +1,125 @@
-# Design — login (Đăng nhập, phiên, quên mật khẩu)
+# Design — login (sign-in, session, forgot password)
 
-Version: 2.0
-Last updated: 2026-10-14
-Status: in-progress (drift) — mirror `requirements.md`.
+Version: 2.3
+Last updated: 2026-10-17
+Status: in-progress (drift) — mirrors `requirements.md`.
 
 > See `changelog.md` in this folder for the version history of this spec.
 
 ## Overview
 
-Cùng kiến trúc như v1.1: form action gọi backend qua `$lib/server/api/auth.ts`, phiên trong cookie
-httpOnly, `hooks.server.ts` làm mới token và gán `locals.user`. v2.0: đăng nhập bằng email; trang mới
-`/forgot-password` (hai bước trong một trang, như `/signup`); một nơi xử lý "phiên hết" (hook + client
-API) đưa người dùng về `/login` kèm thông báo; tham số `redirect` để quay lại trang định vào; chuyển tiếp
-IP và User-Agent của khách tới backend.
+Same architecture as v1.1: the form action calls the backend through `$lib/server/api/auth.ts`, the
+session lives in httpOnly cookies, and `hooks.server.ts` refreshes tokens and sets `locals.user`.
+v2.0: sign-in by email; a new `/forgot-password` page (two steps on one page, like `/signup`); one
+place that handles "session ended" (hook + client API) and sends the user to `/login` with a notice;
+a `redirect` parameter to return to the intended page; forwarding of the visitor's IP and User-Agent
+to the backend. v2.1: the IP is forwarded by the `handleFetch` hook (not per call), and error copy
+takes context (unlock time, wait seconds). v2.2: follows contract 2.1.1 — reset endpoints are published, a revoked session returns `401` at once, `503` keeps the session.
 
 ## Layers & components
 
-| Layer | File | Responsibility | Trạng thái |
-| --- | --- | --- | --- |
-| Route (server) | `src/routes/(auth)/login/+page.server.ts` | `load`: có phiên → 303 `/`; đọc `reason`, `redirect`. Action `default`: login bằng email, `startSession`, 303 tới `safeRedirect` | cần sửa |
-| Feature UI | `src/lib/features/auth/components/LoginForm.svelte` | Ô email (thay `PhoneField`), mật khẩu; bỏ nút mã SMS; hiển thị `login_session_ended` / `login_password_changed`; xoá mật khẩu sau lỗi | cần sửa |
-| Route (server) | `src/routes/(auth)/forgot-password/+page.server.ts` | `load`: có phiên → `/`. Actions `request` (gọi lại = gửi lại), `confirm` | chưa tạo |
-| Route (UI) | `src/routes/(auth)/forgot-password/+page.svelte` | `AuthShell` + `ForgotPasswordForm` | chưa tạo |
-| Feature UI | `src/lib/features/auth/components/ForgotPasswordForm.svelte` | Bước email → bước mã + mật khẩu mới; dùng lại đồng hồ của `SignupOtp` (tách thành `OtpTimers.svelte`) | chưa tạo |
-| Feature logic | `src/lib/features/auth/redirect.ts` | `safeRedirect(raw): string \| null` — chỉ đường dẫn tương đối cùng site (AC6) | chưa tạo |
-| API resource | `src/lib/server/api/auth.ts` | `login({email,…})`, `requestPasswordReset(email)`, `confirmPasswordReset(body)` | cần sửa |
-| API client | `src/lib/server/api/client.ts` | Header `X-InnerLamp-Client-IP` (IP khách) + `User-Agent` (AC19); `apiAuthed(event, path, opts)`: `401` → refresh một lần → thử lại → vẫn `401` thì `sessionEnded(event)` (AC8) | cần sửa |
-| Server auth | `src/lib/server/auth/session.ts` | `startSession` đặt `il_name = dharma_name \|\| full_name`; `sessionEnded(event)`: `endSession` + `redirect(303, /login?reason=session_ended&redirect=…)` khi là điều hướng GET | cần sửa |
-| Server auth | `src/lib/server/auth/refresh.ts` | Single-flight: `Map<refreshToken, Promise<AuthTokens>>` trong process, xoá sau khi xong (AC7) | chưa tạo |
-| Hook | `src/hooks.server.ts` (`handleAuth`) | Dùng `refresh.ts`; refresh bị từ chối → `sessionEnded` (AC9); lưu `event.locals.clientIp` | cần sửa |
-| Logout | `src/routes/(site)/profile/+page.server.ts`, `ProfileHeader.svelte` | Hỏi xác nhận, best effort, xoá cookie, `/` | có, không đổi |
-| Guest prompt | các trang cần tài khoản (`memorial`, `profile`, …) | Link mời đăng nhập thêm `?redirect=<path>` (AC17) | cần sửa |
-| Types | `src/lib/types/auth.ts` | `LoginRequest.email`; `PasswordResetRequest`, `PasswordResetConfirm` | cần sửa |
-| i18n | `messages/vi.json`, `messages/en.json` | `login_email_*`, `login_session_ended`, `login_password_changed`, `forgot_*`, `auth_err_rate_limited`; sửa `auth_err_invalid_credentials`, `auth_err_login_locked({time})`; bỏ `login_otp_sms` và các key SĐT của login | cần sửa |
-| Tests | `redirect.spec.ts`, `refresh.spec.ts`, `tests/login.e2e.ts`, `tests/forgot-password.e2e.ts` | Theo `il-testing` | chưa tạo |
+| Layer          | File                                                                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                       | Status                                      |
+| -------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Route (server) | `src/routes/(auth)/login/+page.server.ts`                                                   | `load`: signed-in → 303 `/`, reads `reason` (`session_ended` / `password_changed` only) and `redirect` (via `safeRedirect`). Action `default`: email sign-in with `device {platform:'web', device_model}`, `startSession`, 303 to `safeRedirect(redirect)` or `/`, failures via `authFail`.                                                                          | done                                        |
+| Feature UI     | `src/lib/features/auth/components/LoginForm.svelte`                                         | Email field, password; no SMS-code button; "Forgot password?" link; hidden `redirect`; notice for `login_session_ended` / `login_password_changed`; clears the password after a failure; error via `authErrorMessage(form.error, errorContext(form))`.                                                                                                               | done                                        |
+| Route (server) | `src/routes/(auth)/forgot-password/+page.server.ts`                                         | `load`: session → `/`. Actions `request`, `resend` (same backend call; a failed resend stays on the code step) and `confirm` (checks the password with `checkPassword`, calls the backend, `endSession`, 303 `/login?reason=password_changed`).                                                                                                                      | done                                        |
+| Route (UI)     | `src/routes/(auth)/forgot-password/+page.svelte`                                            | `AuthShell` + `ForgotPasswordForm`                                                                                                                                                                                                                                                                                                                                   | done                                        |
+| Feature UI     | `src/lib/features/auth/components/ForgotPasswordForm.svelte`                                | Email step → code + new-password step; timers from `otp-timers.svelte.ts` (`OtpTimers`, extracted for this form; `SignupOtp` still has its own copy).                                                                                                                                                                                                                | done (SignupOtp not refactored)             |
+| Feature logic  | `src/lib/features/auth/redirect.ts`                                                         | `safeRedirect(raw): string                                                                                                                                                                                                                                                                                                                                           | null` — same-site relative paths only (AC6) | done                     | not created |
+| Feature logic  | `src/lib/features/auth/errors.ts`                                                           | `authErrorMessage(code, ctx)`, `ErrorContext {lockedUntil, retryAfter}`, `errorContext(formData)`; unlock time for `LOGIN_LOCKED`, `OTP_LOCKED`, `OTP_SEND_LIMITED`; wait seconds for `RATE_LIMITED` and `REGISTRATION_IN_PROGRESS`. The case mapping is in `requirements.md` Error → UI                                                                             | done (`SESSION_ENDED` for POST not added)   |
+| Server auth    | `src/lib/server/auth/action.ts`                                                             | `authFail(e)` returns the error code plus `retryAfter` (from `details.retry_after_seconds`) and `lockedUntil` (from `details.locked_until`)                                                                                                                                                                                                                          | done                                        |
+| API resource   | `src/lib/server/api/auth.ts`                                                                | `login`, `refreshTokens`, `logout`, `requestPasswordReset`, `confirmPasswordReset`                                                                                                                                                                                                                                                                                   | done                                        |
+| API client     | `src/lib/server/api/client.ts`                                                              | Sends `x-api-key`; no `apiAuthed` wrapper — the `401` → refresh → retry logic lives in `handleFetch` so every Bearer call is covered (AC8)                                                                                                                                                                                                                           | done (replaces the planned `apiAuthed`)     |
+| Server auth    | `src/lib/server/auth/session.ts`                                                            | `startSession` sets `il_name = dharma_name                                                                                                                                                                                                                                                                                                                           |                                             | full_name`; `endSession` | done        | full_name`; `sessionEnded(event)`: `endSession`+`redirect(303, /login?reason=session_ended&redirect=…)` on a GET navigation | needs change |
+| Server auth    | `src/lib/server/auth/refresh.ts`                                                            | `refreshSession(fetch, cookies)`: single-flight `Map<refreshToken, Promise>`, returns `refreshed` / `rejected` (4xx except `429` and `INVALID_API_KEY`; cookies cleared) / `unavailable` (outage; cookies kept) / `none` (AC7)                                                                                                                                       | done                                        |
+| Hook           | `src/hooks.server.ts` (`handleAuth`)                                                        | Renews the access cookie through `refreshSession`; a rejection sets `locals.sessionEnded`. `handleSessionEnded` (after Paraglide): when `locals.sessionEnded`, a GET navigation gets 303 (or the data-request redirect JSON) to `/login?reason=session_ended&redirect=<page>` carrying the cleared cookies; skipped on `/login`, `/signup`, `/forgot-password` (AC9) | done                                        |
+| Hook           | `src/hooks.server.ts` (`handleFetch`)                                                       | For every request to `API_BASE_URL`: sets `X-InnerLamp-Client-IP` (`event.getClientAddress()`, skipped if none) and the browser's `User-Agent`; a Bearer call answered `401 UNAUTHORIZED` is refreshed once and retried, a second `401` or a rejected refresh ends the session; `503` is passed through untouched so the cookies stay (AC8, AC19)                    | done                                        |
+| Logout         | `src/routes/(site)/profile/+page.server.ts`, `ProfileHeader.svelte`                         | Confirm, best effort, clear cookies, `/`                                                                                                                                                                                                                                                                                                                             | exists, unchanged                           |
+| Guest prompt   | pages that need an account (`memorial`, `profile`, …)                                       | Sign-in invitation link gets `?redirect=<path>` (AC17)                                                                                                                                                                                                                                                                                                               | needs change                                |
+| Types          | `src/lib/types/auth.ts`                                                                     | `LoginRequest {email, password, device}`, `PasswordResetConfirm`                                                                                                                                                                                                                                                                                                     | done                                        |
+| i18n           | `messages/vi.json`, `messages/en.json`                                                      | `login_session_ended`, `login_password_changed`, `forgot_*`, `auth_err_otp_locked_until({time})`, `auth_err_otp_limited_until({time})`, `auth_err_registration_in_progress_wait({seconds})` added; `auth_err_invalid_password` now says 8–64 characters.                                                                                                             | done                                        |
+| Tests          | `redirect.spec.ts`, `refresh.spec.ts`, `tests/login.e2e.ts`, `tests/forgot-password.e2e.ts` | Per `il-testing`                                                                                                                                                                                                                                                                                                                                                     | not created                                 |
 
 ## Route & navigation flow
 
 ```
-/login  (load: có phiên → 303 /)
+/login  (load: session → 303 /)
   ├─ submit ✓ ──▶ startSession ──▶ 303 safeRedirect(redirect) ?? localizeHref('/')
-  ├─ "Quên mật khẩu?" ──▶ /forgot-password
-  ├─ "Tạo tài khoản" ──▶ /signup
-  └─ "Vào xem trước" ──▶ /
+  ├─ "Forgot password?" ──▶ /forgot-password
+  ├─ "Create account" ──▶ /signup
+  └─ "Browse without signing in" ──▶ /
 
-/forgot-password  (load: có phiên → 303 /)
-  ├─ ?/request ✓ ──▶ bước mã + mật khẩu mới (cùng trang); gọi lại = gửi lại
+/forgot-password  (load: session → 303 /)
+  ├─ ?/request ✓ ──▶ code + new-password step (same page); calling again = resend
   └─ ?/confirm ✓ ──▶ 303 /login?reason=password_changed
 
-bất kỳ trang (GET) khi phiên hết ──▶ 303 /login?reason=session_ended&redirect=<trang>
+any page (GET) when the session ends ──▶ 303 /login?reason=session_ended&redirect=<page>
 ```
 
-## Step-by-step Flow — Làm mới phiên và phiên hết
+## Step-by-step Flow — Session refresh and session ended
 
 ```
-Step 1 — Hook (mọi request)
-- Trigger: không có il_token, có il_refresh.
-- Where: hooks.server.ts handleAuth → refresh.ts (single-flight theo refresh token).
+Step 1 — Hook (every request)
+- Trigger: no il_token, il_refresh present.
+- Where: hooks.server.ts handleAuth → refresh.ts (single-flight per refresh token).
 - API: POST /v1/auth/refresh
-    - Success → setTokens (TTL từ expires_in) → tiếp tục.
+    - Success → setTokens (TTL from expires_in) → continue.
     - Failure 4xx → Step 3.
-    - Failure mạng / 5xx → giữ cookie, tiếp tục như khách cho request này.
+    - Failure network / 5xx → keep cookies, continue as a guest for this request.
 
-Step 2 — Call Bearer trong load/action
+Step 2 — Bearer call in load/action
 - Where: client.ts apiAuthed.
-- API: call gốc → 401 → POST /v1/auth/refresh (single-flight) → gọi lại call gốc một lần
-    - Lần hai thành công → trả dữ liệu.
-    - Refresh 4xx hoặc lần hai vẫn 401 → Step 3.
+- API: original call → 401 → POST /v1/auth/refresh (single-flight) → retry the original call once
+    - Second attempt succeeds → return the data.
+    - Refresh 4xx or the second attempt is still 401 → Step 3 (a revoked session returns 401 on the next request even if the access token has not expired).
+    - 503 SERVICE_UNAVAILABLE (backend cannot check the session) → keep cookies, no refresh, show auth_err_generic.
 
-Step 3 — Phiên hết
-- endSession(cookies); nếu là điều hướng GET → 303 /login?reason=session_ended&redirect=<url hiện tại>;
-  nếu là action (POST) → fail(401, {error:'SESSION_ENDED'}) và form hiển thị link đăng nhập.
+Step 3 — Session ended
+- endSession(cookies); locals.sessionEnded = true. On a GET navigation → 303 /login?reason=session_ended&redirect=<current url>
+  (for a client-side navigation, the redirect JSON of a data request). Not built yet: on an action (POST) or an /api/* call the session is cleared but no SESSION_ENDED error is shown.
 ```
 
-## Step-by-step Flow — Quên mật khẩu
+## Step-by-step Flow — Forgot password
 
 ```
-Step 1 — Xin mã
+Step 1 — Request the code
 - Where: forgot-password action `request`.
 - API: POST /v1/auth/password-reset/request-otp {email}
-    - Success → {step:'reset', email, expiresIn, resendAfter} (luôn cùng thông điệp forgot_sent).
-    - Failure 400/429 → ở lại, báo theo bảng lỗi.
+    - Success (identical for an email with or without an account) → {step:'reset', email, expiresIn: expires_in_seconds, resendAfter: resend_after_seconds}; the page shows its own forgot_sent text, never the backend message.
+    - Failure 400/429 (INVALID_EMAIL, OTP_RESEND_TOO_SOON, OTP_SEND_LIMITED, OTP_LOCKED, RATE_LIMITED) → stay, show the error per the Error → UI table. The same codes come back for unknown emails, so no extra branching.
 
-Step 2 — Gửi lại (lặp được) — gọi lại Step 1 sau resendAfter.
+Step 2 — Resend (repeatable) — call Step 1 again after resendAfter (same endpoint; the cycle allows four codes in total, then OTP_SEND_LIMITED).
 
-Step 3 — Đặt mật khẩu mới
-- Where: action `confirm`. Kiểm mật khẩu mới bằng checkPassword (onboarding validation.ts) trước khi gọi.
+Step 3 — Set the new password
+- Where: action `confirm`. Check the new password with checkPassword (onboarding validation.ts) before calling.
 - API: POST /v1/auth/password-reset/confirm {email, otp_code, new_password}
-    - Success → nếu trình duyệt này đang có phiên thì endSession → 303 /login?reason=password_changed.
-    - Failure → ở lại bước mã, báo lỗi; mật khẩu mới không echo về trang.
+    - Success (200, no token, no data) → endSession (cookies of this browser, if any) → 303 /login?reason=password_changed. No automatic sign-in. The backend has revoked every session and lifted LOGIN_LOCKED.
+    - Failure → stay on the code step, show the error (OTP_INVALID, OTP_EXPIRED — also for an email without an account —, OTP_LOCKED, INVALID_PASSWORD, RATE_LIMITED); the new password is never echoed back to the page.
 ```
+
+Both endpoints are in `openapi.yaml` 2.1.1 (see the header of `requirements.md`).
 
 ## Session & cookies
 
-| Cookie | Nội dung | TTL | Thuộc tính |
-| --- | --- | --- | --- |
-| `il_token` | access token | `expires_in` (fallback 15 phút) | httpOnly, `SameSite=Lax`, `Secure` ở prod |
-| `il_refresh` | refresh token | 7 ngày | như trên |
-| `il_name` | `dharma_name \|\| full_name` | 7 ngày | như trên |
+| Cookie       | Content                      | TTL                                | Attributes                                 |
+| ------------ | ---------------------------- | ---------------------------------- | ------------------------------------------ |
+| `il_token`   | access token                 | `expires_in` (fallback 15 minutes) | httpOnly, `SameSite=Lax`, `Secure` in prod |
+| `il_refresh` | refresh token                | 7 days                             | same                                       |
+| `il_name`    | `dharma_name \|\| full_name` | 7 days                             | same                                       |
 
-Thông báo `session_ended` / `password_changed` đi qua query `reason` của `/login` (chỉ nhận hai giá trị
-đó), không cần cookie flash.
+The `session_ended` / `password_changed` notices travel in the `reason` query of `/login` (only those
+two values accepted); no flash cookie is needed.
 
-## Header gửi backend
+## Headers sent to the backend
 
-`client.ts` gửi trên mọi call: `x-api-key`; `X-InnerLamp-Client-IP: <event.getClientAddress()>` (đặt mới mỗi call, không chép header từ browser);
-`User-Agent` của trình duyệt (login dùng làm fingerprint thiết bị). Backend chỉ tin IP chuyển tiếp khi
-`x-api-key` hợp lệ (backend login v2.2 AC34).
+- `x-api-key` — set in `client.ts` on every call.
+- `X-InnerLamp-Client-IP: <event.getClientAddress()>` — set in the `handleFetch` hook on every request
+  to `API_BASE_URL` (so it also covers `event.fetch` calls that do not go through `apiCall`). It replaces the earlier plan
+  of passing the IP per call through `apiCall`. The value is always the server's own reading of the
+  visitor address, never copied from a browser header. The backend trusts it only with a valid
+  `x-api-key` and the value is exactly one valid IP, otherwise it uses the connection address (`openapi.yaml` 2.1.1, `ClientIpHeader`; backend login v2.2 AC34).
+- `User-Agent` of the browser — forwarded by `handleFetch` (AC19); the login body's `device.device_model` is also derived from it (AC4).
 
 ## Deliberately stubbed for now
 
-- Login theo email và `password-reset/*` chỉ chạy được sau khi backend làm xong (backend login v2.1
-  `tasks.md`). E2E Phase 5 chạy sau đó.
+- Nothing is stubbed on the contract side any more: `password-reset/*` is in `openapi.yaml` 2.1.1. The pages are simply not built yet (see Layers). Nothing has been run against a real backend server yet.

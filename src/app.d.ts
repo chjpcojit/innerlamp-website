@@ -7,6 +7,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			user: SessionUser | null;
+			/** Set when the backend revoked the session during this request. */
+			sessionEnded?: boolean;
 		}
 		interface PageData {
 			user?: SessionUser | null;

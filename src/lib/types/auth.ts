@@ -26,6 +26,9 @@ export interface AuthSession extends AuthTokens {
 export interface RegisterRequest {
 	email: string;
 	password: string;
+	/** ISO country of the phone (VN, US, …). */
+	phone_country: string;
+	/** National number as typed, without "+" or country code. */
 	phone_number: string;
 	full_name: string;
 	dharma_name?: string;
@@ -40,8 +43,14 @@ export interface OtpChallenge {
 	resend_remaining?: number;
 }
 
+export interface PasswordResetConfirm {
+	email: string;
+	otp_code: string;
+	new_password: string;
+}
+
 export interface LoginRequest {
-	phone_number: string;
+	email: string;
 	password: string;
 	device: { platform: string; device_model: string; os_version?: string; app_version?: string };
 }

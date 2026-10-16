@@ -25,7 +25,7 @@
 			>
 				<LampMark onDark size={100} />
 			</div>
-			<p class="mt-6 font-serif text-2xl/normal italic">{m.auth_tagline()}</p>
+			<p class="mt-6 font-serif text-[28px]/[1.5] italic">{m.auth_tagline()}</p>
 		</div>
 		<p class="font-serif text-[13px] text-[#F2EBDD]/40 italic">{m.auth_quote()}</p>
 	</aside>

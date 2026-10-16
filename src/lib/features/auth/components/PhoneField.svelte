@@ -10,6 +10,9 @@
 		valid?: boolean;
 		/** Full international number ("+84949123456") when valid, else empty. For form posts. */
 		e164?: string;
+		/** National number (digits, no trunk "0") and ISO country when valid, else empty. The backend expects these two, not E.164. */
+		national?: string;
+		iso?: string;
 		/** Label rendered inside the box; omit when the parent renders its own. */
 		label?: string;
 		/** Show the helper line under the box. */
@@ -23,6 +26,8 @@
 		phone = $bindable(''),
 		valid = $bindable(),
 		e164 = $bindable(''),
+		national = $bindable(''),
+		iso = $bindable(''),
 		label,
 		hint = true
 	}: Props = $props();
@@ -51,6 +56,8 @@
 	$effect(() => {
 		valid = ok;
 		e164 = ok ? country.dial + digits : '';
+		national = ok ? digits : '';
+		iso = ok ? country.iso : '';
 	});
 </script>
 
@@ -59,7 +66,7 @@
 		class="rounded-2xl border bg-paper px-4 py-3 {phone && !ok ? 'border-gold' : 'border-ink/12'}"
 	>
 		{#if label}
-			<label for={id} class="text-[11px] text-ink/45">{label}</label>
+			<label for={id} class="text-xs text-ink/45">{label}</label>
 		{/if}
 		<div class="flex items-center gap-2.5 {label ? 'mt-1' : ''}">
 			<button
@@ -69,7 +76,7 @@
 				aria-label={m.country_picker_title()}
 			>
 				<span
-					class="rounded-[5px] bg-[#EFE6D5] px-[5px] py-0.5 text-[10px] font-semibold tracking-[.06em]"
+					class="rounded-[5px] bg-[#EFE6D5] px-[5px] py-0.5 text-[10.5px] font-semibold tracking-[.06em]"
 					>{country.iso}</span
 				>
 				<span class="text-[15px]">{country.dial}</span>
