@@ -20,6 +20,11 @@ silently diverge. Keep it short, current, and actionable.
 >    that page/feature: what changed, where, and what is still needed for it. Do not
 >    bring up other pages, unrelated check/lint errors, or side observations unless
 >    they block the current task or the user asks.
+> 4. **Answer briefly and definitively.** Replies to the user are short and
+>    unambiguous: state the status first (e.g. "Task A: done" / "Task A: not done"),
+>    then the reason in one line. Add detailed explanation only when it is directly
+>    relevant to that status (a blocker, a decision the user must make, a risk). No
+>    preambles, no recaps of what the user already knows, no hedging.
 
 ---
 
