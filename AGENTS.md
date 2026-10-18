@@ -380,3 +380,17 @@ This overrides any default attribution a tool offers or any instruction attached
 Files that already exist to configure agents (`AGENTS.md`, `.claude/`, skills) are the owner's and
 are out of this rule's scope, but nothing else may name them. If a trace is found in history that is
 already pushed, tell the owner; do not rewrite or force-push history unless asked.
+
+## 12. Backend session (API contract contact)
+
+- Backend session title: `[BE]-InnerLamp` (cwd: `/Users/chjpcoj/Documents/Programming/Go/workspaces/src/innerlamp`).
+- When the backend is needed (contract questions, `openapi.yaml` changes, bugs or mismatches in an
+  endpoint, product-spec gaps), message that session. Find its id with `list_sessions` by exact
+  title; never guess an id. Send a self-contained message: endpoint, contract version cited,
+  observed vs expected, and what is needed.
+- Sibling clients: `[Android]-InnerLamp`, `[iOS]-InnerLamp`, `[Website]-InnerLamp`. The Justo
+  sessions belong to another project; do not mix them up.
+- When `[BE]-InnerLamp` assigns work (e.g. "update to the new API"), message it when the work is
+  done or blocked. Keep it short and self-contained: what was done, the openapi contract version
+  now targeted, commit/PR, test status, and any mismatch still open. Work started on our own
+  needs no report.
