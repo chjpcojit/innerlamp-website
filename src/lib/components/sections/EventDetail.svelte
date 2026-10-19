@@ -2,6 +2,10 @@
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import type { CalendarEventDetail, CalendarNeighbour } from '$lib/types/calendar';
+	import LampMark from '$lib/components/ui/LampMark.svelte';
+	import { paragraphs, practices } from '$lib/utils/event-content';
+	import { countdown, countdownText, localIsoToday, lunarDateText } from '$lib/utils/events';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		detail: CalendarEventDetail;
@@ -18,27 +22,21 @@
 		return new Date(y, mo - 1, d);
 	}
 
-	/** Backend texts separate paragraphs / steps with line breaks. */
-	const lines = (text: string) =>
-		text
-			.split(/\r?\n/)
-			.map((l) => l.trim())
-			.filter(Boolean);
+	// Empty sections are hidden; an empty long description is not replaced by the short one (BR-CAL-14).
+	const about = $derived(paragraphs(detail.event.long_description));
+	const dos = $derived(practices(detail.event.guidance));
 
-	const about = $derived(lines(detail.event.long_description || detail.event.short_description));
-	const dos = $derived(lines(detail.event.guidance));
-	const left = $derived(
-		detail.days_left === 0
-			? m.ev_left_today()
-			: detail.days_left > 0
-				? m.ev_d_in_days({ count: detail.days_left })
-				: m.ev_d_days_ago({ count: -detail.days_left })
-	);
+	// The countdown counts on the device date (BR-CAL-13), so it exists only after mount.
+	let today = $state('');
+	onMount(() => (today = localIsoToday()));
+	const left = $derived(today ? countdownText(countdown(today, detail.solar_date)) : '');
 
-	const lunarLabel = (d: { day: number; month: number }) =>
-		m.ev_d_lunar({ day: d.day, month: d.month });
+	const lunarLabel = (d: { day: number; month: number; is_leap_month: boolean }) =>
+		d.is_leap_month
+			? m.ev_d_lunar_leap({ day: d.day, month: d.month })
+			: m.ev_d_lunar({ day: d.day, month: d.month });
 	const whenLabel = (n: CalendarNeighbour) =>
-		`${m.ev_lunar_date({ day: n.lunar_date.day, month: n.lunar_date.month })} · ${weekdayFull.format(parseIso(n.solar_date))}`;
+		`${lunarDateText(n.lunar_date)} · ${weekdayFull.format(parseIso(n.solar_date))}`;
 	const href = (n: CalendarNeighbour) =>
 		localizeHref(`/events/${encodeURIComponent(n.code)}?date=${n.solar_date}`);
 
@@ -55,6 +53,11 @@
 	>
 		{#if detail.event.image_url}
 			<img src={detail.event.image_url} alt="" class="absolute inset-0 size-full object-cover" />
+		{:else}
+			<!-- Placeholder until the shared default image exists (product §3.6). -->
+			<div class="pointer-events-none absolute top-[12%] right-[8%] opacity-25" aria-hidden="true">
+				<LampMark size={120} onDark />
+			</div>
 		{/if}
 		<div
 			class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_85%_20%,rgba(217,150,60,.24),transparent)]"
@@ -74,7 +77,14 @@
 							{detail.group_names.join(' · ')}
 						</p>
 					{/if}
-					<p class="rounded-full bg-[#f5eee0]/14 px-2.5 py-1 text-xs font-medium">{left}</p>
+					{#if left}
+						<p class="rounded-full bg-[#f5eee0]/14 px-2.5 py-1 text-xs font-medium">{left}</p>
+					{/if}
+					{#if detail.event.is_major}
+						<p class="rounded-full bg-[#f3c673]/20 px-2.5 py-1 text-xs font-medium text-[#f3c673]">
+							{m.ev_major()}
+						</p>
+					{/if}
 					{#if detail.event.is_public_holiday}
 						<p class="rounded-full bg-[#f3c673]/20 px-2.5 py-1 text-xs font-medium text-[#f3c673]">
 							{m.ev_d_holiday()}
@@ -98,6 +108,10 @@
 			</div>
 		</div>
 	</header>
+
+	{#if detail.stale}
+		<p class="text-[13px] text-ink/55" role="status">{m.ev_stale_note()}</p>
+	{/if}
 
 	{#if about.length > 0 || dos.length > 0}
 		<div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,400px),1fr))] items-start gap-5">

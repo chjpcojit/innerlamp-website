@@ -3,11 +3,13 @@
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import type { CalendarListItem } from '$lib/types/calendar';
-	import { leftLabel, monthShort, parseIsoDate } from '$lib/utils/events';
+	import { countdownText, lunarDateText, monthShort, parseIsoDate } from '$lib/utils/events';
+	import type { CountdownLabel } from '$lib/utils/events';
 
 	interface Props {
-		events: { item: CalendarListItem; daysLeft: number }[];
-		/** Backend group code → display name, for the row tag. */
+		/** `cd` is `null` until the browser knows today's date (BR-CAL-13). */
+		events: { item: CalendarListItem; cd: { days: number; label: CountdownLabel } | null }[];
+		/** Backend group code → display name, for the row tags. */
 		groupNames: Map<string, string>;
 	}
 
@@ -26,16 +28,16 @@
 			key: string;
 			year: number;
 			month: number;
-			items: { item: CalendarListItem; date: Date; daysLeft: number }[];
+			items: { item: CalendarListItem; date: Date; cd: (typeof events)[number]['cd'] }[];
 		}[] = [];
-		for (const { item, daysLeft } of events) {
+		for (const { item, cd } of events) {
 			const date = parseIsoDate(item.solar_date);
 			const year = date.getFullYear();
 			const month = date.getMonth() + 1;
 			const key = `${year}-${month}`;
 			let g = out.find((x) => x.key === key);
 			if (!g) out.push((g = { key, year, month, items: [] }));
-			g.items.push({ item, date, daysLeft });
+			g.items.push({ item, date, cd });
 		}
 		return out;
 	});
@@ -69,9 +71,11 @@
 					<p class="mt-1 text-xs text-ink/50">{m.ev_month_count({ count: g.items.length })}</p>
 				</div>
 				<ul class="rounded-[22px] border border-ink/8 bg-paper px-[22px] py-1">
-					{#each g.items as { item: e, date, daysLeft } (`${e.code}-${e.solar_date}`)}
-						{@const tag = groupNames.get(e.groups[0] ?? '')}
-						<li class="border-b border-ink/6 last:border-b-0 {daysLeft < 0 ? 'opacity-50' : ''}">
+					{#each g.items as { item: e, date, cd } (`${e.code}-${e.solar_date}`)}
+						{@const tags = e.groups.map((code) => groupNames.get(code)).filter(Boolean)}
+						<li
+							class="border-b border-ink/6 last:border-b-0 {cd && cd.days < 0 ? 'opacity-50' : ''}"
+						>
 							<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
 							<a
 								href={localizeHref(`/events/${encodeURIComponent(e.code)}?date=${e.solar_date}`)}
@@ -96,23 +100,27 @@
 										{e.name}
 									</p>
 									<p class="mt-1 text-xs text-ink/50">
-										{weekdayDate.format(date)} · {m.ev_lunar_date({
-											day: e.lunar_date.day,
-											month: e.lunar_date.month
-										})}
+										{weekdayDate.format(date)} · {lunarDateText(e.lunar_date)}
 									</p>
 								</div>
-								{#if tag}
+								{#if e.is_major}
+									<span
+										class="rounded-full bg-gold/15 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-gold-deep"
+									>
+										{m.ev_major()}
+									</span>
+								{/if}
+								{#each tags as tag (tag)}
 									<span
 										class="rounded-full bg-ink/6 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-ink/60"
 									>
 										{tag}
 									</span>
-								{/if}
+								{/each}
 								<p
 									class="min-w-[78px] text-right text-xs font-medium whitespace-nowrap text-ink/50"
 								>
-									{leftLabel(daysLeft)}
+									{cd ? countdownText(cd) : ''}
 								</p>
 							</a>
 							<!-- eslint-enable svelte/no-navigation-without-resolve -->

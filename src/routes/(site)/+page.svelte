@@ -24,7 +24,7 @@
 	{#if !data.user}
 		<GuestPerks />
 	{/if}
-	<EventsRoutines events={data.events} isGuest={!data.user} />
+	<EventsRoutines events={data.events} />
 	<BuddhaGrid items={data.buddhas} />
 	<TempleGrid items={data.temples} />
 	<PhotoGallery items={data.gallery} />

@@ -23,17 +23,16 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch, url }) => {
 	const month = (date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : vietnamToday()).slice(0, 7);
 
 	const token = cookies.get(TOKEN_COOKIE);
-	// The calendar API needs the user's token, so guests get no events.
+	// The lunar page still hides events from guests (the calendar route itself is public).
 	if (!locals.user || !token) return { isGuest: true, events: { month, items: null } };
 
 	let items: CalendarListItem[] | null = null;
 	try {
 		const [y, mo] = month.split('-').map(Number);
-		items = listMonthItems(await getCalendarYear(fetch, token, y), mo);
+		items = listMonthItems((await getCalendarYear(fetch, y)).calendar, mo);
 	} catch (e) {
 		// Never break the calendar over the backend: the events panel shows "unavailable".
 		if (!(e instanceof ApiError)) throw e;
-		if (e.status === 401) return { isGuest: true, events: { month, items: null } };
 	}
 	return { isGuest: false, events: { month, items } };
 };

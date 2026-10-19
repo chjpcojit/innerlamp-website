@@ -22,7 +22,17 @@ export interface CalendarEvent {
 	groups: string[];
 	/** True only on the event's own date. */
 	is_public_holiday: boolean;
+	/** "Lễ lớn": marked by the content editor (BR-CAL-10). */
+	is_major: boolean;
+	/** Display order within one day, ascending; Rằm / Mùng Một are last (BR-CAL-05). */
+	sort_order: number;
+	/** Repeat-rule kind. Open union: treat an unknown value as `other`. */
+	recurrence: CalendarRecurrence;
 }
+
+/** Known repeat-rule kinds; `lunar_monthly` is Rằm / Mùng Một. The backend may add more. */
+export type CalendarRecurrence =
+	'solar' | 'lunar' | 'lunar_monthly' | 'lunar_last_day' | 'solar_term' | (string & {});
 
 export interface LunarDate {
 	day: number;
@@ -62,8 +72,24 @@ export interface CalendarListItem {
 	solar_date: string;
 	lunar_date: LunarDate;
 	is_public_holiday: boolean;
+	is_major: boolean;
+	sort_order: number;
+	recurrence: CalendarRecurrence;
 	/** `CalendarGroup.code` values. */
 	groups: string[];
+}
+
+/** One month card of the home block (BR-CAL-15). */
+export interface HomeBlockMonth {
+	year: number;
+	/** 1–12. */
+	month: number;
+	/** At most three rows, in the order shown. */
+	shown: CalendarListItem[];
+	/** Buddhist occurrences of the month that are not shown ("+N sự kiện khác"). */
+	more: number;
+	/** True when this month's year could not be loaded (BR-CAL-15: the card shows the failure). */
+	failed: boolean;
 }
 
 /** A neighbouring occurrence shown as "previous / next event" on the detail page. */
@@ -81,8 +107,8 @@ export interface CalendarEventDetail {
 	group_names: string[];
 	solar_date: string;
 	lunar_date: LunarDate;
-	/** Whole days from today (Vietnam time) to `solar_date`; negative when past. */
-	days_left: number;
+	/** True when the year came from the server's old copy because the backend failed. */
+	stale: boolean;
 	prev: CalendarNeighbour | null;
 	next: CalendarNeighbour | null;
 }

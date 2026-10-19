@@ -1,49 +1,19 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ROUTINES } from '$lib/content/home';
-	import type { CalendarListItem } from '$lib/types/calendar';
+	import type { HomeBlockMonth } from '$lib/types/calendar';
+	import { lunarDateText } from '$lib/utils/events';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte';
 
 	interface Props {
-		/** This month's Buddhist events; `null` when guest or the backend failed. */
-		events: CalendarListItem[] | null;
-		isGuest: boolean;
+		/** The current month's card of the Buddhist events block (BR-CAL-15) and whether it came from an old copy. */
+		events: { month: HomeBlockMonth; stale: boolean };
 	}
 
-	let { events, isGuest }: Props = $props();
-
-	const now = new Date();
-	const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const DAY_MS = 86_400_000;
-	/** Rows shown before collapsing the rest into a "+n events" link. */
-	const MAX_VISIBLE = 5;
-
-	const items = $derived(
-		(events ?? []).map((e) => {
-			const [year, month, day] = e.solar_date.split('-').map(Number);
-			const date = new Date(year, month - 1, day);
-			return {
-				item: e,
-				day,
-				month,
-				daysLeft: Math.round((date.getTime() - startOfToday.getTime()) / DAY_MS)
-			};
-		})
-	);
-
-	// Over the cap, start at the first upcoming event so past days don't take the slots.
-	const visible = $derived.by(() => {
-		if (items.length <= MAX_VISIBLE) return items;
-		const firstUpcoming = items.findIndex((i) => i.daysLeft >= 0);
-		const from = Math.min(
-			firstUpcoming === -1 ? items.length : firstUpcoming,
-			items.length - MAX_VISIBLE
-		);
-		return items.slice(from, from + MAX_VISIBLE);
-	});
-	const hiddenCount = $derived(items.length - visible.length);
+	let { events }: Props = $props();
 </script>
 
 <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-7">
@@ -55,66 +25,65 @@
 			linkLabel={m.events_view_all()}
 			icon="wheel"
 		/>
-		{#if events === null || items.length === 0}
-			<p class="rounded-[22px] border border-ink/8 bg-paper px-[22px] py-6 text-sm text-ink/50">
-				{isGuest
-					? m.events_guest()
-					: events === null
-						? m.events_unavailable()
-						: m.events_month_empty()}
-			</p>
-		{:else}
-			<ul class="rounded-[22px] border border-ink/8 bg-paper px-[22px] py-1.5">
-				{#each visible as { item: e, day, month, daysLeft } (`${e.code}-${e.solar_date}`)}
-					<li class="border-b border-ink/6 last:border-b-0 {daysLeft < 0 ? 'opacity-50' : ''}">
-						<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
-						<a
-							href={localizeHref(`/events/${encodeURIComponent(e.code)}?date=${e.solar_date}`)}
-							class="flex items-center gap-[18px] py-3.5"
-						>
-							<span class="w-[52px] text-center">
-								<span class="block font-serif text-[22px]/none">{String(day).padStart(2, '0')}</span
-								>
-								<span class="mt-[3px] block text-[10.5px] font-medium text-ink/45"
-									>{m.events_month_short({ month })}</span
-								>
-							</span>
-							<span class="min-w-0 flex-1">
-								<span
-									class="block text-sm font-medium {e.is_public_holiday ? 'text-gold-deep' : ''}"
-									>{e.name}</span
-								>
-								<span class="mt-[3px] block text-xs text-ink/50"
-									>{m.events_lunar_date({
-										day: e.lunar_date.day,
-										month: e.lunar_date.month
-									})}</span
-								>
-							</span>
-							{#if daysLeft >= 0}
-								<span class="text-xs font-medium whitespace-nowrap text-ink/50">
-									{daysLeft === 0 ? m.events_today() : m.events_days_left({ count: daysLeft })}
-								</span>
-							{/if}
-						</a>
-						<!-- eslint-enable svelte/no-navigation-without-resolve -->
-					</li>
-				{/each}
-				{#if hiddenCount > 0}
-					<li>
-						<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
-						<a
-							href={localizeHref('/events')}
-							class="flex items-center justify-center gap-1.5 py-3.5 text-[13px] font-medium text-gold-deep transition-colors hover:text-ink"
-						>
-							{m.events_more({ count: hiddenCount })}
-							<span class="text-[15px]" aria-hidden="true">›</span>
-						</a>
-						<!-- eslint-enable svelte/no-navigation-without-resolve -->
-					</li>
-				{/if}
-			</ul>
+		{#if events.stale}
+			<p class="mb-3 text-[13px] text-ink/55" role="status">{m.ev_stale_note()}</p>
 		{/if}
+		<div class="rounded-[22px] border border-ink/8 bg-paper px-[22px] py-1.5">
+			{#if events.month.failed}
+				<div class="flex flex-wrap items-center gap-3 py-4">
+					<p class="text-sm text-ink/50">{m.events_unavailable()}</p>
+					<button
+						type="button"
+						onclick={() => invalidateAll()}
+						class="cursor-pointer rounded-full border border-ink/14 px-4 py-1.5 text-[13px] font-medium text-ink/70 transition-colors hover:bg-white"
+					>
+						{m.ev_retry()}
+					</button>
+				</div>
+			{:else if events.month.shown.length === 0 && events.month.more === 0}
+				<p class="py-4 text-sm text-ink/50">{m.events_month_none()}</p>
+			{:else}
+				<ul>
+					{#each events.month.shown as e (`${e.code}-${e.solar_date}`)}
+						<li class="border-b border-ink/6 last:border-b-0">
+							<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
+							<a
+								href={localizeHref(`/events/${encodeURIComponent(e.code)}?date=${e.solar_date}`)}
+								class="flex items-center gap-[18px] py-3.5"
+							>
+								<span class="w-[52px] text-center">
+									<span class="block font-serif text-[22px]/none">{e.solar_date.slice(8, 10)}</span>
+									<span class="mt-[3px] block text-[10.5px] font-medium text-ink/45">
+										{m.events_month_short({ month: Number(e.solar_date.slice(5, 7)) })}
+									</span>
+								</span>
+								<span class="min-w-0 flex-1">
+									<span
+										class="block text-sm font-medium {e.is_public_holiday ? 'text-gold-deep' : ''}"
+										>{e.name}</span
+									>
+									<span class="mt-[3px] block text-xs text-ink/50">
+										{lunarDateText(e.lunar_date)}
+									</span>
+								</span>
+							</a>
+							<!-- eslint-enable svelte/no-navigation-without-resolve -->
+						</li>
+					{/each}
+				</ul>
+				{#if events.month.more > 0}
+					<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
+					<a
+						href={localizeHref('/events')}
+						class="flex items-center justify-center gap-1.5 py-3.5 text-[13px] font-medium text-gold-deep transition-colors hover:text-ink"
+					>
+						{m.events_more_others({ count: events.month.more })}
+						<span class="text-[15px]" aria-hidden="true">›</span>
+					</a>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+				{/if}
+			{/if}
+		</div>
 	</section>
 
 	<section aria-labelledby="routines-title">
