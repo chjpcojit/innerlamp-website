@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500&amp;text=%E5%96%9C%E8%B2%A1%E9%B6%B4&amp;display=swap" rel="stylesheet">
 <style>html.il-dark{filter:invert(.95) hue-rotate(180deg) sepia(.22) saturate(1.3);background:#F7F2E8}html.il-dark image-slot,html.il-dark img,html.il-dark video{filter:invert(1) hue-rotate(180deg)}[data-keep-dark="1"],[data-keep-dark="1"] image-slot,[data-keep-dark="1"] img,[data-keep-dark="1"] [data-keep-dark]{filter:invert(1) hue-rotate(180deg)}html.il-dark [data-keep-dark]{filter:invert(1) hue-rotate(180deg)}html.il-dark [data-keep-dark] [data-keep-dark],html.il-dark [data-keep-dark] image-slot,html.il-dark [data-keep-dark] img{filter:none}*{font-variant-numeric:lining-nums}@keyframes il-breathe{0%,100%{transform:scale(.55);opacity:.55}50%{transform:scale(1);opacity:1}}@keyframes il-spin{to{transform:rotate(270deg)}}@keyframes il-chase{0%,100%{opacity:.18;transform:scale(.8)}20%{opacity:1;transform:scale(1.35)}}@keyframes il-halo{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}body{margin:0;background:#F7F2E8;font-family:'Be Vietnam Pro',system-ui,sans-serif;color:#221E19}a{color:#8A5A18;text-decoration:none;cursor:pointer}a:hover{color:#B8862F}@keyframes il-flick{0%,100%{transform:scaleY(1) skewX(0)}25%{transform:scaleY(1.08) skewX(-2deg)}50%{transform:scaleY(.94) skewX(2deg)}75%{transform:scaleY(1.04) skewX(-1deg)}}@keyframes il-glow{0%,100%{opacity:.85}50%{opacity:1}}@keyframes il-ignite{0%{transform:scale(.06);opacity:0;filter:brightness(2.2)}25%{transform:scale(.22);opacity:1}100%{transform:scale(1);opacity:1;filter:brightness(1)}}@keyframes il-glowin{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}@keyframes il-dawn{0%{opacity:0}100%{opacity:1}}@keyframes il-rise1{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:none}}@keyframes il-rise2{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:none}}@keyframes il-ripple{0%{transform:scale(.62);opacity:0}15%{opacity:.55}100%{transform:scale(1.55);opacity:0}}@keyframes il-drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(var(--dx),var(--dy)) scale(1.12)}}@keyframes il-mote{0%{transform:translateY(0);opacity:0}20%{opacity:.8}100%{transform:translateY(-160px);opacity:0}}@keyframes il-fadein{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}@keyframes il-rise3{0%{opacity:0;transform:translateY(60px)}100%{opacity:1;transform:none}}</style>
+<style>@keyframes zd-br{0%,100%{transform:scale(.62);opacity:.38}50%{transform:scale(1.18);opacity:1}}@keyframes zd-flash{0%{transform:scale(.3);opacity:.95}100%{transform:scale(2.8);opacity:0}}@keyframes zd-rise{0%{transform:translate(-50%,0);opacity:0}20%{opacity:1}100%{transform:translate(-50%,-46px);opacity:0}}@keyframes zd-ring{0%{transform:translate(-50%,-50%) scale(.05);opacity:.7}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}@keyframes zd-bloom{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(3.4);opacity:0}}@keyframes zd-live{0%,100%{opacity:1}50%{opacity:.35}}</style>
 </helmet>
 
 <div style="min-height:100vh;background:#F7F2E8">
@@ -623,7 +624,7 @@
                   <div style="color:rgba(34,30,25,.35)">›</div>
                 </div>
                 <div onClick="{{ smNotif }}" style="display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:16px;cursor:pointer" style-hover="background:#F7F2E8">
-                  <div style="flex:1;min-width:0"><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Nhận thông báo từ chùa</div><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:2px">Lịch lễ, khóa tu và tin từ ban trị sự</div></div>
+                  <div style="flex:1;min-width:0"><div style="font:500 14px 'Be Vietnam Pro',sans-serif">Nhận thông báo từ chùa</div><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:2px">Nhắc sự kiện đã ghi danh và tin từ ban trị sự</div></div>
                   <div style="width:42px;height:24px;border-radius:999px;padding:3px;box-sizing:border-box;display:flex;background: {{ smNtBg }};justify-content: {{ smNtJ }}"><div style="width:18px;height:18px;border-radius:50%;background:#FFFDF8"></div></div>
                 </div>
                 <div style="height:1px;background:rgba(34,30,25,.07);margin:8px 12px"></div>
@@ -782,6 +783,26 @@
             </div>
 
             <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:22px 24px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div style="font:500 22px 'Cormorant Garamond',Georgia,serif">Thông báo từ chùa</div>
+                <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">Từ ban trị sự {{ sgName }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;margin-top:10px">
+                <sc-for list="{{ sgNotices }}" as="n" hint-placeholder-count="3">
+                  <div onClick="{{ n.open }}" style="display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid {{ n.line }};cursor: {{ n.cur }}">
+                    <div style="width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none;background: {{ n.dot }}"></div>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="padding:3px 9px;border-radius:999px;background:#F1E8D8;font:500 10.5px 'Be Vietnam Pro',sans-serif;color:#8A5A18">{{ n.tag }}</span><span style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">{{ n.when }}</span></div>
+                      <div style="font:500 14px/1.5 'Be Vietnam Pro',sans-serif;margin-top:6px">{{ n.title }}</div>
+                      <div style="font:400 13px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.65);margin-top:2px;text-wrap:pretty">{{ n.body }}</div>
+                      <sc-if value="{{ n.hasLink }}" hint-placeholder-val="{{ false }}"><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;margin-top:6px">Xem sự kiện ›</div></sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:22px 24px">
               <div style="font:500 22px 'Cormorant Garamond',Georgia,serif">Thời khóa tu tập</div>
               <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5);margin-top:4px">Đạo hữu có thể tham dự bất kỳ thời khóa nào, không cần ghi danh</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px">
@@ -837,10 +858,10 @@
 
             <div data-keep-dark="1" style="border-radius:24px;background:linear-gradient(150deg,#2A2620,#161310);padding:24px;color:#F5EEE0;position:relative;overflow:hidden" data-comment-anchor="29cf9297fc-div">
               <div style="position:absolute;right:-50px;top:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(217,150,60,.3),transparent 66%)"></div>
-              <div style="position:relative;font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#E8B061">ĐẠO HỮU ĐANG NGỒI THIỀN</div>
-              <div style="position:relative;font:500 40px 'Cormorant Garamond',Georgia,serif;margin-top:10px" data-comment-anchor="ae6c4d472b-div">23 <span style="font-size:16px;color:rgba(242,235,221,.6)">người</span></div>
-              <div style="position:relative;font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.6);margin-top:4px">đạo tràng Từ Quang · phiên 20 phút</div>
-              <div onClick="{{ goMeditate }}" style="position:relative;display:inline-flex;margin-top:18px;padding:11px 20px;border-radius:999px;background:#D9963C;color:#1A1611;font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer">Ngồi cùng</div>
+              <div style="position:relative;display:flex;align-items:center;gap:8px;font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#E8B061">{{ zdLiveDot }}THIỀN ĐƯỜNG TRỰC TUYẾN</div>
+              <div style="position:relative;font:500 40px/1.1 'Cormorant Garamond',Georgia,serif;margin-top:12px" data-comment-anchor="ae6c4d472b-div">312 <span style="font-size:17px;color:rgba(242,235,221,.7)">vị đồng tu</span></div>
+              <div style="position:relative;font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.7);margin-top:4px;text-wrap:pretty">đang cùng ngồi thiền · Tọa thiền buổi tối, 19:30 – 19:50</div>
+              <div onClick="{{ goZendo }}" style="position:relative;display:inline-flex;margin-top:18px;padding:11px 20px;border-radius:999px;background:#D9963C;color:#1A1611;font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#E6A94E">Vào thiền đường</div>
             </div>
 
             <div style="background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:22px 24px">
@@ -1210,6 +1231,115 @@
       </div>
     </sc-if>
 
+    <!-- ===== THIỀN ĐƯỜNG TRỰC TUYẾN ===== -->
+    <sc-if value="{{ isZendo }}" hint-placeholder-val="{{ false }}">
+      <div data-keep-dark="2" data-screen-label="Thiền đường trực tuyến" style="position:fixed;inset:0;z-index:400;background:#070605;color:#F2EBDD;overflow:hidden;display:flex;flex-direction:column;font-family:'Be Vietnam Pro',sans-serif">
+        <div style="position:absolute;top:0;left:0;right:0;z-index:5;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:start;gap:12px;padding:18px clamp(14px,3vw,32px) 40px;background:linear-gradient(180deg,rgba(7,6,5,.85),rgba(7,6,5,0))">
+          <div style="display:flex">
+            <div onClick="{{ zdLeave }}" style="padding:10px 16px;border-radius:999px;border:1px solid rgba(242,235,221,.18);font:500 13px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.8);cursor:pointer;white-space:nowrap" style-hover="background:rgba(242,235,221,.06)">‹ Rời</div>
+          </div>
+          <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:#E8B061">THIỀN ĐƯỜNG · {{ sgName }}</div>
+            <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.55)">{{ zdSub }}</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap">
+            <div onClick="{{ zdSndToggle }}" style="padding:10px 14px;border-radius:999px;border:1px solid rgba(242,235,221,.18);font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.8);cursor:pointer;white-space:nowrap" style-hover="background:rgba(242,235,221,.06)">{{ zdSndLabel }}</div>
+            <div onClick="{{ zdListToggle }}" style="padding:10px 14px;border-radius:999px;border:1px solid rgba(242,235,221,.18);font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.8);cursor:pointer;white-space:nowrap" style-hover="background:rgba(242,235,221,.06)">{{ zdListLabel }}</div>
+          </div>
+        </div>
+
+        <div style="position:absolute;inset:0">
+          <div style="position:absolute;left:50%;top:-6%;width:min(150vh,140%);height:96%;transform:translateX(-50%);background:radial-gradient(ellipse 34% 40% at 50% 30%,rgba(232,170,90,.26),rgba(150,90,40,.10) 48%,transparent 72%);pointer-events:none"></div>
+          <div style="position:absolute;left:50%;top:0;width:min(46vh,70%);height:60%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,226,170,.10),rgba(255,226,170,0) 85%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);filter:blur(14px);pointer-events:none"></div>
+          <div style="position:absolute;left:0;right:0;top:36%;bottom:0;background:linear-gradient(180deg,rgba(70,40,20,.35),rgba(7,6,5,0) 60%);pointer-events:none"></div>
+          <div style="position:absolute;left:-50%;right:-50%;top:36%;height:80%;transform-origin:50% 0;transform:perspective(600px) rotateX(62deg);background:repeating-linear-gradient(90deg,rgba(243,198,115,.07) 0 1px,transparent 1px 4%),repeating-linear-gradient(0deg,rgba(243,198,115,.05) 0 1px,transparent 1px 7%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);mask-image:linear-gradient(180deg,#000,transparent 70%);pointer-events:none"></div>
+          <div style="position:absolute;inset:0;pointer-events:none"><div style="position:absolute;left:3.80%;top:-8.0%;width:4.40%;height:100.0%;opacity:1.00;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 30px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:91.80%;top:-8.0%;width:4.40%;height:100.0%;opacity:1.00;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 30px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:6.00%;right:6.00%;top:-6.5%;height:2.20%;background:linear-gradient(180deg,#5A2A18,#2A130B);border-bottom:1px solid rgba(201,154,74,.5);opacity:1.00"></div><div style="position:absolute;left:15.81%;top:3.4%;width:3.26%;height:74.0%;opacity:0.88;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 22px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:80.93%;top:3.4%;width:3.26%;height:74.0%;opacity:0.88;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 22px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:17.44%;right:17.44%;top:4.9%;height:1.63%;background:linear-gradient(180deg,#5A2A18,#2A130B);border-bottom:1px solid rgba(201,154,74,.5);opacity:0.90"></div><div style="position:absolute;left:24.59%;top:11.8%;width:2.42%;height:55.0%;opacity:0.80;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 17px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:72.99%;top:11.8%;width:2.42%;height:55.0%;opacity:0.80;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 17px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:31.06%;top:18.0%;width:1.80%;height:41.0%;opacity:0.73;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 12px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:67.14%;top:18.0%;width:1.80%;height:41.0%;opacity:0.73;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 12px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:35.68%;top:22.4%;width:1.36%;height:31.0%;opacity:0.69;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 9px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div><div style="position:absolute;left:62.96%;top:22.4%;width:1.36%;height:31.0%;opacity:0.69;background:linear-gradient(90deg,#120906,#3E1C11 30%,#6A3220 52%,#3A1A10 74%,#0E0705);box-shadow:0 0 9px rgba(0,0,0,.6)"><div style="position:absolute;left:-12%;right:-12%;top:4%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-12%;right:-12%;bottom:6%;height:1.2%;background:linear-gradient(90deg,#5A3E1A,#C99A4A,#5A3E1A)"></div><div style="position:absolute;left:-18%;right:-18%;bottom:0;height:6%;background:linear-gradient(180deg,#3A2A1A,#1A120B)"></div></div></div>
+          <div style="position:absolute;left:50%;top:31%;height:62%;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none">
+            <div style="position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle,rgba(255,214,140,.30),rgba(217,150,60,.10) 42%,transparent 68%)"></div>
+            <div style="position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,220,150,.16) 0deg 1.2deg,transparent 1.2deg 7.5deg);-webkit-mask-image:radial-gradient(circle,transparent 22%,#000 30%,#000 52%,transparent 70%);mask-image:radial-gradient(circle,transparent 22%,#000 30%,#000 52%,transparent 70%)"></div>
+            <div style="position:absolute;inset:6%;border-radius:50%;border:1px solid rgba(243,198,115,.22)"></div>
+            <div style="position:absolute;inset:16%;border-radius:50%;border:1.5px solid rgba(243,198,115,.38);box-shadow:0 0 40px rgba(243,198,115,.12),inset 0 0 40px rgba(243,198,115,.10)"></div>
+            <div style="position:absolute;inset:24%;border-radius:50%;border:1px solid rgba(243,198,115,.26)"></div>
+            <div style="position:absolute;inset:29%;border-radius:50%;background:radial-gradient(circle,rgba(255,244,214,.95),rgba(255,214,140,.55) 30%,rgba(217,150,60,.12) 62%,transparent 72%)"></div>
+          </div>
+          <div style="position:absolute;left:50%;top:50%;width:min(30vh,34%);aspect-ratio:2.4;transform:translateX(-50%);pointer-events:none">
+            <div style="position:absolute;left:8%;right:8%;bottom:8%;height:70%"><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(-60deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(-45deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(-30deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(-15deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(0deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(15deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(30deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(45deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div><div style="position:absolute;left:50%;bottom:0;width:20%;height:100%;margin-left:-10%;transform-origin:50% 100%;transform:rotate(60deg);border-radius:50% 50% 50% 50% / 80% 80% 20% 20%;background:linear-gradient(180deg,rgba(255,226,170,.85),rgba(201,140,60,.75) 55%,rgba(90,58,26,.9));box-shadow:inset 0 0 0 1px rgba(255,236,190,.35)"></div></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;height:16%;border-radius:50%;background:linear-gradient(180deg,#C99A4A,#5A3E1A);box-shadow:0 10px 30px rgba(0,0,0,.5)"></div>
+          </div>
+          <div style="position:absolute;left:50%;top:58.5%;width:min(46vh,52%);height:9%;transform:translateX(-50%);pointer-events:none;background:linear-gradient(180deg,#4A2A16,#24140C);border-top:1px solid rgba(201,154,74,.6);clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:50%;background:linear-gradient(0deg,#070605 10%,rgba(7,6,5,.7) 45%,rgba(7,6,5,0));pointer-events:none"></div>
+          
+          {{ zdField }}
+        </div>
+
+        <sc-if value="{{ zdSit }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px 20px 20px;gap:8px;background:linear-gradient(0deg,rgba(7,6,5,.95) 50%,rgba(7,6,5,0))">
+            <div style="display:flex;align-items:baseline;gap:14px"><div style="font:500 clamp(30px,5vw,40px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.02em">{{ zdClock }}</div><div style="font:italic 400 19px 'Cormorant Garamond',Georgia,serif;color:rgba(242,235,221,.6);min-width:56px">{{ zdBreath }}</div></div>
+            <div style="width:min(420px,100%);display:flex;flex-direction:column;gap:8px">
+              <div style="position:relative;height:2px;border-radius:2px;background:rgba(242,235,221,.12)">
+                <div style="position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:#D9963C;width: {{ zdPct }}"></div>
+                <sc-for list="{{ zdMarks }}" as="m" hint-placeholder-count="2">
+                  <div style="position:absolute;top:-3px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#100E0B;border:1px solid #E8B061;left: {{ m.x }}"></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;justify-content:space-between;gap:12px;font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.5)"><div>Chủ trì: Thầy Minh Đạo</div><div>{{ zdNext }}</div></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ zdListOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;z-index:4;top:clamp(96px,14vh,120px);left:clamp(12px,2.4vw,28px);width:min(250px,calc(100% - 24px));max-height:calc(100% - 260px);display:flex;flex-direction:column;border-radius:18px;background:rgba(18,15,12,.72);backdrop-filter:blur(10px);border:1px solid rgba(242,235,221,.08)">
+            <div style="padding:14px 16px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:rgba(242,235,221,.5)">ĐANG CÙNG NGỒI</div><div onClick="{{ zdListToggle }}" style="font:400 16px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.45);cursor:pointer">×</div></div>
+            <div style="overflow-y:auto;padding:0 8px 8px;display:flex;flex-direction:column">
+              <sc-for list="{{ zdPeople }}" as="u" hint-placeholder-count="8">
+                <div onClick="{{ u.send }}" title="{{ u.tip }}" style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:12px;cursor: {{ u.cur }}" style-hover="background:rgba(242,235,221,.05)">
+                  <div style="width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 10px 'Be Vietnam Pro',sans-serif;color:#1A1611;background: {{ u.av }}">{{ u.ini }}</div>
+                  <div style="flex:1;min-width:0;font:400 12.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-weight:500;color:#F2EBDD">{{ u.name }}</span> · {{ u.city }}</div>
+                  <div style="font:400 11px 'Noto Emoji',sans-serif;color:#E8B061;opacity: {{ u.sentOp }}">🙏</div>
+                </div>
+              </sc-for>
+              <div style="padding:8px;font:400 11.5px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.42)">và 294 vị khác · chạm vào ngọn đèn để tùy hỷ</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ zdListOff }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ zdListToggle }}" style="position:absolute;z-index:4;top:clamp(96px,14vh,120px);left:clamp(12px,2.4vw,28px);display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;background:rgba(18,15,12,.6);border:1px solid rgba(242,235,221,.1);cursor:pointer" style-hover="border-color:rgba(232,176,97,.35)">
+            <div style="display:flex">
+              <div style="width:24px;height:24px;border-radius:50%;background:#E8B061;border:2px solid #14110D;font:600 9px 'Be Vietnam Pro',sans-serif;color:#1A1611;display:flex;align-items:center;justify-content:center">DT</div>
+              <div style="width:24px;height:24px;border-radius:50%;background:#C9B79C;border:2px solid #14110D;margin-left:-8px;font:600 9px 'Be Vietnam Pro',sans-serif;color:#1A1611;display:flex;align-items:center;justify-content:center">MĐ</div>
+              <div style="width:24px;height:24px;border-radius:50%;background:#BFCDB8;border:2px solid #14110D;margin-left:-8px;font:600 9px 'Be Vietnam Pro',sans-serif;color:#1A1611;display:flex;align-items:center;justify-content:center">TT</div>
+            </div>
+            <div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.85);white-space:nowrap">Đang cùng ngồi · 313</div>
+            <div style="font:400 14px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.5)">›</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ zdHasToast }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;z-index:5;top:clamp(120px,17vh,150px);left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:999px;background:rgba(242,235,221,.1);backdrop-filter:blur(8px);border:1px solid rgba(232,176,97,.25);font:400 13px 'Be Vietnam Pro',sans-serif;color:#F2EBDD;white-space:nowrap;max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;display:flex;gap:8px;align-items:center"><span style="font-family:'Noto Emoji',sans-serif;color:#E8B061">🙏</span><span>{{ zdToast }}</span></div>
+        </sc-if>
+
+        <sc-if value="{{ zdEnd }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;z-index:4;left:0;right:0;bottom:0;padding:120px 20px clamp(26px,5vh,48px);background:linear-gradient(0deg,rgba(8,7,6,.96) 0%,rgba(8,7,6,.82) 55%,rgba(8,7,6,0) 100%);display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px">
+            <div style="font:600 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;color:#E8B061">HỒI HƯỚNG KẾT KHÓA</div>
+            <div style="font:500 clamp(32px,5.4vw,44px)/1.15 'Cormorant Garamond',Georgia,serif">Thời khóa đã tròn đầy</div>
+            <div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.72)">Cùng hồi hướng công đức với 312 bạn đồng tu</div>
+            <div style="font:italic 400 19px/1.55 'Cormorant Garamond',Georgia,serif;color:rgba(242,235,221,.82);margin-top:8px">Nguyện đem công đức này<br>Hướng về khắp tất cả<br>Đệ tử và chúng sanh<br>Đều trọn thành Phật đạo</div>
+            <sc-if value="{{ zdCanHh }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ zdHuiHuong }}" style="margin-top:14px;padding:14px 34px;border-radius:999px;background:#D9963C;color:#1A1611;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#E6A94E">Hồi hướng</div>
+            </sc-if>
+            <sc-if value="{{ zdDidHh }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+                <div onClick="{{ zdLeave }}" style="padding:13px 24px;border-radius:999px;background:#F2EBDD;color:#1A1611;font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#FFFDF8">Rời thiền đường</div>
+                <div onClick="{{ zdAgain }}" style="padding:13px 24px;border-radius:999px;border:1px solid rgba(242,235,221,.25);color:#F2EBDD;font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:rgba(242,235,221,.06)">Ngồi thêm một thời khóa</div>
+              </div>
+            </sc-if>
+            <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.5);margin-top:6px">{{ zdHhLine }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
     <!-- ===== THẮP ĐÈN ===== -->
     <sc-if value="{{ isLamp }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px" data-screen-label="Thắp đèn">
@@ -1231,6 +1361,20 @@
                   <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ lpDaysL }}" as="d" hint-placeholder-count="4"><div onClick="{{ d.pick }}" style="width:64px;padding:10px 0;border-radius:16px;text-align:center;cursor:pointer;background: {{ d.bg }};color: {{ d.fg }};border:1px solid {{ d.bd }}"><div style="font:500 22px 'Cormorant Garamond',Georgia,serif">{{ d.v }}</div><div style="font:400 10.5px 'Be Vietnam Pro',sans-serif;opacity:.6">ngày</div></div></sc-for></div>
                 </div>
                 <div onClick="{{ lpLight }}" style="animation: {{ lpF6 }};align-self:flex-start;padding:15px 34px;border-radius:999px;background:#D9963C;color:#1A1611;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;white-space:nowrap;opacity: {{ lpBtnOp }};transition:opacity .3s ease">{{ lpBtnLabel }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ lpGuest }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:22px;animation: {{ lpF1 }}">
+                <div style="display:flex;flex-direction:column;gap:14px;max-width:440px">
+                  <div style="display:flex;gap:14px;align-items:baseline"><div style="font:500 20px 'Cormorant Garamond',Georgia,serif;color:#E8B061;width:22px;flex:none">01</div><div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.78)">Chọn loại đèn và tâm nguyện: cầu an, cầu siêu, hồi hướng hay tri ân.</div></div>
+                  <div style="display:flex;gap:14px;align-items:baseline"><div style="font:500 20px 'Cormorant Garamond',Georgia,serif;color:#E8B061;width:22px;flex:none">02</div><div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.78)">Ghi danh người thân và lời nguyện từ tâm.</div></div>
+                  <div style="display:flex;gap:14px;align-items:baseline"><div style="font:500 20px 'Cormorant Garamond',Georgia,serif;color:#E8B061;width:22px;flex:none">03</div><div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.78)">Đèn sáng trên tường đèn chung từ 1 đến 49 ngày. Có thể thỉnh chùa thắp đèn thật tại chánh điện.</div></div>
+                </div>
+                <div style="padding:16px 18px;border-radius:18px;background:rgba(243,198,115,.08);border:1px solid rgba(243,198,115,.3);font:400 13px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(242,235,221,.8);max-width:440px">Mỗi ngọn đèn gắn với tên người thắp và lời nguyện, nên cần đăng nhập để thắp đèn.</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <div onClick="{{ lpGoSignup }}" style="padding:14px 28px;border-radius:999px;background:#D9963C;color:#1A1611;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer;white-space:nowrap" style-hover="background:#E4A44C">Đăng ký</div>
+                  <div onClick="{{ lpGoLogin }}" style="padding:14px 28px;border-radius:999px;border:1px solid rgba(242,235,221,.3);color:#F5EEE0;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer;white-space:nowrap" style-hover="background:rgba(242,235,221,.06)">Đăng nhập</div>
+                </div>
               </div>
             </sc-if>
             <sc-if value="{{ lpDone }}" hint-placeholder-val="{{ false }}">
@@ -1650,7 +1794,20 @@
           </div>
           <div style="flex:1 1 300px;min-width:0;background:#FFFDF8;border:1px solid rgba(34,30,25,.08);border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:16px">
             <div style="font:500 15px 'Be Vietnam Pro',sans-serif">Đạo tràng &amp; quy y</div>
-            <div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-bottom:6px">Đạo tràng sinh hoạt</div><select value="{{ pf.temple }}" onChange="{{ pfOn.temple }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:14px;border:1px solid rgba(34,30,25,.12);background:#FFFDF8;font:400 14px 'Be Vietnam Pro',sans-serif;color:#221E19;outline:none;cursor:pointer" data-comment-anchor="beb6802af8-select"><sc-for list="{{ pfTemples }}" as="o" hint-placeholder-count="5"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+            <div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-bottom:6px">Đạo tràng sinh hoạt</div><div style="position:relative;z-index:20" data-comment-anchor="beb6802af8-select">
+              <div onClick="{{ pfTogTemple }}" style="height:46px;box-sizing:border-box;padding:0 14px;border-radius:14px;border:1px solid {{ pfTempleBd }};background:#FFFDF8;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none"><div style="flex:1;min-width:0;font:400 14px 'Be Vietnam Pro',sans-serif;color:#221E19;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pf.temple }}</div><div style="width:7px;height:7px;flex:none;border-right:1.5px solid rgba(34,30,25,.45);border-bottom:1.5px solid rgba(34,30,25,.45);transition:transform .2s ease;transform: {{ pfTempleChev }}"></div></div>
+              <sc-if value="{{ pfTempleOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ pfCloseTemple }}" style="position:fixed;inset:0;z-index:0"></div>
+                <div style="position:absolute;z-index:1;left:0;right:0;top:calc(100% + 6px);max-height:300px;overflow-y:auto;background:#FFFDF8;border:1px solid rgba(34,30,25,.12);border-radius:16px;box-shadow:0 16px 40px rgba(34,30,25,.16)">
+                  <sc-for list="{{ pfTempleOpts }}" as="o" hint-placeholder-count="6">
+                    <div onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-top:1px solid {{ o.sep }};background: {{ o.bg }}" style-hover="background:rgba(34,30,25,.04)">
+                      <div style="flex:1;min-width:0;font:400 14px 'Be Vietnam Pro',sans-serif">{{ o.label }}</div>
+                      <div style="width:16px;height:16px;border-radius:50%;flex:none;box-sizing:border-box;border:1.5px solid {{ o.ring }};display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;border-radius:50%;background: {{ o.dot }}"></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div></div>
             <div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-bottom:6px">Ngày quy y</div><input type="text" value="{{ pf.quyy }}" onChange="{{ pfOn.quyy }}" placeholder="VD: 15/4 Kỷ Hợi (2019)" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:14px;border:1px solid rgba(34,30,25,.12);background:#FFFDF8;font:400 14px 'Be Vietnam Pro',sans-serif;color:#221E19;outline:none" style-focus="border-color:#B8862F"></div>
             <div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-bottom:6px">Bổn sư</div><input type="text" value="{{ pf.master }}" onChange="{{ pfOn.master }}" placeholder="VD: TT. Thích Minh Đạo" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:14px;border:1px solid rgba(34,30,25,.12);background:#FFFDF8;font:400 14px 'Be Vietnam Pro',sans-serif;color:#221E19;outline:none" style-focus="border-color:#B8862F"></div>
             <div><div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-bottom:6px">Nhóm sinh hoạt</div><input type="text" value="{{ pf.group }}" onChange="{{ pfOn.group }}" placeholder="VD: Ban Hộ niệm" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:14px;border:1px solid rgba(34,30,25,.12);background:#FFFDF8;font:400 14px 'Be Vietnam Pro',sans-serif;color:#221E19;outline:none" style-focus="border-color:#B8862F"></div>
@@ -1750,11 +1907,25 @@
       </div>
     </sc-if>
 
+    <sc-if value="{{ gateOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ gateClose }}" style="position:fixed;inset:0;z-index:100;background:rgba(22,19,16,.48);display:flex;align-items:center;justify-content:center;padding:20px">
+        <div onClick="{{ stopProp }}" style="width:min(100%,400px);background:#FFFDF8;border-radius:24px;padding:28px;box-sizing:border-box;box-shadow:0 24px 60px rgba(0,0,0,.25);position:relative">
+          <div onClick="{{ gateClose }}" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(34,30,25,.55)" style-hover="background:#F3ECDE">✕</div>
+          <div style="font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.16em;color:#8A5A18">CẦN TÀI KHOẢN</div>
+          <div style="font:500 28px/1.2 'Cormorant Garamond',Georgia,serif;margin-top:10px;padding-right:28px">{{ gateT }}</div>
+          <div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.62);margin-top:10px;text-wrap:pretty">{{ gateS }} Đăng nhập để dữ liệu được lưu trong tài khoản và dùng được trên mọi thiết bị.</div>
+          <div style="display:flex;gap:10px;margin-top:24px">
+            <div onClick="{{ gateSignup }}" style="flex:1;text-align:center;padding:13px 0;border-radius:999px;border:1px solid rgba(184,134,47,.5);color:#8A5A18;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#FBF3E4">Tạo tài khoản</div>
+            <div onClick="{{ gateLogin }}" style="flex:1;text-align:center;padding:13px 0;border-radius:999px;background:#221E19;color:#F7F2E8;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#3A342C">Đăng nhập</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
     <sc-if value="{{ logoutAsk }}" hint-placeholder-val="{{ false }}">
       <div onClick="{{ logoutCancel }}" style="position:fixed;inset:0;z-index:100;background:rgba(22,19,16,.48);display:flex;align-items:center;justify-content:center;padding:20px">
         <div onClick="{{ stopProp }}" style="width:min(100%,400px);background:#FFFDF8;border-radius:24px;padding:28px;box-sizing:border-box;box-shadow:0 24px 60px rgba(0,0,0,.25)">
           <div style="font:500 28px 'Cormorant Garamond',Georgia,serif">Đăng xuất khỏi InnerLamp?</div>
-          <div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.62);margin-top:10px;text-wrap:pretty">Nhật ký tu tập, sổ giỗ và gia phả vẫn được giữ trong tài khoản. Bạn có thể đăng nhập lại bất cứ lúc nào.</div>
+          <div style="font:400 14px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.62);margin-top:10px;text-wrap:pretty">Bạn chỉ đăng xuất trên thiết bị này, các thiết bị khác vẫn giữ đăng nhập. Nhật ký tu tập, sổ giỗ và gia phả vẫn được lưu trong tài khoản.</div>
           <div style="display:flex;gap:10px;margin-top:24px">
             <div onClick="{{ logoutCancel }}" style="flex:1;text-align:center;padding:13px 0;border-radius:999px;border:1px solid rgba(34,30,25,.16);font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#F3ECDE">Không, ở lại</div>
             <div onClick="{{ logoutConfirm }}" style="flex:1;text-align:center;padding:13px 0;border-radius:999px;background:#A7443F;color:#FFFDF8;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#933A35">Có, đăng xuất</div>
@@ -2967,24 +3138,17 @@
             <div style="width:56px;height:56px;border-radius:50%;border:1px solid rgba(184,134,47,.45);display:flex;align-items:flex-end;justify-content:center;padding-bottom:13px;box-sizing:border-box;background:radial-gradient(circle at 50% 74%,rgba(217,150,60,.24),transparent 66%)"><svg viewBox="0 0 40 56" width="15" height="21" style="display:block;filter:drop-shadow(0 0 8px rgba(217,150,60,.8))"><path d="M23 1C25 11 36 19 36 34c0 12-8 20-16 20S4 47 4 37c0-9 6-14 9-21 2 7 5 10 8 11-2-9-2-17 2-26z" fill="#E6A94E"></path><path d="M21 30c2 5 5 8 5 12a6 6 0 0 1-12 0c0-3 2-5 3-8 1 2 2 3 3 3-1-2-1-4 1-7z" fill="#F3C673"></path></svg></div>
             <div style="font:500 40px/1.2 'Cormorant Garamond',Georgia,serif;margin-top:16px">Kính chào bạn</div>
             <div style="font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.52);margin-top:8px">Đăng nhập để lưu hành trình tu tập của bạn</div>
-            <div style="margin-top:24px;font:400 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(34,30,25,.45)">Số điện thoại</div>
-            <div style="margin-top:8px;background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ phoneBd }}">
-              <div style="display:flex;align-items:center;gap:10px"><div onClick="{{ openCC }}" style="flex:none;display:flex;align-items:center;gap:7px;cursor:pointer;padding:2px 2px 2px 0"><div style="padding:2px 5px;border-radius:5px;background:#EFE6D5;font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.06em">{{ cc.iso }}</div><div style="font:500 15px 'Be Vietnam Pro',sans-serif">{{ cc.dial }}</div><div style="width:6px;height:6px;border-right:1.4px solid rgba(34,30,25,.45);border-bottom:1.4px solid rgba(34,30,25,.45);transform:rotate(45deg) translateY(-2px)"></div></div>
-              <div style="width:1px;height:20px;background:rgba(34,30,25,.12);flex:none"></div>
-              <input value="{{ phone }}" onChange="{{ onPhone }}" inputmode="numeric" placeholder="0949 797 071" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
-              <div style="width:18px;height:18px;border-radius:50%;background:#4E6C59;display:flex;align-items:center;justify-content:center;flex:none;transition:opacity .2s ease;opacity: {{ phoneOkOp }}"><div style="width:7px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg);margin-top:-2px"></div></div></div>
+            <sc-if value="{{ authHasNote }}" hint-placeholder-val="{{ false }}"><div style="margin-top:18px;padding:12px 14px;border-radius:14px;background:{{ authNoteBg }};font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:{{ authNoteFg }};text-wrap:pretty">{{ authNote }}</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:24px">
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ lEmailBd }}"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Email</div><input type="email" inputmode="email" autocomplete="email" value="{{ email }}" onChange="{{ onLEmail }}" placeholder="phapdanh@email.com" style="flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19;margin-top:4px"></div>
+              <sc-if value="{{ eLEmailHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ eLEmail }}</div></sc-if>
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ lPwBd }}"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Mật khẩu</div><div style="display:flex;align-items:center;gap:10px;margin-top:4px"><input type="{{ pwType }}" value="{{ pwd }}" onChange="{{ onPwd }}" autocomplete="current-password" placeholder="Mật khẩu" style="flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19"><div onClick="{{ toggleShow }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;user-select:none">{{ showLabel }}</div></div></div>
+              <sc-if value="{{ eLPwHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ eLPw }}</div></sc-if>
             </div>
-            <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:{{ phoneHintFg }};margin:6px 0 0 16px">{{ phoneHint }}</div>
-            <div style="margin-top:12px;display:flex;align-items:center;gap:10px;background:#FFFDF8;border:1px solid rgba(34,30,25,.12);border-radius:16px;padding:15px 16px">
-              <input type="password" value="{{ pwd }}" onChange="{{ onPwd }}" placeholder="Mật khẩu" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
-              <div onClick="{{ goForgot }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;white-space:nowrap">Quên mật khẩu?</div>
-            </div>
-            <sc-if value="{{ authHasNote }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(78,108,89,.1);font:400 13px 'Be Vietnam Pro',sans-serif;color:#4E6C59">{{ authNote }}</div></sc-if>
-            <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(164,68,46,.08);font:400 13px 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
-            <div onClick="{{ doLogin }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18)" style-hover="background:#3A342C">Đăng nhập</div>
-            <div onClick="{{ doLoginSms }}" style="height:52px;margin-top:10px;border-radius:999px;border:1px solid rgba(34,30,25,.16);display:flex;align-items:center;justify-content:center;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:rgba(34,30,25,.04)">Gửi mã một lần qua SMS</div>
-            <div style="display:flex;align-items:center;gap:12px;margin-top:28px"><div style="flex:1;height:1px;background:rgba(34,30,25,.12)"></div><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.38)">hoặc</div><div style="flex:1;height:1px;background:rgba(34,30,25,.12)"></div></div>
-            <div onClick="{{ goSignup }}" style="height:52px;margin-top:14px;border-radius:999px;background:#FFFDF8;border:1px solid rgba(184,134,47,.5);display:flex;align-items:center;justify-content:center;font:500 14px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer" style-hover="background:#FBF3E4">Tạo tài khoản mới</div>
+            <div onClick="{{ goForgot }}" style="align-self:flex-end;margin-top:12px;font:500 13px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer">Quên mật khẩu?</div>
+            <sc-if value="{{ lBanHas }}" hint-placeholder-val="{{ false }}"><div style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);display:flex;align-items:center;gap:12px"><div style="flex:1;min-width:0;font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ lBanMsg }}</div><sc-if value="{{ lBanRetry }}" hint-placeholder-val="{{ false }}"><div onClick="{{ lRetry }}" style="flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(164,68,46,.35);display:flex;align-items:center;font:500 13px 'Be Vietnam Pro',sans-serif;color:#A4442E;cursor:pointer" style-hover="background:rgba(164,68,46,.06)">Thử lại</div></sc-if></div></sc-if>
+            <div onClick="{{ doLogin }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18)" style-hover="background:#3A342C"><sc-if value="{{ lLoading }}" hint-placeholder-val="{{ false }}"><div style="width:15px;height:15px;border-radius:50%;border:2px solid rgba(247,242,232,.35);border-top-color:#F7F2E8;box-sizing:border-box;animation:il-spin .8s linear infinite;margin-right:10px"></div></sc-if>Đăng nhập</div>
+            <div onClick="{{ goSignup }}" style="height:52px;margin-top:10px;border-radius:999px;background:#FFFDF8;border:1px solid rgba(184,134,47,.5);display:flex;align-items:center;justify-content:center;font:500 14px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer" style-hover="background:#FBF3E4">Tạo tài khoản mới</div>
             <div onClick="{{ doGuest }}" style="text-align:center;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);cursor:pointer">Vào xem trước, chưa đăng nhập</div>
           </div>
         </sc-if>
@@ -2992,13 +3156,15 @@
           <div style="width:min(100%,420px);display:flex;flex-direction:column">
             <div style="font:500 40px/1.22 'Cormorant Garamond',Georgia,serif">Kết duyên cùng InnerLamp</div>
             <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.52);margin-top:10px">Hành trình tu tập sẽ được lưu lại, dù bạn đổi máy.</div>
+            <sc-if value="{{ sBanTop }}" hint-placeholder-val="{{ false }}"><div style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(184,134,47,.1);border:1px solid rgba(184,134,47,.28);font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#6E4A14;text-wrap:pretty">Thời gian đăng ký đã hết. Vui lòng đăng ký lại từ đầu.</div></sc-if>
             <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
-              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid rgba(34,30,25,.12);display:flex;flex-direction:column">
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ sFullBd }};display:flex;flex-direction:column">
                 <div style="display:flex;align-items:baseline;gap:4px;font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)"><span>Họ và tên</span><span style="color:#A7443F">*</span></div>
                 <input value="{{ fullName }}" onChange="{{ onFullName }}" autocomplete="name" placeholder="Nguyễn Thị Lan" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19;margin-top:3px">
               </div>
+              <sc-if value="{{ eFullHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ eFull }}</div></sc-if>
               <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid rgba(34,30,25,.12);display:flex;align-items:center;gap:12px">
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Pháp danh hoặc tên gọi</div><input value="{{ name }}" onChange="{{ onName }}" placeholder="Diệu Tâm" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19;margin-top:3px"></div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column"><div style="display:flex;align-items:baseline;gap:8px"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Pháp danh</div><div style="font:400 10.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.38)">không bắt buộc</div></div><input value="{{ name }}" onChange="{{ onName }}" placeholder="Diệu Tâm" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19;margin-top:3px"></div>
                 <div onClick="{{ suggestName }}" style="flex:none;display:flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:999px;background:rgba(184,134,47,.14);border:1px solid rgba(184,134,47,.3);cursor:pointer;user-select:none;transition:background .18s ease" style-hover="background:rgba(184,134,47,.24)">
                   <div style="width:13px;height:13px;border:1.5px solid #8A5A18;border-radius:50%;border-top-color:transparent;box-sizing:border-box;transform:rotate({{ diceRot }});transition:transform .45s cubic-bezier(.2,.8,.3,1)"></div>
                   <div style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;white-space:nowrap">Gợi ý</div>
@@ -3034,30 +3200,33 @@
                   <div style="display:flex;flex-direction:column;gap:4px;font:400 12.5px/1.6 'Be Vietnam Pro',sans-serif;color:#6E4A14;text-wrap:pretty;min-width:0"><div style="display:flex;gap:8px;align-items:flex-start"><div style="width:4px;height:4px;border-radius:50%;background:#8A5A18;flex:none;margin-top:8px"></div><div><span style="font-weight:600">{{ templePendingName }}</span> đang chờ InnerLamp duyệt.</div></div><div style="display:flex;gap:8px;align-items:flex-start"><div style="width:4px;height:4px;border-radius:50%;background:#8A5A18;flex:none;margin-top:8px"></div><div>Hồ sơ của bạn sẽ chưa có nơi xuất gia.</div></div><div style="display:flex;gap:8px;align-items:flex-start"><div style="width:4px;height:4px;border-radius:50%;background:#8A5A18;flex:none;margin-top:8px"></div><div>Sau khi chùa được duyệt, bạn có thể tự cập nhật nơi xuất gia trong phần Hồ sơ.</div></div></div>
                 </div>
               </sc-if>
-              <div>
-                <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ phoneBd }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ sPhoneBd }}">
                   <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Số điện thoại</div>
                   <div style="display:flex;align-items:center;gap:10px;margin-top:4px"><div onClick="{{ openCC }}" style="flex:none;display:flex;align-items:center;gap:7px;cursor:pointer;padding:2px 2px 2px 0"><div style="padding:2px 5px;border-radius:5px;background:#EFE6D5;font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.06em">{{ cc.iso }}</div><div style="font:400 15px 'Be Vietnam Pro',sans-serif">{{ cc.dial }}</div><div style="width:6px;height:6px;border-right:1.4px solid rgba(34,30,25,.45);border-bottom:1.4px solid rgba(34,30,25,.45);transform:rotate(45deg) translateY(-2px)"></div></div>
               <div style="width:1px;height:20px;background:rgba(34,30,25,.12);flex:none"></div>
               <input value="{{ phone }}" onChange="{{ onPhone }}" inputmode="numeric" placeholder="0949 797 071" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
               <div style="width:18px;height:18px;border-radius:50%;background:#4E6C59;display:flex;align-items:center;justify-content:center;flex:none;transition:opacity .2s ease;opacity: {{ phoneOkOp }}"><div style="width:7px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg);margin-top:-2px"></div></div></div>
                 </div>
-                <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:{{ phoneHintFg }};margin:6px 0 0 16px">{{ phoneHint }}</div>
+                <sc-if value="{{ ePhoneHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ ePhone }}</div></sc-if>
+                <sc-if value="{{ ePhoneTaken }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">Số điện thoại này đã được đăng ký. <a onClick="{{ goLogin }}" style="font-weight:500">Đăng nhập</a></div></sc-if>
               </div>
-              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ emailBd }}">
-                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Email</div><div style="font:400 10.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.38)">để nhận biên nhận cúng dường</div></div>
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ sEmailBd }}">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Email</div><div style="font:400 10.5px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.38)" data-comment-anchor="ea010009df-div">Dùng để đăng nhập và nhận mã xác thực</div></div>
                 <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
                   <input value="{{ email }}" onChange="{{ onEmail }}" inputmode="email" placeholder="phapdanh@email.com" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
                   <div style="width:18px;height:18px;border-radius:50%;background:#4E6C59;display:flex;align-items:center;justify-content:center;flex:none;opacity: {{ emailOkOp }}"><div style="width:7px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg);margin-top:-2px"></div></div>
                 </div>
               </div>
-              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ pwBd }}">
+              <sc-if value="{{ eEmailHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ eEmail }}</div></sc-if>
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ sPwBd }}">
                 <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Mật khẩu</div>
                 <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
                   <input type="{{ pwType }}" value="{{ spwd }}" onChange="{{ onSpwd }}" placeholder="Tối thiểu 8 ký tự" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
                   <div onClick="{{ toggleShow }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;user-select:none">{{ showLabel }}</div>
                 </div>
               </div>
+              <sc-if value="{{ ePwHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ ePw }}</div></sc-if>
               <div style="display:flex;gap:6px;align-items:center">
                 <sc-for list="{{ strengthSegs }}" as="g" hint-placeholder-count="3"><div style="flex:1;height:3px;border-radius:2px;background: {{ g }}"></div></sc-for>
                 <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color: {{ strengthFg }};margin-left:6px;min-width:64px">{{ strengthLabel }}</div>
@@ -3065,25 +3234,26 @@
             </div>
             <div onClick="{{ toggleAgree }}" style="display:flex;gap:11px;margin-top:20px;cursor:pointer;user-select:none">
               <div style="width:20px;height:20px;border-radius:6px;flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background: {{ agreeBg }};border:1px solid {{ agreeBd }}"><div style="width:8px;height:4.5px;border-left:1.6px solid #F7F2E8;border-bottom:1.6px solid #F7F2E8;transform:rotate(-45deg);margin-top:-2px;opacity: {{ agreeTickOp }}"></div></div>
-              <div style="font:400 12px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.6);text-wrap:pretty">Tôi đồng ý <a>Điều khoản sử dụng</a> và <a>Chính sách quyền riêng tư</a> của InnerLamp.</div>
+              <div style="font:400 12px/1.6 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.6);text-wrap:pretty">Tôi đồng ý <a onClick="{{ lgOpenTerms }}" style="cursor:pointer">Điều khoản sử dụng</a> và <a onClick="{{ lgOpenPrivacy }}" style="cursor:pointer">Chính sách quyền riêng tư</a> của InnerLamp.</div>
             </div>
-            <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(164,68,46,.08);font:400 13px 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
+            <sc-if value="{{ eAgreeHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:6px 0 0 31px">{{ eAgree }}</div></sc-if>
+            <sc-if value="{{ sBanHas }}" hint-placeholder-val="{{ false }}"><div style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);display:flex;align-items:center;gap:12px"><div style="flex:1;min-width:0;font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ sBanMsg }}</div><sc-if value="{{ sBanRetry }}" hint-placeholder-val="{{ false }}"><div onClick="{{ sRetry }}" style="flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(164,68,46,.35);display:flex;align-items:center;font:500 13px 'Be Vietnam Pro',sans-serif;color:#A4442E;cursor:pointer" style-hover="background:rgba(164,68,46,.06)">Thử lại</div></sc-if></div></sc-if>
             <div style="padding-top:16px;margin-top:18px;border-top:1px solid rgba(34,30,25,.08)">
-              <div onClick="{{ doSignup }}" style="height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor: {{ ctaCursor }};background: {{ ctaBg }};color: {{ ctaFg }};box-shadow: {{ ctaSh }};transition:background .16s ease">Gửi mã xác thực</div>
+              <div onClick="{{ doSignup }}" style="height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor: {{ ctaCursor }};background: {{ ctaBg }};color: {{ ctaFg }};box-shadow: {{ ctaSh }};transition:background .16s ease"><sc-if value="{{ sLoading }}" hint-placeholder-val="{{ false }}"><div style="width:15px;height:15px;border-radius:50%;border:2px solid rgba(247,242,232,.35);border-top-color:#F7F2E8;box-sizing:border-box;animation:il-spin .8s linear infinite;margin-right:10px"></div></sc-if>Đăng ký</div>
               <div onClick="{{ goLogin }}" style="text-align:center;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);cursor:pointer">Tôi đã có tài khoản</div>
             </div>
           </div>
         </sc-if>
         <sc-if value="{{ isOtp }}" hint-placeholder-val="{{ false }}">
           <div style="width:min(100%,400px);display:flex;flex-direction:column" data-screen-label="Nhập mã OTP">
-            <div onClick="{{ otpBack }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;font:500 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);cursor:pointer;margin-bottom:22px" style-hover="color:#221E19"><div style="width:7px;height:7px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)"></div>Quay lại</div>
+            <div onClick="{{ otpBack }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;font:500 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);cursor:pointer;margin-bottom:22px" style-hover="color:#221E19"><div style="width:7px;height:7px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)"></div>{{ otpBackLbl }}</div>
             <div style="font:500 40px/1.2 'Cormorant Garamond',Georgia,serif">Nhập mã xác thực</div>
-            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px;text-wrap:pretty">Mã gồm 6 số đã gửi qua tin nhắn đến <span style="color:#221E19;font-weight:500;white-space:nowrap">{{ otpPhone }}</span>. <a onClick="{{ otpBack }}">Đổi số</a></div>
-            <div style="position:relative;margin-top:26px">
+            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px;text-wrap:pretty">{{ otpDestPre }}<span style="color:#221E19;font-weight:500;word-break:break-all">{{ otpDest }}</span>.</div>
+            <div style="position:relative;margin-top:26px;opacity:{{ otpBoxOp }}">
               <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">
                 <sc-for list="{{ otpBoxes }}" as="b" hint-placeholder-count="6"><div style="height:58px;border-radius:14px;background:#FFFDF8;border:1.5px solid {{ b.bd }};display:flex;align-items:center;justify-content:center;font:500 24px 'Be Vietnam Pro',sans-serif;color:#221E19;box-shadow:{{ b.sh }}">{{ b.v }}</div></sc-for>
               </div>
-              <input ref="{{ otpRef }}" value="{{ otp }}" onChange="{{ onOtp }}" inputmode="numeric" autocomplete="one-time-code" maxlength="6" autofocus="autofocus" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;cursor:text;font-size:16px">
+              <input ref="{{ otpRef }}" value="{{ otp }}" onChange="{{ onOtp }}" inputmode="numeric" autocomplete="one-time-code" maxlength="6" autofocus="autofocus" disabled="{{ otpLocked }}" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;cursor:text;font-size:16px">
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif">
               <div style="color:{{ otpLeftFg }}">{{ otpLeftLbl }}</div>
@@ -3092,44 +3262,56 @@
             </div>
             <div style="height:3px;border-radius:2px;background:rgba(34,30,25,.08);margin-top:10px;overflow:hidden"><div style="height:100%;width:{{ otpPct }};background:{{ otpLeftFg }};transition:width 1s linear"></div></div>
             <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(164,68,46,.08);font:400 13px 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
-            <div onClick="{{ otpVerify }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18);opacity:{{ otpCtaOp }}" style-hover="background:#3A342C">Xác nhận</div>
+            <sc-if value="{{ otpLocked }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ otpLockMsg }}</div></sc-if>
+            <sc-if value="{{ otpPaused }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ otpPauseMsg }}</div></sc-if>
+            <sc-if value="{{ otpShowVerify }}" hint-placeholder-val="{{ true }}"><div onClick="{{ otpVerify }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18);opacity:{{ otpCtaOp }}" style-hover="background:#3A342C">Xác nhận</div></sc-if>
+            <sc-if value="{{ otpShowResendCta }}" hint-placeholder-val="{{ false }}"><div onClick="{{ otpResend }}" style="height:54px;margin-top:20px;border-radius:999px;background:#D9963C;color:#1A1611;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(184,134,47,.28)" style-hover="background:#E3A44C">Gửi lại mã</div></sc-if>
             <div style="text-align:center;margin-top:14px;font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.4)">Bản mẫu: nhập 123456</div>
           </div>
         </sc-if>
         <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ false }}">
           <div style="width:min(100%,400px);display:flex;flex-direction:column" data-screen-label="Quên mật khẩu">
-            <div onClick="{{ goLogin }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;font:500 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);cursor:pointer;margin-bottom:22px" style-hover="color:#221E19"><div style="width:7px;height:7px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)"></div>Đăng nhập</div>
             <div style="font:500 40px/1.2 'Cormorant Garamond',Georgia,serif">Quên mật khẩu</div>
-            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px;text-wrap:pretty">Nhập số điện thoại đã đăng ký. InnerLamp sẽ gửi mã xác thực để bạn đặt lại mật khẩu.</div>
-            <div style="margin-top:24px;font:400 12px 'Be Vietnam Pro',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(34,30,25,.45)">Số điện thoại</div>
-            <div style="margin-top:8px;background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ phoneBd }}">
-              <div style="display:flex;align-items:center;gap:10px"><div onClick="{{ openCC }}" style="flex:none;display:flex;align-items:center;gap:7px;cursor:pointer;padding:2px 2px 2px 0"><div style="padding:2px 5px;border-radius:5px;background:#EFE6D5;font:600 10.5px 'Be Vietnam Pro',sans-serif;letter-spacing:.06em">{{ cc.iso }}</div><div style="font:500 15px 'Be Vietnam Pro',sans-serif">{{ cc.dial }}</div><div style="width:6px;height:6px;border-right:1.4px solid rgba(34,30,25,.45);border-bottom:1.4px solid rgba(34,30,25,.45);transform:rotate(45deg) translateY(-2px)"></div></div>
-              <div style="width:1px;height:20px;background:rgba(34,30,25,.12);flex:none"></div>
-              <input value="{{ phone }}" onChange="{{ onPhone }}" inputmode="numeric" placeholder="0949 797 071" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
-              <div style="width:18px;height:18px;border-radius:50%;background:#4E6C59;display:flex;align-items:center;justify-content:center;flex:none;transition:opacity .2s ease;opacity: {{ phoneOkOp }}"><div style="width:7px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg);margin-top:-2px"></div></div></div>
-            </div>
-            <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:{{ phoneHintFg }};margin:6px 0 0 16px">{{ phoneHint }}</div>
-            <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(164,68,46,.08);font:400 13px 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
-            <div onClick="{{ doForgot }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18)" style-hover="background:#3A342C">Gửi mã xác thực</div>
-            <div onClick="{{ goSignup }}" style="text-align:center;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);cursor:pointer">Chưa có tài khoản? Tạo tài khoản mới</div>
+            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px;text-wrap:pretty">Nhập email của tài khoản, InnerLamp sẽ gửi mã để bạn đặt lại mật khẩu.</div>
+            <div style="margin-top:22px"><div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ fEmailBd }}"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Email</div><input type="email" inputmode="email" autocomplete="email" value="{{ email }}" onChange="{{ onFEmail }}" placeholder="phapdanh@email.com" style="flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19;margin-top:4px"></div></div>
+            <sc-if value="{{ eFEmailHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:6px 0 0 16px">{{ eFEmail }}</div></sc-if>
+            <sc-if value="{{ fBanHas }}" hint-placeholder-val="{{ false }}"><div style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);display:flex;align-items:center;gap:12px"><div style="flex:1;min-width:0;font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ fBanMsg }}</div><sc-if value="{{ fBanRetry }}" hint-placeholder-val="{{ false }}"><div onClick="{{ fRetry }}" style="flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(164,68,46,.35);display:flex;align-items:center;font:500 13px 'Be Vietnam Pro',sans-serif;color:#A4442E;cursor:pointer" style-hover="background:rgba(164,68,46,.06)">Thử lại</div></sc-if></div></sc-if>
+            <div onClick="{{ doForgot }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18)" style-hover="background:#3A342C"><sc-if value="{{ fLoading }}" hint-placeholder-val="{{ false }}"><div style="width:15px;height:15px;border-radius:50%;border:2px solid rgba(247,242,232,.35);border-top-color:#F7F2E8;box-sizing:border-box;animation:il-spin .8s linear infinite;margin-right:10px"></div></sc-if>Gửi mã</div>
+            <div onClick="{{ goLogin }}" style="text-align:center;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45);cursor:pointer">Trở lại đăng nhập</div>
           </div>
         </sc-if>
         <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
-          <div style="width:min(100%,400px);display:flex;flex-direction:column" data-screen-label="Đặt mật khẩu mới">
-            <div style="font:500 40px/1.2 'Cormorant Garamond',Georgia,serif">Đặt mật khẩu mới</div>
-            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px">Cho tài khoản {{ otpPhone }}</div>
-            <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
-              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid rgba(34,30,25,.12)">
-                <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Mật khẩu mới</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:5px"><input type="{{ pwType }}" value="{{ npw }}" onChange="{{ onNpw }}" placeholder="Tối thiểu 8 ký tự" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19"><div onClick="{{ toggleShow }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;user-select:none">{{ showLabel }}</div></div>
+          <div style="width:min(100%,400px);display:flex;flex-direction:column" data-screen-label="Đặt lại mật khẩu">
+            <div onClick="{{ otpBack }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;font:500 13px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);cursor:pointer;margin-bottom:22px" style-hover="color:#221E19"><div style="width:7px;height:7px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)"></div>Đổi email</div>
+            <div style="font:500 40px/1.2 'Cormorant Garamond',Georgia,serif">Đặt lại mật khẩu</div>
+            <div style="font:400 13px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.55);margin-top:10px;text-wrap:pretty">Nếu email này có tài khoản, mã đã được gửi đến <span style="color:#221E19;font-weight:500;word-break:break-all">{{ email }}</span>. Không thấy thư? Kiểm tra cả hộp thư Spam hoặc Quảng cáo.</div>
+            <div style="margin-top:22px;font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.5)">Mã gồm 6 số</div>
+                        <div style="position:relative;margin-top:8px;opacity:{{ otpBoxOp }}">
+              <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">
+                <sc-for list="{{ otpBoxes }}" as="b" hint-placeholder-count="6"><div style="height:58px;border-radius:14px;background:#FFFDF8;border:1.5px solid {{ b.bd }};display:flex;align-items:center;justify-content:center;font:500 24px 'Be Vietnam Pro',sans-serif;color:#221E19;box-shadow:{{ b.sh }}">{{ b.v }}</div></sc-for>
               </div>
-              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid rgba(34,30,25,.12)">
-                <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Nhập lại mật khẩu</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:5px"><input type="{{ pwType }}" value="{{ npw2 }}" onChange="{{ onNpw2 }}" placeholder="Tối thiểu 8 ký tự" style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19"><div onClick="{{ toggleShow }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;user-select:none">{{ showLabel }}</div></div>
+              <input ref="{{ otpRef }}" value="{{ otp }}" onChange="{{ onOtp }}" inputmode="numeric" autocomplete="one-time-code" maxlength="6" autofocus="autofocus" disabled="{{ otpLocked }}" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;cursor:text;font-size:16px">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;font:400 13px 'Be Vietnam Pro',sans-serif">
+              <div style="color:{{ otpLeftFg }}">{{ otpLeftLbl }}</div>
+              <sc-if value="{{ otpCanResend }}" hint-placeholder-val="{{ false }}"><a onClick="{{ otpResend }}" style="font-weight:500">Gửi lại mã</a></sc-if>
+              <sc-if value="{{ otpWaiting }}" hint-placeholder-val="{{ true }}"><div style="color:rgba(34,30,25,.45)">Gửi lại sau {{ otpWait }}</div></sc-if>
+            </div>
+            <div style="height:3px;border-radius:2px;background:rgba(34,30,25,.08);margin-top:10px;overflow:hidden"><div style="height:100%;width:{{ otpPct }};background:{{ otpLeftFg }};transition:width 1s linear"></div></div>
+            <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:12px;font:400 12.5px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
+            <sc-if value="{{ otpLocked }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ otpLockMsg }}</div></sc-if>
+            <sc-if value="{{ otpPaused }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(164,68,46,.07);border:1px solid rgba(164,68,46,.18);font:400 13px/1.55 'Be Vietnam Pro',sans-serif;color:#A4442E;text-wrap:pretty">{{ otpPauseMsg }}</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+              <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid {{ rPwBd }}"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Mật khẩu mới</div><div style="display:flex;align-items:center;gap:10px;margin-top:4px"><input type="{{ pwType }}" value="{{ npw }}" onChange="{{ onNpw }}" autocomplete="new-password" placeholder="8 đến 64 ký tự" style="flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;padding:0;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19"><div onClick="{{ toggleShow }}" style="font:500 12px 'Be Vietnam Pro',sans-serif;color:#8A5A18;cursor:pointer;user-select:none">{{ showLabel }}</div></div></div>
+              <sc-if value="{{ eRPwHas }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin:-4px 0 0 16px">{{ eRPw }}</div></sc-if>
+              <div style="display:flex;gap:6px;align-items:center">
+                <sc-for list="{{ rStrengthSegs }}" as="g" hint-placeholder-count="3"><div style="flex:1;height:3px;border-radius:2px;background: {{ g }}"></div></sc-for>
+                <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color: {{ rStrengthFg }};margin-left:6px;min-width:64px">{{ rStrengthLabel }}</div>
               </div>
             </div>
-            <sc-if value="{{ authHasErr }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(164,68,46,.08);font:400 13px 'Be Vietnam Pro',sans-serif;color:#A4442E">{{ authErr }}</div></sc-if>
-            <div onClick="{{ doReset }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18)" style-hover="background:#3A342C">Lưu mật khẩu</div>
+            <sc-if value="{{ otpShowVerify }}" hint-placeholder-val="{{ true }}"><div onClick="{{ doReset }}" style="height:54px;margin-top:20px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(34,30,25,.18);opacity:{{ rCtaOp }}" style-hover="background:#3A342C"><sc-if value="{{ rLoading }}" hint-placeholder-val="{{ false }}"><div style="width:15px;height:15px;border-radius:50%;border:2px solid rgba(247,242,232,.35);border-top-color:#F7F2E8;box-sizing:border-box;animation:il-spin .8s linear infinite;margin-right:10px"></div></sc-if>Lưu mật khẩu</div></sc-if>
+            <sc-if value="{{ otpShowResendCta }}" hint-placeholder-val="{{ false }}"><div onClick="{{ otpResend }}" style="height:54px;margin-top:20px;border-radius:999px;background:#D9963C;color:#1A1611;display:flex;align-items:center;justify-content:center;font:500 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(184,134,47,.28)" style-hover="background:#E3A44C">Gửi lại mã</div></sc-if>
+            <div style="text-align:center;margin-top:14px;font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.4)">Bản mẫu: nhập 123456</div>
           </div>
         </sc-if>
         <sc-if value="{{ isAddTemple }}" hint-placeholder-val="{{ false }}">
@@ -3199,9 +3381,9 @@
                 </sc-if>
                 </sc-if>
                 <sc-if value="{{ atWardFree }}" hint-placeholder-val="{{ false }}">
-                  <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid rgba(34,30,25,.12)">
-                    <div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Phường / Xã / Đặc khu</div>
-                    <input value="{{ atWard }}" onChange="{{ onAtWard }}" placeholder="Nhập tên phường, xã" style="width:100%;box-sizing:border-box;border:0;background:transparent;outline:none;padding:0;margin-top:4px;font:400 15px 'Be Vietnam Pro',sans-serif;color:#221E19">
+                  <div style="background:#FFFDF8;border-radius:16px;padding:12px 16px;border:1px solid #C2857F;display:flex;align-items:center;gap:12px">
+                    <div style="flex:1;min-width:0"><div style="font:400 12px 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.45)">Phường / Xã / Đặc khu</div><div style="font:400 13px/1.5 'Be Vietnam Pro',sans-serif;color:#A4442E;margin-top:3px;text-wrap:pretty">{{ atWardErrMsg }}</div></div>
+                    <div onClick="{{ atRetryWards }}" style="flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(164,68,46,.35);display:flex;align-items:center;font:500 13px 'Be Vietnam Pro',sans-serif;color:#A4442E;cursor:pointer" style-hover="background:rgba(164,68,46,.06)">Thử lại</div>
                   </div>
                 </sc-if>
               </div>
@@ -3219,6 +3401,23 @@
     </div>
   </sc-if>
 
+  <sc-if value="{{ lgModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ lgClose }}" style="position:fixed;inset:0;z-index:100;background:rgba(20,18,15,.42);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div onClick="{{ stop }}" style="width:min(100%,620px);max-height:min(720px,90vh);display:flex;flex-direction:column;background:#FBF7EF;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden">
+        <div style="padding:20px 20px 14px;display:flex;flex-direction:column;gap:14px;border-bottom:1px solid rgba(34,30,25,.08)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="font:500 24px 'Cormorant Garamond',Georgia,serif">{{ lg.title }}</div><div onClick="{{ lgClose }}" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(34,30,25,.6);flex:none" style-hover="background:#F1E8D8">✕</div></div>
+          <div style="display:flex;gap:4px;align-self:flex-start;padding:4px;border-radius:999px;background:#F1E8D8"><sc-for list="{{ lgTabs }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="padding:8px 14px;border-radius:999px;font:500 13px 'Be Vietnam Pro',sans-serif;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.sh }}">{{ g.label }}</div></sc-for></div>
+        </div>
+        <div style="overflow-y:auto;padding:20px 24px 24px;display:flex;flex-direction:column;gap:22px">
+          <div style="font:400 14px/1.65 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.6);text-wrap:pretty">{{ lg.intro }}</div>
+          <sc-for list="{{ lg.secs }}" as="x" hint-placeholder-count="6">
+            <div><div style="font:500 20px 'Cormorant Garamond',Georgia,serif">{{ x.n }}. {{ x.t }}</div><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><sc-for list="{{ x.p }}" as="pp" hint-placeholder-count="2"><div style="font:400 14px/1.7 'Be Vietnam Pro',sans-serif;color:rgba(34,30,25,.75);text-wrap:pretty">{{ pp }}</div></sc-for></div></div>
+          </sc-for>
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid rgba(34,30,25,.08);display:flex;justify-content:flex-end"><div onClick="{{ lgClose }}" style="height:44px;padding:0 22px;border-radius:999px;background:#221E19;color:#F7F2E8;display:flex;align-items:center;font:500 14px 'Be Vietnam Pro',sans-serif;cursor:pointer" style-hover="background:#3A342C">Đã đọc</div></div>
+      </div>
+    </div>
+  </sc-if>
   <sc-if value="{{ ccOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeCC }}" style="position:fixed;inset:0;z-index:100;background:rgba(20,18,15,.42);display:flex;align-items:center;justify-content:center;padding:24px">
       <div onClick="{{ stop }}" style="width:min(100%,400px);max-height:min(560px,90vh);display:flex;flex-direction:column;background:#FBF7EF;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden">
@@ -3242,7 +3441,7 @@
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;viewAs&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Đã đăng nhập&quot;,&quot;Chưa đăng nhập&quot;],&quot;default&quot;:&quot;Đã đăng nhập&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Người dùng&quot;},&quot;sangha&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Theo hồ sơ&quot;,&quot;Đã có đạo tràng&quot;,&quot;Chưa có đạo tràng&quot;],&quot;default&quot;:&quot;Theo hồ sơ&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Người dùng&quot;},&quot;simulate&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Không&quot;,&quot;Không tìm thấy trang&quot;,&quot;Mất kết nối&quot;,&quot;Lỗi tải dữ liệu&quot;],&quot;default&quot;:&quot;Không&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Xem trước trạng thái lỗi&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewAs&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Đã đăng nhập&quot;,&quot;Chưa đăng nhập&quot;],&quot;default&quot;:&quot;Đã đăng nhập&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Người dùng&quot;},&quot;sangha&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Theo hồ sơ&quot;,&quot;Đã có đạo tràng&quot;,&quot;Chưa có đạo tràng&quot;],&quot;default&quot;:&quot;Theo hồ sơ&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Người dùng&quot;},&quot;zendoLen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;20 phút&quot;,&quot;Rút gọn 1 phút&quot;],&quot;default&quot;:&quot;20 phút&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Thiền đường trực tuyến&quot;},&quot;simulate&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Không&quot;,&quot;Không tìm thấy trang&quot;,&quot;Mất kết nối&quot;,&quot;Lỗi tải dữ liệu&quot;],&quot;default&quot;:&quot;Không&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Xem trước trạng thái lỗi&quot;},&quot;authDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Bình thường&quot;,&quot;Số điện thoại đã đăng ký&quot;,&quot;Mất mạng khi đăng ký&quot;,&quot;Gửi quá nhiều lần&quot;,&quot;Mã hết hạn&quot;,&quot;Khóa do sai quá số lần&quot;,&quot;Tạm dừng gửi mã&quot;,&quot;Đăng ký quá 24 giờ&quot;,&quot;Danh sách phường lỗi&quot;],&quot;default&quot;:&quot;Bình thường&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Xem trước đăng ký &amp; quên mật khẩu&quot;},&quot;loginDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Bình thường&quot;,&quot;Sai email hoặc mật khẩu&quot;,&quot;Mất mạng&quot;,&quot;Phiên đăng nhập hết hạn&quot;],&quot;default&quot;:&quot;Bình thường&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Xem trước luồng đăng nhập&quot;}}">
 class Component extends DCLogic {
   state = { page: localStorage.getItem('il-web-page') || 'home', fade: 1, sel: 5, calDay: 3, beads: 27, pulse: false, dur: 20, lib: 0, region: 0, liked: {},
     loggedIn: localStorage.getItem('il-web-auth') === '1', hitMo: false, hitCh: false, beadOff: 0, mlTarget: 108, mlDone: false, mlRound: 1, mlText: null, dayDate: [3, 10, 2026], dayFrom: 'home', evSel: (() => { try { return JSON.parse(localStorage.getItem('il-web-evsel')); } catch (e) { return null; } })(), evYear: 2026, evF: 0, phF: 0, phI: -1, gp: JSON.parse(localStorage.getItem('il-web-gp') || 'null'), gpSetup: { name: '', home: '', fn: '', fb: '', alive: false, fd: '', fgio: '', wife: '', err: '', ek: '' }, gioFlash: '', gioDraft: null, gioIsNew: false, gioErr: false,
@@ -3325,7 +3524,7 @@ class Component extends DCLogic {
       mantras: [{ label: 'DANH HIỆU', vi: 'Nam mô Đại Thế Chí Bồ Tát', note: 'Thường xưng niệm cùng danh hiệu Phật A Di Đà và Quán Thế Âm.' }],
       sutras: [{ t: 'Kinh A Di Đà', s: 'Tịnh Độ tông · 22 phút' }] },
   ];
-  CC = [{n:'Việt Nam',iso:'VN',dial:'+84',len:9},{n:'Hoa Kỳ',iso:'US',dial:'+1',len:10},{n:'Canada',iso:'CA',dial:'+1',len:10},{n:'Úc',iso:'AU',dial:'+61',len:9},{n:'Nhật Bản',iso:'JP',dial:'+81',len:10},{n:'Hàn Quốc',iso:'KR',dial:'+82',len:10},{n:'Trung Quốc',iso:'CN',dial:'+86',len:11},{n:'Đài Loan',iso:'TW',dial:'+886',len:9},{n:'Singapore',iso:'SG',dial:'+65',len:8},{n:'Thái Lan',iso:'TH',dial:'+66',len:9},{n:'Pháp',iso:'FR',dial:'+33',len:9},{n:'Đức',iso:'DE',dial:'+49',len:11}];
+  CC = [{n:'Việt Nam',iso:'VN',dial:'+84',len:9},{n:'Hoa Kỳ',iso:'US',dial:'+1',len:10},{n:'Canada',iso:'CA',dial:'+1',len:10},{n:'Úc',iso:'AU',dial:'+61',len:9},{n:'Nhật Bản',iso:'JP',dial:'+81',len:10},{n:'Hàn Quốc',iso:'KR',dial:'+82',len:10},{n:'Malaysia',iso:'MY',dial:'+60',len:9},{n:'Đài Loan',iso:'TW',dial:'+886',len:9},{n:'Singapore',iso:'SG',dial:'+65',len:8},{n:'Thái Lan',iso:'TH',dial:'+66',len:9},{n:'Pháp',iso:'FR',dial:'+33',len:9},{n:'Đức',iso:'DE',dial:'+49',len:11}];
   NAMES = ['Diệu Tâm','Tịnh An','Minh Đăng','Diệu Hạnh','Quảng Tâm','Thiện Từ','Nhuận Hòa','Tâm Như','Chơn Giác','An Lạc'];
   TEMPLES = [{label:'Chưa xuất gia',sub:'Cư sĩ tu tại gia'},{label:'Chùa Từ Quang',sub:'TP. Hồ Chí Minh'},{label:'Thiền viện Trúc Lâm',sub:'Đà Lạt, Lâm Đồng'},{label:'Chùa Vĩnh Nghiêm',sub:'TP. Hồ Chí Minh'},{label:'Chùa Trấn Quốc',sub:'Hà Nội'}];
   dnTick() { clearInterval(this._dnT); this._dnT = setInterval(() => { if (!this.state.dnQr || this.state.dnDone) return clearInterval(this._dnT); this.setState(st => ({ dnBeat: !st.dnBeat })); }, 1000); }
@@ -3375,14 +3574,15 @@ class Component extends DCLogic {
     };
   }
   async pickProv(name) {
-    this.setState({ atProv: name, atWard: '', atWards: [], atWardsErr: false, atWardsLoading: !!name, authErr: '' });
+    this.setState({ atProv: name, atWard: '', atWards: [], atWardsErr: false, atWardsEmpty: false, atWardsLoading: !!name, authErr: '' });
     if (!name) return;
+    if ((this.props.authDemo ?? '') === 'Danh sách phường lỗi') return setTimeout(() => this.setState({ atWardsLoading: false, atWardsErr: true }), 700);
     const list = this.state.atPList || await this.loadProvs() || [];
     const p = list.find(x => x.name === name) || list.find(x => this.vnShort(x.name) === this.vnShort(name));
     if (!p) return this.setState({ atWardsLoading: false, atWardsErr: true });
     if (p.name !== name) this.setState({ atProv: p.name });
     this._wReq = name;
-    fetch(this.VNAPI + p.code + '?depth=2').then(r => r.json()).then(d => { if (this._wReq !== name) return; const w = (d.wards || []).map(x => x.name).sort((x, y) => this.vnShort(x).localeCompare(this.vnShort(y), 'vi')); this.setState({ atWards: w, atWardsLoading: false, atWardsErr: !w.length }); }).catch(() => { if (this._wReq === name) this.setState({ atWardsLoading: false, atWardsErr: true }); });
+    fetch(this.VNAPI + p.code + '?depth=2').then(r => r.json()).then(d => { if (this._wReq !== name) return; const w = (d.wards || []).map(x => x.name).sort((x, y) => this.vnShort(x).localeCompare(this.vnShort(y), 'vi')); this.setState({ atWards: w, atWardsLoading: false, atWardsErr: !w.length, atWardsEmpty: !w.length }); }).catch(() => { if (this._wReq === name) this.setState({ atWardsLoading: false, atWardsErr: true }); });
   }
   PROVINCES = ['An Giang','Bắc Ninh','Cà Mau','Cao Bằng','Cần Thơ','Đà Nẵng','Đắk Lắk','Điện Biên','Đồng Nai','Đồng Tháp','Gia Lai','Hà Nội','Hà Tĩnh','Hải Phòng','Huế','Hưng Yên','Khánh Hòa','Lai Châu','Lạng Sơn','Lào Cai','Lâm Đồng','Nghệ An','Ninh Bình','Phú Thọ','Quảng Ngãi','Quảng Ninh','Quảng Trị','Sơn La','Tây Ninh','Thái Nguyên','Thanh Hóa','TP. Hồ Chí Minh','Tuyên Quang','Vĩnh Long'];
   POSTS = [
@@ -3476,11 +3676,11 @@ class Component extends DCLogic {
       setLpName: e => this.setState({ lpName: e.target.value }), setLpWish: e => this.setState({ lpWish: e.target.value }),
       lpCup: T.cup, lpCupW: Math.round(150 * T.w) + 'px', lpCupR: T.r, lpFlame: this.flame(70, s.lpLit || s.lpIgn, s.lpIgn), lpBtnLabel: s.lpIgn ? 'Đang thắp…' : 'Thắp đèn', lpBtnOp: s.lpIgn ? 0.6 : 1,
       lpGlowOp: s.lpIgn || s.lpLit ? 1 : 0,
-      lpForm: !s.lpLit, lpDone: s.lpLit,
+      lpForm: !s.lpLit && s.loggedIn, lpDone: s.lpLit && s.loggedIn, lpGuest: !s.loggedIn, lpGoLogin: go('login'), lpGoSignup: go('signup'),
       lpR1: s.lpLit ? 'il-rise1 0.8s cubic-bezier(.2,.8,.2,1) 0.12s both' : s.lpBack ? 'il-rise1 0.7s cubic-bezier(.2,.8,.2,1) 0.05s both' : 'none', lpR2: s.lpLit ? 'il-rise2 0.9s cubic-bezier(.2,.8,.2,1) 0.3s both' : s.lpBack ? 'il-rise1 0.7s cubic-bezier(.2,.8,.2,1) 0.2s both' : 'none',
       lpR3: 'il-rise2 0.85s cubic-bezier(.2,.8,.2,1) 0.42s both', lpR4: 'il-rise3 0.95s cubic-bezier(.2,.8,.2,1) 0.56s both', lpR5: 'il-rise2 0.9s cubic-bezier(.2,.8,.2,1) 0.72s both',
       ...Object.fromEntries([1, 2, 3, 4, 5, 6].map(i => ['lpF' + i, s.lpBack ? 'il-rise' + (i % 3 + 1) + ' ' + (.75 + (i % 2) * .15) + 's cubic-bezier(.2,.8,.2,1) ' + (.12 + i * .08).toFixed(2) + 's both' : 'none'])), lpLampBasis: s.lpLit ? '100%' : '320px', lpLampOrder: s.lpLit ? -1 : 0, lpTxtAlign: s.lpLit ? 'center' : 'stretch', lpTxtTA: s.lpLit ? 'center' : 'left',
-      lpCaption: s.lpLit ? this.LP_FOR[s.lpFor] + (s.lpName.trim() ? ' cho ' + s.lpName.trim() : '') : 'Chạm “Thắp đèn” khi bạn đã sẵn sàng',
+      lpCaption: !s.loggedIn ? 'Đăng nhập để thắp đèn' : s.lpLit ? this.LP_FOR[s.lpFor] + (s.lpName.trim() ? ' cho ' + s.lpName.trim() : '') : 'Chạm “Thắp đèn” khi bạn đã sẵn sàng',
       lpUntil: 'Đèn sáng đến ' + endS + ' · ' + s.lpDays + ' ngày',
       lpWishShow: s.lpLit && !!s.lpWish.trim(), lpWishQ: '“' + s.lpWish.trim() + '”',
       lpLight: () => {
@@ -4128,8 +4328,9 @@ class Component extends DCLogic {
     this.measureNav();
     const va = this.props.viewAs;
     if (va && va !== (prev && prev.viewAs)) { const li = va === 'Đã đăng nhập'; localStorage.setItem('il-web-auth', li ? '1' : '0'); if (li !== this.state.loggedIn) this.setState({ loggedIn: li }); }
+    const ld = this.props.loginDemo; if (ld === 'Phiên đăng nhập hết hạn' && ld !== (prev && prev.loginDemo) && this.state.loggedIn) this.sessionExpire();
   }
-  KNOWN = 'lamp,sutra,talk,sutras,talks,meditate,post,posts,giapha,giaphaEmpty,giaphaNew,gallery,events,evDetail,gio,gioEdit,day,profileEdit,notifs,settings,buddha,temple,buddhas,practice,mala,bell,login,signup,me,home,lib,sangha,cal,temples,help,premium,contact,legal,offer,merit,mbell,otp,forgot,reset,addTemple,sgEvent'.split(',');
+  KNOWN = 'zendo,lamp,sutra,talk,sutras,talks,meditate,post,posts,giapha,giaphaEmpty,giaphaNew,gallery,events,evDetail,gio,gioEdit,day,profileEdit,notifs,settings,buddha,temple,buddhas,practice,mala,bell,login,signup,me,home,lib,sangha,cal,temples,help,premium,contact,legal,offer,merit,mbell,otp,forgot,reset,addTemple,sgEvent'.split(',');
   HELP = [
     [1, 'Tôi quên mật khẩu thì làm sao?', 'Ở màn hình Đăng nhập, chọn “Quên mật khẩu?” và nhập số điện thoại đã đăng ký. InnerLamp gửi mã xác thực qua tin nhắn để bạn đặt mật khẩu mới.'],
     [1, 'Có dùng InnerLamp mà không cần tài khoản được không?', 'Được. Lịch âm, kinh sách, chuông mõ, niệm Phật và thiền định dùng được ngay. Tài khoản cần khi bạn muốn lưu nhật ký tu tập, sổ giỗ, gia phả và sinh hoạt cùng đạo tràng.'],
@@ -4303,7 +4504,9 @@ class Component extends DCLogic {
     return {
       isHelp: s.page === 'help', isPremium: s.page === 'premium', isContact: s.page === 'contact', isLegal: s.page === 'legal',
       goHelp: go('help'), goPremium: go('premium'), goContact: go('contact'),
-      goTerms: () => { this.setState({ lgTab: 0 }); this.go('legal'); }, goPrivacy: () => { this.setState({ lgTab: 1 }); this.go('legal'); },
+      goTerms: () => { this.setState({ lgTab: 0 }); this.go('legal'); },
+      lgModal: !!s.lgModal, lgClose: () => this.setState({ lgModal: false }),
+      lgOpenTerms: e => { e.stopPropagation(); this.setState({ lgTab: 0, lgModal: true }); }, lgOpenPrivacy: e => { e.stopPropagation(); this.setState({ lgTab: 1, lgModal: true }); }, goPrivacy: () => { this.setState({ lgTab: 1 }); this.go('legal'); },
       hpQ: s.hpQ || '', hpOnQ: e => this.setState({ hpQ: e.target.value, hpOpen: -1 }),
       hpCats: CATS.map((label, i) => ({ label, ...chip(i === hc), pick: () => this.setState({ hpC: i, hpOpen: -1 }) })),
       hpList: HL.map(({ f, i }, k) => { const open = openI === i; return { cat: CATS[f[0]].toUpperCase(), q: f[1], a: f[2], open, sign: open ? '−' : '+', line: k === HL.length - 1 ? 'transparent' : 'rgba(34,30,25,.07)', toggle: () => this.setState({ hpOpen: open ? -1 : i }) }; }),
@@ -4396,6 +4599,10 @@ class Component extends DCLogic {
       goProfileEdit: () => { this.setState({ pfDraft: { ...P } }); this.go('profileEdit'); }, goNotifs: go('notifs'), goSettings: go('settings'),
       pf: D, pfOn,
       pfStatus: ['Phật tử tại gia', 'Cư sĩ', 'Tăng', 'Ni'].map(label => ({ label, ...chip(D.status === label), pick: () => setD({ status: label }) })),
+      ...(() => { const T = 'transparent', cur = D.temple, L = [...new Set(['Chưa sinh hoạt đạo tràng', 'Chùa Từ Quang', 'Chùa Vĩnh Nghiêm', 'Chùa Trấn Quốc', 'Chùa Thiên Mụ', 'Thiền viện Trúc Lâm', ...(s.myTemples || []).map(t => t.label), D.temple].filter(Boolean))], o = !!s.pfTempleOpen; return {
+        pfTempleOpen: o, pfTogTemple: () => this.setState({ pfTempleOpen: !o }), pfCloseTemple: () => this.setState({ pfTempleOpen: false }),
+        pfTempleBd: o ? 'rgba(184,134,47,.55)' : 'rgba(34,30,25,.12)', pfTempleChev: o ? 'rotate(225deg) translate(-2px,-2px)' : 'rotate(45deg) translate(-2px,-2px)',
+        pfTempleOpts: L.map((label, i) => ({ label, sep: i ? 'rgba(34,30,25,.07)' : T, bg: label === cur ? 'rgba(184,134,47,.08)' : T, ring: label === cur ? '#B8862F' : 'rgba(34,30,25,.18)', dot: label === cur ? '#B8862F' : T, pick: () => { this.setState({ pfTempleOpen: false }); setD({ temple: label }); } })) }; })(),
       pfTemples: [...new Set(['Chưa sinh hoạt đạo tràng', 'Chùa Từ Quang', 'Chùa Vĩnh Nghiêm', 'Chùa Trấn Quốc', 'Chùa Thiên Mụ', 'Thiền viện Trúc Lâm', ...(s.myTemples || []).map(t => t.label), D.temple].filter(Boolean))],
       pfSave: () => { const v = { ...D }; localStorage.setItem('il-web-prof', JSON.stringify(v)); const has = !!v.temple && v.temple !== 'Chưa sinh hoạt đạo tràng'; this.setState({ prof: v, sgJoin: has, sgLeft: !has }); this.go('me'); },
       setGroups: groups.map(([title, rows]) => ({ title, rows: rows.map((r, i) => ({ isTog: false, isSeg: false, isLink: false, fg: '#221E19', click: undefined, ...r, fg: r.fg || '#221E19', cur: r.isSeg ? 'default' : 'pointer', line: i === rows.length - 1 ? 'transparent' : 'rgba(34,30,25,.07)' })) })),
@@ -4488,15 +4695,136 @@ class Component extends DCLogic {
       else if (p === 'bell') { e.preventDefault(); this.bellTap(); }
     };
     window.addEventListener('keydown', this._key);
+    if (this.state.page === 'zendo') this.zdEnter(true);
+  }
+  ZD_NAMED = [['Minh Đăng', 'TP.HCM'], ['Thiện Từ', 'Đà Nẵng'], ['Diệu Hạnh', 'Hà Nội'], ['Minh Tâm', 'Huế'], ['Quảng Đức', 'Cần Thơ'], ['Tâm An', 'Đà Lạt'], ['Nguyên Hạnh', 'Hải Phòng'], ['Diệu Liên', 'Nha Trang'], ['Chơn Tịnh', 'Biên Hòa'], ['Thiện Lạc', 'Vũng Tàu'], ['Huệ Minh', 'Quy Nhơn'], ['Đồng Viên', 'Bắc Ninh'], ['Diệu Ngọc', 'Vinh'], ['Tâm Hòa', 'Buôn Ma Thuột'], ['Minh Huệ', 'Long Xuyên'], ['Nhuận Pháp', 'Thủ Đức'], ['Diệu Thủy', 'Sydney'], ['Quảng Tín', 'Paris']];
+  ZD_AV = ['#E2C79A', '#C9B79C', '#BFCDB8', '#D9B8A8', '#E8D2A6', '#C7C1D6'];
+  zdCfg() { const demo = (this.props.zendoLen || '20 phút') !== '20 phút'; return demo ? { total: 75, join: 12, bells: [0, 40] } : { total: 1200, join: 412, bells: [0, 600] }; }
+  zdLayout() {
+    const W = (this.state && this.state.vw) || window.innerWidth, H = Math.max(320, window.innerHeight), ak = Math.round(W / H * 20);
+    if (this._zdL && this._zdL.ak === ak) return this._zdL;
+    const P1 = ['Diệu', 'Minh', 'Thiện', 'Tâm', 'Quảng', 'Nguyên', 'Chơn', 'Huệ', 'Đồng', 'Nhuận', 'Thanh', 'Trí'], P2 = ['An', 'Hạnh', 'Liên', 'Ngọc', 'Tịnh', 'Lạc', 'Hòa', 'Pháp', 'Từ', 'Đức', 'Thủy', 'Quang', 'Hiền', 'Phước', 'Nghiêm'];
+    const C = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Huế', 'Cần Thơ', 'Hải Phòng', 'Nha Trang', 'Đà Lạt', 'Bình Dương', 'Đồng Nai', 'Quảng Ninh', 'Nghệ An', 'Thanh Hóa', 'Long An', 'Tiền Giang', 'Khánh Hòa', 'Lâm Đồng', 'Melbourne', 'California', 'Berlin'];
+    const rnd = i => { const v = Math.sin(i * 91.17 + 7.3) * 43758.5453; return v - Math.floor(v); };
+    const lamps = []; let idx = 0;
+    const CY = 62, flat = Math.min(.3, Math.max(.18, .2 * W / H));
+    [16, 24, 32, 38, 44, 50, 54, 55].forEach((n, ri) => { const r = ri + 1, rx = 15 + ri * 4.6, a0 = .1, a1 = Math.PI - .1; for (let k = 0; k < n; k++) { const a = a0 + (a1 - a0) * (k + .5) / n; const x = 50 + Math.cos(a) * rx, y = CY + 4 + Math.sin(a) * rx * flat; lamps.push({ x, y, s: .6 + ri * .06, o: .55 + ri * .06, d: -(r * .22), r, name: P1[Math.floor(rnd(idx + 900) * 12)] + ' ' + P2[Math.floor(rnd(idx + 1300) * 15)], city: C[Math.floor(rnd(idx + 1700) * C.length)] }); idx++; } });
+    let me = lamps.findIndex(l => l.r === 4); me += 11;
+    lamps[me] = { ...lamps[me], name: 'Diệu Tâm', city: 'TP.HCM', me: true };
+    const named = this.ZD_NAMED.map(([name, city], j) => { let i = (j * 17 + 5) % lamps.length; if (i === me) i++; lamps[i] = { ...lamps[i], name, city }; return i; });
+    return (this._zdL = { lamps, me, named, ak, CY, flat });
+  }
+  zdEnter(noGo) {
+    const cfg = this.zdCfg(), now = Date.now(); this._zdMount = now;
+    if (!noGo) this.go('zendo');
+    this.setState({ zdT0: now - cfg.join * 1000, zdRung: cfg.bells.filter(b => b <= cfg.join).length, zdPhase: 'sit', zdHh: 0, zdMine: false, zdFx: [], zdToast: null, zdSent: {}, zdGot: false, zdNow: now, zdRings: [], zdBloom: 0, zdJoin: now, zdListOn: false });
+    if (!noGo) { this.ac(); this.zdAmbStart(); this.zdBell(1); }
+    clearInterval(this._zdT); this._zdT = setInterval(() => this.zdTick(), 1000);
+  }
+  zdAmbStart() {
+    const ac = this.ac(); if (!ac || this._zdA || this.state.zdSnd === false) return;
+    const t = ac.currentTime, out = ac.createGain(), nodes = []; out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(.55, t + 4); out.connect(ac.destination);
+    [[98, .045], [146.8, .028], [196, .014], [293.7, .006]].forEach(([fr, g]) => { const o = ac.createOscillator(), gg = ac.createGain(), l = ac.createOscillator(), lg = ac.createGain(); o.frequency.value = fr; gg.gain.value = g; l.frequency.value = .05 + Math.random() * .06; lg.gain.value = g * .55; l.connect(lg); lg.connect(gg.gain); o.connect(gg); gg.connect(out); o.start(); l.start(); nodes.push(o, l); });
+    const len = ac.sampleRate * 3, b = ac.createBuffer(1, len, ac.sampleRate), ch = b.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { last = (last + .02 * (Math.random() * 2 - 1)) / 1.02; ch[i] = last * 3.5; }
+    const src = ac.createBufferSource(), lp = ac.createBiquadFilter(), ng = ac.createGain(); src.buffer = b; src.loop = true; lp.type = 'lowpass'; lp.frequency.value = 420; ng.gain.value = .12; src.connect(lp); lp.connect(ng); ng.connect(out); src.start(); nodes.push(src);
+    this._zdA = { out, nodes };
+  }
+  zdAmbStop() { const a = this._zdA; this._zdA = null; if (!a || !this._ac) return; const t = this._ac.currentTime; a.out.gain.cancelScheduledValues(t); a.out.gain.setValueAtTime(a.out.gain.value, t); a.out.gain.linearRampToValueAtTime(0, t + .8); setTimeout(() => { a.nodes.forEach(n => { try { n.stop(); } catch (e) {} }); a.out.disconnect(); }, 1000); }
+  zdChime() { if (this.state.zdSnd === false) return; const ac = this.ac(); if (!ac) return; const t0 = ac.currentTime + .03; this.tone(ac, 1318.5, .05, 1.8, 'sine', t0); this.tone(ac, 1975.5, .025, 1.3, 'sine', t0 + .09); }
+  zdBell(n) {
+    for (let k = 0; k < n; k++) setTimeout(() => { if (this.state.page !== 'zendo') return; if (this.state.zdSnd !== false) this.playBell(); const key = Date.now() + Math.random(); this.setState(st => ({ zdRings: [...(st.zdRings || []).slice(-2), key] })); }, k * 2600);
+  }
+  zdFxAdd(i, soft) { const k = Date.now() + Math.random(); this.setState(st => ({ zdFx: [...(st.zdFx || []).slice(-8), { i, k, soft }] })); setTimeout(() => this.setState(st => ({ zdFx: (st.zdFx || []).filter(f => f.k !== k) })), 2000); }
+  zdToastSet(t) { const k = Date.now(); this.setState({ zdToast: { t, k } }); setTimeout(() => { if (this.state.zdToast && this.state.zdToast.k === k) this.setState({ zdToast: null }); }, 2800); }
+  zdSend(i) {
+    const L = this.zdLayout(), l = L.lamps[i]; if (!l) return;
+    if (l.me) return this.zdToastSet('Đây là ngọn đèn của bạn');
+    this.zdFxAdd(i, false); this.zdChime(); this.setState(st => ({ zdSent: { ...st.zdSent, [i]: true } })); this.zdToastSet('Đã gửi tùy hỷ đến ' + l.name + ' · ' + l.city);
+  }
+  zdTick() {
+    const s = this.state; if (s.page !== 'zendo') return clearInterval(this._zdT);
+    const cfg = this.zdCfg(), L = this.zdLayout(), now = Date.now(), el = (now - s.zdT0) / 1000, patch = { zdNow: now };
+    if (s.zdPhase === 'sit') {
+      let r = s.zdRung; while (r < cfg.bells.length && cfg.bells[r] <= el) { this.zdBell(r === 0 ? 3 : 1); r++; } patch.zdRung = r;
+      if (el >= cfg.total) { patch.zdPhase = 'end'; this.zdBell(3); }
+      if (!s.zdGot && now - s.zdJoin > 14000) { patch.zdGot = true; this.zdFxAdd(L.me, false); this.zdChime(); this.zdToastSet('Thiện Từ · Đà Nẵng tùy hỷ cùng bạn'); }
+      if (Math.random() < .3) { const i = Math.floor(Math.random() * L.lamps.length); if (i !== L.me) this.zdFxAdd(i, true); }
+    } else if ((s.zdHh || 0) < 296) {
+      const h = s.zdHh || 0; patch.zdHh = Math.min(296 + (s.zdMine ? 1 : 0), h + (h < 230 ? 9 + Math.floor(Math.random() * 18) : 1 + Math.floor(Math.random() * 4)));
+      if (Math.random() < .5) this.zdFxAdd(Math.floor(Math.random() * L.lamps.length), true);
+    }
+    this.setState(patch);
+  }
+  zdField(L, s, I, end) {
+    const h = React.createElement, k = Math.min(1, (s.vw || window.innerWidth) / 1100) * .55 + .45;
+    const lampEl = (l, i) => { const W = 22 * l.s * k; return h('div', { key: i, onClick: () => this.zdSend(i), onMouseEnter: () => this.setState({ zdHov: i }), onMouseLeave: () => this.setState({ zdHov: null }), style: { position: 'absolute', left: l.x + '%', top: l.y + '%', width: W, height: W, marginLeft: -W / 2, marginTop: -W / 2, cursor: 'pointer', opacity: l.o } },
+      h('div', { style: { position: 'absolute', inset: -W * .1, borderRadius: '50%', background: l.me ? 'radial-gradient(circle,rgba(255,214,140,.6),transparent 66%)' : 'radial-gradient(circle,rgba(243,198,115,.32),transparent 64%)', animation: 'zd-br 8s ease-in-out ' + l.d + 's infinite', pointerEvents: 'none' } }),
+      h('div', { style: { position: 'absolute', left: '50%', top: '50%', width: 3 * l.s * k + 1, height: 6 * l.s * k + 1, transform: 'translate(-50%,-70%)', borderRadius: '50% 50% 50% 50% / 62% 62% 38% 38%', background: 'radial-gradient(circle at 50% 70%,#FFF6DC,#F3C673 55%,#D9963C)', boxShadow: '0 0 4px rgba(243,198,115,.7)', pointerEvents: 'none' } }),
+      h('div', { style: { position: 'absolute', left: '50%', top: '50%', width: 7 * l.s * k + 2, height: 2 * l.s * k + 1, transform: 'translate(-50%,40%)', borderRadius: '0 0 50% 50%', background: '#5A4430', pointerEvents: 'none' } }),
+      l.me ? h('div', { style: { position: 'absolute', left: '50%', top: '100%', transform: 'translateX(-50%)', marginTop: 4, font: "500 10px 'Be Vietnam Pro',sans-serif", letterSpacing: '.1em', color: '#E8B061', whiteSpace: 'nowrap', pointerEvents: 'none' } }, 'BẠN') : null); };
+    const at = (l, kids, key) => h('div', { key, style: { position: 'absolute', left: l.x + '%', top: l.y + '%', width: 0, height: 0, pointerEvents: 'none' } }, kids);
+    const hov = s.zdHov != null ? L.lamps[s.zdHov] : null;
+    const bloomK = s.zdBloom || 0;
+    return h('div', { style: { position: 'absolute', inset: 0 } },
+      h('div', { style: { position: 'absolute', left: '50%', top: L.CY + '%', width: '110%', height: (110 * L.flat) + '%', transform: 'translate(-50%,-30%)', borderRadius: '50%', background: 'radial-gradient(closest-side,rgba(243,198,115,.07),rgba(243,198,115,.02) 55%,transparent 100%)', pointerEvents: 'none' } }),
+      
+      ...(s.zdRings || []).map(rk => h('div', { key: 'r' + rk, style: { position: 'absolute', left: '50%', top: L.CY + '%', width: '104%', height: (104 * L.flat) + '%', borderRadius: '50%', border: '1.5px solid rgba(243,198,115,.5)', animation: 'zd-ring 6s cubic-bezier(.2,.6,.3,1) both', pointerEvents: 'none' } })),
+      ...L.lamps.map(lampEl),
+      h('div', { key: 'core', style: { position: 'absolute', left: '50%', top: (L.CY + 7) + '%', width: 0, height: 0, pointerEvents: 'none' } },
+        h('div', { style: { position: 'absolute', left: 0, top: 0, width: 320 * k, height: 320 * k, borderRadius: '50%', transform: 'translate(-50%,-50%) scale(' + (.55 + I * .9) + ')', opacity: I, background: 'radial-gradient(circle,rgba(255,220,150,.55),rgba(217,150,60,.16) 40%,transparent 68%)', transition: 'transform 1.6s ease, opacity 1.6s ease' } }),
+        h('div', { style: { position: 'absolute', left: -60 * k, top: -60 * k, width: 120 * k, height: 120 * k, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,226,168,.7),transparent 65%)', animation: 'zd-br 8s ease-in-out 0s infinite' } }),
+        bloomK ? h('div', { key: 'b' + bloomK, style: { position: 'absolute', left: 0, top: 0, width: 260 * k, height: 260 * k, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,236,190,.9),rgba(243,198,115,.3) 40%,transparent 70%)', animation: 'zd-bloom 2.6s cubic-bezier(.2,.7,.3,1) both' } }) : null,
+        h('div', { style: { position: 'absolute', left: -7 * k, top: -30 * k, width: 14 * k, height: 24 * k, borderRadius: '50% 50% 50% 50% / 62% 62% 38% 38%', background: 'radial-gradient(circle at 50% 72%,#FFFBEA,#FFD98A 50%,#E39A3B)', boxShadow: '0 0 ' + (18 + I * 30) + 'px rgba(255,210,130,.9)', transformOrigin: '50% 90%', animation: 'il-flick 2.6s ease-in-out infinite' } }),
+        h('div', { style: { position: 'absolute', left: -17 * k, top: -7 * k, width: 34 * k, height: 11 * k, borderRadius: '3px 3px 50% 50% / 3px 3px 100% 100%', background: 'linear-gradient(180deg,#8A6A42,#4A3826)' } }),
+        end ? h('div', { style: { position: 'absolute', left: 0, top: 14 * k, transform: 'translateX(-50%)', whiteSpace: 'nowrap', font: "600 10px 'Be Vietnam Pro',sans-serif", letterSpacing: '.18em', color: 'rgba(242,235,221,.55)' } }, 'NGỌN ĐÈN CHUNG') : null),
+      ...(s.zdFx || []).map(f => { const l = L.lamps[f.i]; if (!l) return null; return at(l, [
+        h('div', { key: 'f', style: { position: 'absolute', left: -18, top: -18, width: 36, height: 36, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,230,170,' + (f.soft ? .55 : .95) + '),transparent 68%)', animation: 'zd-flash ' + (f.soft ? 1.6 : 1.3) + 's ease-out both' } }),
+        f.soft ? null : h('div', { key: 'e', style: { position: 'absolute', left: 0, top: -26, font: "400 15px 'Noto Emoji',sans-serif", color: '#F3C673', animation: 'zd-rise 1.9s ease-out both' } }, '🙏')], 'fx' + f.k); }),
+      hov ? at(hov, h('div', { style: { position: 'absolute', left: 0, bottom: 14, transform: 'translateX(-50%)', padding: '7px 12px', borderRadius: 10, background: 'rgba(242,235,221,.94)', color: '#1A1611', whiteSpace: 'nowrap', font: "400 12px 'Be Vietnam Pro',sans-serif", textAlign: 'center' } }, h('div', { style: { fontWeight: 500 } }, hov.name + ' · ' + hov.city), h('div', { style: { fontSize: 11, color: 'rgba(26,22,17,.55)', marginTop: 2 } }, hov.me ? 'Ngọn đèn của bạn' : s.zdSent && s.zdSent[s.zdHov] ? 'Đã tùy hỷ' : 'Chạm để tùy hỷ')), 'hov') : null);
+  }
+  zdVals(p) {
+    const h = React.createElement;
+    const base = { goZendo: () => this.zdEnter(), zdLiveDot: h('span', { style: { width: 7, height: 7, borderRadius: '50%', background: '#E46A4E', display: 'inline-block', animation: 'zd-live 1.8s ease-in-out infinite' } }) };
+    if (p !== 'zendo') return { ...base, isZendo: false };
+    const s = this.state, cfg = this.zdCfg(), L = this.zdLayout(), now = s.zdNow || Date.now(), el = Math.max(0, (now - (s.zdT0 || now)) / 1000), end = s.zdPhase === 'end';
+    const pad = n => String(n).padStart(2, '0'), left = Math.max(0, Math.ceil(cfg.total - el)), mm = x => pad(Math.floor(x / 60)) + ':' + pad(x % 60);
+    const nb = cfg.bells.concat(cfg.total).find(b => b > el), isEndBell = nb === cfg.total;
+    const breathIn = (((now - (this._zdMount || now)) / 1000) % 8) < 4;
+    const hh = s.zdHh || 0, I = end ? .45 + .55 * Math.min(1, hh / 313) : .42;
+    return { ...base,
+      isZendo: true, zdSit: !end, zdEnd: end,
+      zdClock: end ? '00:00' : mm(left), zdSub: end ? 'Tọa thiền buổi tối · đã viên mãn' : 'Tọa thiền buổi tối · 20 phút',
+      zdBreath: breathIn ? 'thở vào' : 'thở ra', zdBreathOp: 1,
+      zdPct: Math.min(100, el / cfg.total * 100).toFixed(2) + '%',
+      zdMarks: cfg.bells.filter(b => b > 0).concat(cfg.total).map(b => ({ x: (b / cfg.total * 100) + '%' })),
+      zdNext: nb == null ? '' : (isEndBell ? 'Chuông kết thúc sau ' : 'Thỉnh chuông sau ') + mm(Math.max(0, Math.ceil(nb - el))),
+      zdSndLabel: s.zdSnd === false ? 'Chuông: tắt' : 'Chuông: bật', zdSndToggle: () => { const on = s.zdSnd === false; this.setState({ zdSnd: on }); on ? this.zdAmbStart() : this.zdAmbStop(); },
+      zdListOn: !!s.zdListOn, zdListOff: !s.zdListOn, zdListLabel: s.zdListOn ? 'Ẩn danh sách' : 'Danh sách · 313', zdListToggle: () => this.setState({ zdListOn: !s.zdListOn }),
+      zdPeople: [L.me].concat(L.named).map((i, j) => { const l = L.lamps[i], sent = !!(s.zdSent || {})[i]; return { name: l.name + (l.me ? ' (bạn)' : ''), city: l.city, ini: l.name.split(' ').map(w => w[0]).join(''), av: l.me ? '#E8B061' : this.ZD_AV[j % 6], sentOp: sent ? 1 : 0, cur: l.me ? 'default' : 'pointer', tip: l.me ? '' : 'Tùy hỷ với ' + l.name, send: () => this.zdSend(i) }; }),
+      zdHasToast: !!s.zdToast, zdToast: s.zdToast ? s.zdToast.t : '',
+      zdField: this.zdField(L, s, I, end),
+      zdCanHh: end && !s.zdMine, zdDidHh: end && !!s.zdMine,
+      zdHhLine: end ? (s.zdMine ? 'Bạn và ' + (hh - 1) + ' đạo hữu đã hồi hướng' : hh + ' đạo hữu đã hồi hướng') : '',
+      zdHuiHuong: () => { if (s.zdMine) return; this.setState(st => ({ zdMine: true, zdHh: (st.zdHh || 0) + 1, zdBloom: Date.now() })); if (s.zdSnd !== false) this.playBell(); },
+      zdAgain: () => { const t = Date.now(); this.setState({ zdT0: t, zdRung: 0, zdPhase: 'sit', zdHh: 0, zdMine: false, zdNow: t, zdBloom: 0 }); },
+      zdLeave: () => this.go('sangha'),
+    };
   }
   otpRef = React.createRef();
   focusOtp() { setTimeout(() => { const el = this.otpRef.current; if (el) el.focus(); }, 60); }
-  startOtp(otpFor) { clearInterval(this._otpT); const t = Date.now(); this.setState({ otpFor, otp: '', authErr: '', otpSent: t, now: t }); this._otpT = setInterval(() => this.setState({ now: Date.now() }), 1000); if (this.state.page !== 'otp') this.go('otp'); this.focusOtp(); }
-  componentWillUnmount() { this.ambStop(); clearInterval(this._otpT); clearInterval(this._tick); clearInterval(this._md); window.removeEventListener('keydown', this._key); this.stopAuto(); cancelAnimationFrame(this._mlRaf); }
+  otpWrong(msg) { const fg = this.state.otpFor === 'forgot', max = fg ? 3 : 5, n = (this.state.otpTries || 0) + 1; if (n >= max) return this.setState({ otpTries: n, otpLock: Date.now() + (fg ? 1800000 : 900000), authErr: '', otp: '' }); this.setState({ otpTries: n, authErr: msg + ' Còn ' + (max - n) + ' lần thử.', otp: '' }); this.focusOtp(); }
+  startOtp(otpFor, resend) { clearInterval(this._otpT); const t = Date.now(), st = this.state, AD = (otpFor === 'signup' || otpFor === 'forgot') && !resend ? (this.props.authDemo ?? 'Bình thường') : '', sends = resend ? (st.otpSends || 1) + 1 : 1; this.setState({ otpFor, otp: '', authErr: '', otpSent: AD === 'Mã hết hạn' ? t - 600000 : t, now: t, otpSends: sends, otpTries: resend ? st.otpTries || 0 : 0, otpLock: AD === 'Khóa do sai quá số lần' ? t + (otpFor === 'forgot' ? 1800000 : 900000) : resend ? st.otpLock || 0 : 0, otpPause: AD === 'Tạm dừng gửi mã' || sends >= (otpFor === 'forgot' ? 4 : 3) ? t + 1800000 : 0, otp24: resend ? !!st.otp24 : AD === 'Đăng ký quá 24 giờ', sBanner: '' }); this._otpT = setInterval(() => this.setState({ now: Date.now() }), 1000); const tgt = otpFor === 'forgot' ? 'reset' : 'otp'; if (this.state.page !== tgt) this.go(tgt); this.focusOtp(); }
+  componentWillUnmount() { this.ambStop(); clearInterval(this._otpT); clearInterval(this._tick); clearInterval(this._md); clearInterval(this._zdT); this.zdAmbStop(); window.removeEventListener('keydown', this._key); this.stopAuto(); cancelAnimationFrame(this._mlRaf); }
+  AUTHP = ['login', 'signup', 'otp', 'forgot', 'reset', 'addTemple'];
+  GATE = { gio: ['Sổ giỗ chạp', 'Sổ giỗ lưu ngày giỗ theo âm lịch và nhắc trước cho cả gia đình.'], gioEdit: ['Sổ giỗ chạp', 'Sổ giỗ lưu ngày giỗ theo âm lịch và nhắc trước cho cả gia đình.'], giaphaNew: ['Gia phả dòng họ', 'Gia phả lưu cây dòng họ nhiều đời và chia sẻ với người thân.'], me: ['Nhật ký tu tập', 'Nhật ký ghi lại thời khóa, chuỗi ngày tinh tấn và hồ sơ của bạn.'], profileEdit: ['Hồ sơ', 'Hồ sơ lưu pháp danh, đạo tràng và ngày quy y của bạn.'], notifs: ['Thông báo', 'Thông báo gồm lời nhắc giỗ, ngày trai giới và tin từ đạo tràng.'], settings: ['Cài đặt tài khoản', 'Cài đặt nhắc nhở và đồng bộ gắn với tài khoản của bạn.'] };
+  sessionExpire() { const from = this.AUTHP.includes(this.state.page) ? (this.state.authFrom || 'home') : this.state.page; localStorage.setItem('il-web-auth', '0'); this.setState({ loggedIn: false, authNote: 'Phiên đăng nhập đã hết, vui lòng đăng nhập lại.', authNoteKind: 'warn', logoutAsk: false }); this.go('login'); this.setState({ authFrom: from }); }
   go(page) {
+    if (!this.state.loggedIn && this.GATE[page]) return this.setState({ gate: page, menuOpen: false });
+    if (this.AUTHP.includes(page) && !this.AUTHP.includes(this.state.page)) this.setState({ authFrom: this.state.page });
     if (page === this.state.page) { if (this.state.menuOpen) this.setState({ menuOpen: false }); return; }
     if (this.state.page === 'bell') { this.stopAuto(); this.setState({ mo: 0, bl: 0 }); }
     if (this.state.page === 'meditate') this.mdStop();
+    if (this.state.page === 'zendo') { clearInterval(this._zdT); this.zdAmbStop(); }
     if (this.state.page === 'sutra') this.setState({ sPlay: false });
     this.crossfade();
     localStorage.setItem('il-web-page', page);
@@ -4706,7 +5034,7 @@ class Component extends DCLogic {
     const pw = s.spwd; let sc = 0;
     if (pw.length >= 8) sc = Math.min(4, 1 + (/[A-Z]/.test(pw) ? 1 : 0) + (/\d/.test(pw) ? 1 : 0) + (/[^A-Za-z0-9]/.test(pw) ? 1 : 0));
     const segC = sc <= 1 ? '#C2857F' : sc === 2 ? '#D9963C' : '#6E8F7A';
-    const login = (guest) => { localStorage.setItem('il-web-auth', guest ? '0' : '1'); this.setState({ loggedIn: !guest }); this.go('home'); };
+    const login = (guest) => { localStorage.setItem('il-web-auth', guest ? '0' : '1'); const r = this.state.authFrom; this.setState({ loggedIn: !guest, authNote: '', authFrom: null }); this.go(!guest && r && !this.AUTHP.includes(r) ? r : 'home'); };
     // ---- bell ----
     const chipSt = (on) => ({ bg: on ? '#221E19' : '#FFFDF8', fg: on ? '#F7F2E8' : 'rgba(34,30,25,.7)', bd: on ? '#221E19' : 'rgba(34,30,25,.12)' });
     const m1 = s.mode === 1;
@@ -4735,6 +5063,13 @@ class Component extends DCLogic {
       ...(() => { const i = s.sgEvId || 0, E = this.SG_EV[i], on = !!sgReg[i], left = E.cap ? E.cap - E.joined - (on ? 1 : 0) : null;
         return { isSgEvent: p === 'sgEvent', sgE: { ...E, img: 'sgev-' + i, facts: [{ k: 'Ngày', v: E.date }, { k: 'Giờ', v: E.time }, { k: 'Địa điểm', v: E.place }, { k: 'Hướng dẫn', v: E.lead }], steps: E.steps.map(([t, d], k) => ({ t, d, line: k === E.steps.length - 1 ? 'transparent' : 'rgba(34,30,25,.07)' })),
           joinedLbl: (E.joined + (on ? 1 : 0)) + ' đạo hữu đã ghi danh', seatLbl: left === null ? 'Không giới hạn số người' : 'Còn ' + left + ' chỗ', pct: E.cap ? Math.min(100, (E.joined + (on ? 1 : 0)) / E.cap * 100).toFixed(0) + '%' : '100%', hasCap: !!E.cap },
+          sgNotices: (() => { const rd = s.sgNRead || {}, N = [
+              { tag: 'Thay đổi lịch', when: 'Hôm nay', title: 'Công phu khuya ngày 16/10 dời sang 5:00', body: 'Chánh điện sơn sửa nên thời công phu khuya sáng thứ Sáu bắt đầu muộn hơn 30 phút.' },
+              { tag: 'Nhắc sự kiện', when: 'Hôm qua', title: 'Khóa tu Một ngày an lạc còn 12 chỗ', body: 'Đạo hữu chưa ghi danh vui lòng đăng ký trước tối thứ Sáu.', ev: 0 },
+              { tag: 'Kêu gọi', when: '3 ngày trước', title: 'Cần 6 đạo hữu công quả bếp cơm chay', body: 'Bếp cơm chay từ thiện thứ Bảy 31/10 đang thiếu người phụ đóng hộp và vận chuyển.', ev: 3 },
+            ];
+            return N.map((n, k) => ({ ...n, hasLink: n.ev != null, cur: n.ev != null ? 'pointer' : 'default', dot: rd[k] ? 'transparent' : '#B8862F', line: k === N.length - 1 ? 'transparent' : 'rgba(34,30,25,.07)',
+              open: () => { this.setState(st => ({ sgNRead: { ...(st.sgNRead || {}), [k]: true } })); if (n.ev != null) { this.setState({ sgEvId: n.ev }); this.go('sgEvent'); window.scrollTo({ top: 0 }); } } })); })(),
           sgERegOn: on, sgERegOff: !on, sgEToggle: () => this.setState(st => ({ sgReg: { ...(st.sgReg || { 0: true }), [i]: !on } })),
           sgEOthers: this.SG_EV.map((x, k) => ({ ...x, k, open: () => { this.setState({ sgEvId: k }); window.scrollTo({ top: 0, behavior: 'smooth' }); } })).filter(x => x.k !== i).slice(0, 3),
           goSangha2: go('sangha') }; })(),
@@ -4788,42 +5123,97 @@ class Component extends DCLogic {
       guestPerks: [{ icon: 'journal', t: 'Nhật ký tu tập', s: 'Ghi lại thời khóa, chuỗi ngày tinh tấn và dấu ấn' }, { icon: 'calendar', t: 'Sổ giỗ chạp', s: 'Nhắc ngày giỗ theo âm lịch cho cả gia đình' }, { icon: 'tree', t: 'Gia phả dòng họ', s: 'Lưu cây gia phả nhiều đời, chia sẻ với người thân' }, { icon: 'temple', t: 'Đạo tràng của bạn', s: 'Ghi danh khóa tu, nhận thông báo từ chùa' }],
       goLogin: go('login'), goSignup: go('signup'), goBell: go('bell'), goMala: go('mala'), goSangha: go('sangha'),
       logoutAsk: !!s.logoutAsk, logout: () => this.setState({ logoutAsk: true }), logoutCancel: () => this.setState({ logoutAsk: false }), stopProp: e => e.stopPropagation(),
-      logoutConfirm: () => { localStorage.setItem('il-web-auth', '0'); this.setState({ loggedIn: false, logoutAsk: false }); this.go('login'); },
+      logoutConfirm: () => { localStorage.setItem('il-web-auth', '0'); this.setState({ loggedIn: false, logoutAsk: false }); if (this.GATE[p]) this.go('home'); },
+      gateOpen: !!s.gate, gateT: s.gate ? this.GATE[s.gate][0] + ' cần tài khoản' : '', gateS: s.gate ? this.GATE[s.gate][1] : '', gateClose: () => this.setState({ gate: null }),
+      gateLogin: () => { const g = s.gate; this.setState({ gate: null, authNote: '' }); this.go('login'); this.setState({ authFrom: g }); },
+      gateSignup: () => { const g = s.gate; this.setState({ gate: null }); this.go('signup'); this.setState({ authFrom: g }); },
       ...this.meExtraVals(go),
       doGuest: () => login(true),
       ...(() => {
         const E = m => this.setState({ authErr: m }), PE = 'Số điện thoại chưa hợp lệ. Nhập ' + cc.len + ' số hoặc ' + (cc.len + 1) + ' số bắt đầu bằng 0';
-        const now = s.now || Date.now(), el = s.otpSent ? Math.floor((now - s.otpSent) / 1000) : 999, left = Math.max(0, 90 - el), wait = Math.max(0, 60 - el), mm = n => Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0');
+        const EXP = 600, hm = ms => { const d = new Date(ms); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+        const now = s.now || Date.now(), el = s.otpSent ? Math.floor((now - s.otpSent) / 1000) : 9999, left = Math.max(0, EXP - el), wait = Math.max(0, 60 - el), mm = n => Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0');
         const otp = s.otp || '', masked = cc.dial + ' ' + pd.slice(0, 3) + ' ••• ' + pd.slice(-3);
+        const locked = (s.otpLock || 0) > now, paused = (s.otpPause || 0) > now, isSU = s.otpFor === 'signup', sE = s.sErr || {};
+        const RED = '#C2857F', BD0 = 'rgba(34,30,25,.12)';
+        const submit = retry => {
+          if (s.sLoading) return;
+          const fe = {}, pl = (s.spwd || '').length;
+          if ((s.fullName || '').trim().length < 2) fe.fullName = 'Vui lòng nhập họ và tên';
+          if (!emailOk) fe.email = s.email ? 'Email chưa đúng định dạng, ví dụ: ten@email.com' : 'Vui lòng nhập email';
+          if (!pOk) fe.phone = s.phone ? 'Số điện thoại ' + cc.n + ' gồm ' + cc.len + ' số, hoặc ' + (cc.len + 1) + ' số bắt đầu bằng 0' : 'Vui lòng nhập số điện thoại';
+          if (pl < 8) fe.spwd = 'Mật khẩu cần tối thiểu 8 ký tự'; else if (pl > 64) fe.spwd = 'Mật khẩu tối đa 64 ký tự';
+          if (!s.agree) fe.agree = 'Vui lòng đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư';
+          if (Object.keys(fe).length) return this.setState({ sErr: fe, sBanner: '' });
+          this.setState({ sErr: {}, sBanner: '', sLoading: true });
+          setTimeout(() => {
+            const AD = this.props.authDemo ?? 'Bình thường', d = String(this.state.phone || '').replace(/\D/g, '').replace(/^0/, '');
+            if (AD === 'Mất mạng khi đăng ký' && !retry) return this.setState({ sLoading: false, sBanner: 'net' });
+            if (AD === 'Gửi quá nhiều lần') return this.setState({ sLoading: false, sBanner: 'rate' });
+            if (AD === 'Số điện thoại đã đăng ký' || d === '900000000') return this.setState({ sLoading: false, sErr: { phoneTaken: true } });
+            this.setState({ sLoading: false }); this.startOtp('signup');
+          }, 900);
+        };
         return {
-          authErr: s.authErr || '', authHasErr: !!s.authErr, authNote: s.authNote || '', authHasNote: !!s.authNote && p === 'login',
-          doLogin: () => { if (!pOk) return E(PE); if (!s.pwd) return E('Vui lòng nhập mật khẩu'); this.setState({ authErr: '', authNote: '' }); login(false); },
+          authErr: s.authErr || '', authHasErr: !!s.authErr, authNote: s.authNote || '', authHasNote: !!s.authNote && p === 'login', authNoteBg: s.authNoteKind === 'warn' ? 'rgba(184,134,47,.12)' : 'rgba(78,108,89,.1)', authNoteFg: s.authNoteKind === 'warn' ? '#6E4A14' : '#4E6C59',
+          ...(() => {
+            const lE = s.lErr || {}, fE = s.fErr || {}, rE = s.rErr || {}, lLocked = (s.lLock || 0) > Date.now(), LD = () => this.props.loginDemo ?? 'Bình thường';
+            const emErr = () => !s.email ? 'Vui lòng nhập email' : !emailOk ? 'Email chưa đúng định dạng, ví dụ: ten@email.com' : '';
+            const lsub = retry => { if (lLocked || s.lLoading) return; const fe = {}; if (emErr()) fe.email = emErr(); if (!s.pwd) fe.pwd = 'Vui lòng nhập mật khẩu'; if (Object.keys(fe).length) return this.setState({ lErr: fe, lBanner: '' }); this.setState({ lErr: {}, lBanner: '', lLoading: true, authNote: '' });
+              setTimeout(() => { if (LD() === 'Mất mạng' && !retry) return this.setState({ lLoading: false, lBanner: 'net' }); if (LD() === 'Sai email hoặc mật khẩu') { const n = (this.state.lFails || 0) + 1; if (n >= 5) return this.setState({ lLoading: false, lFails: 0, lLock: Date.now() + 900000, lBanner: '', pwd: '' }); return this.setState({ lLoading: false, lFails: n, lBanner: 'bad', pwd: '' }); } this.setState({ lLoading: false, lFails: 0, pwd: '' }); login(false); }, 800); };
+            const fsub = retry => { if (s.fLoading) return; if (emErr()) return this.setState({ fErr: { email: emErr() }, fBanner: '' }); this.setState({ fErr: {}, fBanner: '', fLoading: true }); setTimeout(() => { if (LD() === 'Mất mạng' && !retry) return this.setState({ fLoading: false, fBanner: 'net' }); this.setState({ fLoading: false, npw: '', rErr: {} }); this.startOtp('forgot'); }, 800); };
+            const np = s.npw || ''; let rs = 0; if (np.length >= 8) rs = Math.min(4, 1 + (/[A-Z]/.test(np) ? 1 : 0) + (/\d/.test(np) ? 1 : 0) + (/[^A-Za-z0-9]/.test(np) ? 1 : 0)); const rC = rs <= 1 ? '#C2857F' : rs === 2 ? '#D9963C' : '#6E8F7A';
+            const NET = 'Không kết nối được tới máy chủ. Thông tin bạn đã nhập vẫn được giữ nguyên.';
+            return {
+              lEmailBd: lE.email ? RED : BD0, eLEmail: lE.email || '', eLEmailHas: !!lE.email, lPwBd: lE.pwd ? RED : BD0, eLPw: lE.pwd || '', eLPwHas: !!lE.pwd,
+              onLEmail: e => this.setState({ email: e.target.value.trim(), lErr: { ...lE, email: '' } }), lLoading: !!s.lLoading,
+              lBanHas: (lLocked || !!s.lBanner) && p === 'login', lBanMsg: lLocked ? 'Bạn đã nhập sai quá 5 lần. Vui lòng thử lại sau ' + hm(s.lLock) + '.' : s.lBanner === 'net' ? NET : 'Email hoặc mật khẩu không đúng.', lBanRetry: !lLocked && s.lBanner === 'net', lRetry: () => lsub(true),
+              doLogin: () => lsub(false),
+              fEmailBd: fE.email ? RED : BD0, eFEmail: fE.email || '', eFEmailHas: !!fE.email, onFEmail: e => this.setState({ email: e.target.value.trim(), fErr: {} }), fLoading: !!s.fLoading,
+              fBanHas: s.fBanner === 'net' && p === 'forgot', fBanMsg: NET, fBanRetry: true, fRetry: () => fsub(true), doForgot: () => fsub(false),
+              rPwBd: rE.npw ? RED : np ? 'rgba(184,134,47,.55)' : BD0, eRPw: rE.npw || '', eRPwHas: !!rE.npw, rLoading: !!s.rLoading,
+              rStrengthSegs: [0, 1, 2].map(i => i < Math.min(3, rs) ? rC : 'rgba(34,30,25,.12)'), rStrengthFg: rs >= 3 ? '#4E6C59' : rs === 2 ? '#8A5A18' : '#9A5F58', rStrengthLabel: np ? ['Tối thiểu 8 ký tự', 'Yếu', 'Trung bình', 'Khá tốt', 'Mạnh'][rs] : '',
+              rCtaOp: locked || left === 0 ? .45 : 1,
+            };
+          })(),
           doLoginSms: () => pOk ? this.startOtp('login') : E(PE),
-          fullName: s.fullName || '', onFullName: e => this.setState({ fullName: e.target.value, authErr: '' }),
-          doSignup: () => { if (!s.agree) return; if ((s.fullName || '').trim().length < 2) return E('Vui lòng nhập họ và tên'); if (!pOk) return E(PE); if ((s.spwd || '').length < 8) return E('Mật khẩu cần tối thiểu 8 ký tự'); this.startOtp('signup'); },
-          goForgot: () => { this.setState({ authErr: '', authNote: '' }); this.go('forgot'); },
-          doForgot: () => pOk ? this.startOtp('forgot') : E(PE),
+          fullName: s.fullName || '', onFullName: e => this.setState({ fullName: e.target.value, authErr: '', sErr: { ...sE, fullName: '' } }),
+          sFullBd: sE.fullName ? RED : BD0, eFull: sE.fullName || '', eFullHas: !!sE.fullName,
+          sEmailBd: sE.email || emailErr ? RED : BD0, eEmail: sE.email || '', eEmailHas: !!sE.email,
+          sPhoneBd: sE.phone || sE.phoneTaken ? RED : BD0, ePhone: sE.phone || '', ePhoneHas: !!sE.phone, ePhoneTaken: !!sE.phoneTaken,
+          sPwBd: sE.spwd ? RED : s.spwd ? 'rgba(184,134,47,.55)' : BD0, ePw: sE.spwd || '', ePwHas: !!sE.spwd,
+          eAgree: sE.agree || '', eAgreeHas: !!sE.agree, sLoading: !!s.sLoading,
+          sBanTop: s.sBanner === '24h' && p === 'signup', sBanHas: (s.sBanner === 'net' || s.sBanner === 'rate') && p === 'signup',
+          sBanMsg: s.sBanner === 'net' ? 'Không kết nối được tới máy chủ. Thông tin bạn đã nhập vẫn được giữ nguyên.' : 'Bạn đã yêu cầu mã quá nhiều lần. Vui lòng thử lại sau 15 phút.', sBanRetry: s.sBanner === 'net', sRetry: () => submit(true),
+          doSignup: () => submit(false),
+          goForgot: () => { this.setState({ authErr: '', authNote: '', fErr: {}, fBanner: '', lErr: {}, lBanner: '' }); this.go('forgot'); },
+          
           otpRef: this.otpRef, isOtp: p === 'otp', isForgot: p === 'forgot', isReset: p === 'reset', otpPhone: masked, otp,
-          onOtp: e => { const v = e.target.value.replace(/\D/g, '').slice(0, 6); this.setState({ otp: v, authErr: '' }, () => { if (v.length === 6) this._otpAuto && this._otpAuto(); }); },
+          onOtp: e => { const v = e.target.value.replace(/\D/g, '').slice(0, 6); this.setState({ otp: v, authErr: '' }, () => { if (v.length === 6 && this.state.otpFor === 'signup') this._otpAuto && this._otpAuto(); }); },
           otpBoxes: [0, 1, 2, 3, 4, 5].map(i => { const cur = i === Math.min(otp.length, 5) && left > 0; return { v: otp[i] || '', bd: s.authErr ? '#C2857F' : cur ? '#B8862F' : otp[i] ? 'rgba(34,30,25,.28)' : 'rgba(34,30,25,.12)', sh: cur && !s.authErr ? '0 0 0 3px rgba(184,134,47,.14)' : 'none' }; }),
-          otpLeftLbl: left > 0 ? 'Mã hết hạn sau ' + mm(left) : 'Mã đã hết hạn', otpLeftFg: left === 0 ? '#A4442E' : left <= 20 ? '#B8862F' : '#4E6C59', otpPct: (left / 90 * 100).toFixed(1) + '%',
-          otpCanResend: wait === 0, otpWaiting: wait > 0, otpWait: mm(wait),
-          otpResend: () => this.startOtp(s.otpFor || 'signup'),
-          _otpAutoSet: (this._otpAuto = () => { const st = this.state, e2 = st.otpSent ? Math.floor((Date.now() - st.otpSent) / 1000) : 999; if (st.otp === '123456' && e2 < 90) return; setTimeout(() => { const x = this.state; if (x.page !== 'otp' || (x.otp || '').length !== 6) return; if (x.otp !== '123456' || e2 >= 90) { this.setState({ authErr: e2 >= 90 ? 'Mã đã hết hạn. Vui lòng bấm “Gửi lại mã”.' : 'Mã xác thực chưa đúng. Vui lòng nhập lại.', otp: '' }); this.focusOtp(); } }, 250); }, 0),
-          otpCtaOp: otp.length === 6 && left > 0 ? 1 : .45,
-          otpBack: () => { clearInterval(this._otpT); this.setState({ authErr: '' }); this.go(s.otpFor === 'forgot' ? 'forgot' : s.otpFor === 'login' ? 'login' : 'signup'); },
-          otpVerify: () => { const X = m => { this.setState({ authErr: m, otp: '' }); this.focusOtp(); }; if (left === 0) return X('Mã đã hết hạn. Vui lòng bấm “Gửi lại mã”.'); if (otp.length < 6) return X('Vui lòng nhập đủ 6 số'); if (otp !== '123456') return X('Mã xác thực chưa đúng. Vui lòng nhập lại.'); clearInterval(this._otpT); this.setState({ authErr: '', otpSent: 0 }); if (s.otpFor === 'forgot') return this.go('reset'); if (s.otpFor === 'signup') { const all = [...this.TEMPLES, ...(s.myTemples || [])], tl = s.temple > 0 ? all[s.temple].label : 'Chưa sinh hoạt đạo tràng'; const v = { ...this.getProf(), name: s.name || this.getProf().name, temple: tl }; localStorage.setItem('il-web-prof', JSON.stringify(v)); this.setState({ prof: v, sgJoin: false }); } login(false); },
-          npw: s.npw || '', npw2: s.npw2 || '', onNpw: e => this.setState({ npw: e.target.value, authErr: '' }), onNpw2: e => this.setState({ npw2: e.target.value, authErr: '' }),
-          doReset: () => { if ((s.npw || '').length < 8) return E('Mật khẩu cần tối thiểu 8 ký tự'); if (s.npw !== s.npw2) return E('Hai mật khẩu chưa khớp nhau'); this.setState({ npw: '', npw2: '', authErr: '', authNote: 'Đã đặt lại mật khẩu. Vui lòng đăng nhập bằng mật khẩu mới.' }); this.go('login'); },
+          otpLeftLbl: locked ? 'Ô nhập mã đang tạm khóa' : left > 0 ? 'Mã còn hiệu lực ' + mm(left) : 'Mã đã hết hạn', otpLeftFg: left === 0 || locked ? '#A4442E' : left <= 60 ? '#B8862F' : '#4E6C59', otpPct: (left / EXP * 100).toFixed(1) + '%',
+          otpCanResend: wait === 0 && left > 0 && !paused && !locked, otpWaiting: wait > 0 && left > 0 && !paused && !locked, otpWait: mm(wait),
+          otpResend: () => this.startOtp(s.otpFor || 'signup', true),
+          otpBackLbl: isSU ? 'Đổi email' : 'Quay lại', otpDestPre: isSU ? 'Mã gồm 6 số đã gửi đến ' : 'Mã gồm 6 số đã gửi qua tin nhắn đến ', otpDest: isSU ? (s.email || '') : masked,
+          otpLocked: locked, otpLockMsg: locked ? 'Bạn đã nhập sai mã quá ' + (s.otpFor === 'forgot' ? 3 : 5) + ' lần. Có thể nhập lại lúc ' + hm(s.otpLock) + '.' : '', otpBoxOp: locked ? .45 : 1,
+          otpPaused: paused && !locked, otpPauseMsg: paused ? 'Tạm dừng gửi mã. Bạn có thể yêu cầu mã mới lúc ' + hm(s.otpPause) + '.' : '',
+          otpShowVerify: left > 0 || paused || locked, otpShowResendCta: left === 0 && !paused && !locked,
+          _otpAutoSet: (this._otpAuto = () => { const st = this.state, e2 = st.otpSent ? Math.floor((Date.now() - st.otpSent) / 1000) : 999; if (st.otp === '123456' && e2 < EXP) return; setTimeout(() => { const x = this.state; if (x.page !== 'otp' || (x.otp || '').length !== 6 || (x.otpLock || 0) > Date.now()) return; if (e2 >= EXP) { this.setState({ authErr: 'Mã đã hết hạn. Vui lòng bấm “Gửi lại mã”.', otp: '' }); this.focusOtp(); } else if (x.otp !== '123456') this.otpWrong('Mã xác thực chưa đúng.'); }, 250); }, 0),
+          otpCtaOp: otp.length === 6 && left > 0 && !locked ? 1 : .45,
+          otpBack: () => { clearInterval(this._otpT); this.setState({ authErr: '', sBanner: '' }); this.go(s.otpFor === 'forgot' ? 'forgot' : s.otpFor === 'login' ? 'login' : 'signup'); },
+          otpVerify: () => { if (locked) return; const X = m => { this.setState({ authErr: m, otp: '' }); this.focusOtp(); }; if (left === 0) return X('Mã đã hết hạn. Vui lòng bấm “Gửi lại mã”.'); if (otp.length < 6) return X('Vui lòng nhập đủ 6 số'); if (isSU && s.otp24) { clearInterval(this._otpT); this.setState({ otpSent: 0, authErr: '', otp: '', sBanner: '24h' }); return this.go('signup'); } if (otp !== '123456') return this.otpWrong('Mã xác thực chưa đúng.'); clearInterval(this._otpT); this.setState({ authErr: '', otpSent: 0 }); if (s.otpFor === 'forgot') return this.go('reset'); if (s.otpFor === 'signup') { const all = [...this.TEMPLES, ...(s.myTemples || [])], tl = s.temple > 0 ? all[s.temple].label : 'Chưa sinh hoạt đạo tràng'; const v = { ...this.getProf(), name: s.name || this.getProf().name, temple: tl }; localStorage.setItem('il-web-prof', JSON.stringify(v)); this.setState({ prof: v, sgJoin: false }); } login(false); },
+          npw: s.npw || '', onNpw: e => this.setState({ npw: e.target.value, rErr: {} }),
+          doReset: () => { if (locked || s.rLoading) return; if (left === 0) return this.setState({ authErr: 'Mã đã hết hạn. Vui lòng bấm “Gửi lại mã”.' }); const pl = (s.npw || '').length, pe = pl < 8 ? 'Mật khẩu cần tối thiểu 8 ký tự' : pl > 64 ? 'Mật khẩu tối đa 64 ký tự' : ''; if (otp.length < 6) { this.setState({ authErr: 'Vui lòng nhập đủ 6 số', rErr: pe ? { npw: pe } : {} }); return this.focusOtp(); } if (pe) return this.setState({ rErr: { npw: pe }, authErr: '' }); if (otp !== '123456') { this.setState({ rErr: {} }); return this.otpWrong('Mã xác thực chưa đúng.'); } this.setState({ rLoading: true }); setTimeout(() => { clearInterval(this._otpT); localStorage.setItem('il-web-auth', '0'); this.setState({ rLoading: false, npw: '', otp: '', otpSent: 0, authErr: '', rErr: {}, loggedIn: false, pwd: '', lBanner: '', lErr: {}, authNote: 'Đã đổi mật khẩu. Mọi thiết bị đã được đăng xuất, vui lòng đăng nhập lại bằng mật khẩu mới.', authNoteKind: 'ok' }); this.go('login'); }, 800); },
+
         };
       })(),
-      cc, phone: s.phone, onPhone: (e) => { const d = e.target.value.replace(/\D/g, ''); this.setState({ phone: d.slice(0, d[0] === '0' ? cc.len + 1 : cc.len), authErr: '' }); },
+      cc, phone: s.phone, onPhone: (e) => { const d = e.target.value.replace(/\D/g, ''); this.setState({ phone: d.slice(0, d[0] === '0' ? cc.len + 1 : cc.len), authErr: '', sErr: { ...(s.sErr || {}), phone: '', phoneTaken: false } }); },
       phoneBd: s.phone && !pOk ? '#B8862F' : 'rgba(34,30,25,.12)', phoneOkOp: pOk ? 1 : 0, ordBd: s.templeOpen ? 'rgba(184,134,47,.55)' : 'rgba(34,30,25,.12)', ordChev: s.templeOpen ? 'rotate(225deg) translate(-2px,-2px)' : 'rotate(45deg) translate(-2px,-2px)',
       phoneHint: pOk ? 'Mã xác thực sẽ gửi tới ' + cc.dial + ' ' + fmt : s.phone ? 'Số điện thoại gồm ' + cc.len + ' số (949…) hoặc ' + (cc.len + 1) + ' số bắt đầu bằng 0 (0949…)' : 'Nhập ' + cc.len + ' số (949797071) hoặc ' + (cc.len + 1) + ' số (0949797071)',
       phoneHintFg: pOk ? '#4E6C59' : s.phone ? '#8A5A18' : 'rgba(34,30,25,.5)',
       openCC: () => this.setState({ ccOpen: true, ccQ: '' }), closeCC: () => this.setState({ ccOpen: false }), stop: (e) => e.stopPropagation(),
       ccOpen: s.ccOpen, ccQ: s.ccQ, onCCQ: (e) => this.setState({ ccQ: e.target.value }), ccList, ccEmpty: ccList.length === 0,
-      pwd: s.pwd, onPwd: (e) => this.setState({ pwd: e.target.value }),
+      pwd: s.pwd, onPwd: (e) => this.setState({ pwd: e.target.value, lErr: { ...(s.lErr || {}), pwd: '' } }),
       name: s.name, onName: (e) => this.setState({ name: e.target.value }), diceRot: s.dice + 'deg',
       suggestName: () => this.setState(st => { const i = (st.nameIdx + 1) % this.NAMES.length; return { nameIdx: i, name: this.NAMES[i], dice: st.dice + 180 }; }),
       isAddTemple: p === 'addTemple' && (this.state.atPList || this.loadProvs(), true),
@@ -4833,7 +5223,7 @@ class Component extends DCLogic {
       atName: s.atName || '', onAtName: e => this.setState({ atName: e.target.value, authErr: '' }),
       atAddr: s.atAddr || '', onAtAddr: e => this.setState({ atAddr: e.target.value, authErr: '' }),
       atProv: s.atProv || '', atProvFg: s.atProv ? '#221E19' : 'rgba(34,30,25,.42)', ...this.atDrop(s),
-      atWard: s.atWard || '', onAtWard: e => this.setState({ atWard: e.target.value, authErr: '' }),
+      atWard: s.atWard || '', atRetryWards: () => this.pickProv(s.atProv), atWardErrMsg: s.atWardsEmpty ? 'Chưa có danh sách phường, xã cho tỉnh này.' : 'Không tải được danh sách phường, xã.',
       atWardFree: !!(s.atProv && s.atWardsErr), atWardSel: !(s.atProv && s.atWardsErr),
       atWardOp: s.atProv ? 1 : .55, atWardFg: s.atWard ? '#221E19' : 'rgba(34,30,25,.42)',
       atWardLabel: s.atWard || (!s.atProv ? 'Chọn tỉnh, thành phố trước' : s.atWardsLoading ? 'Đang tải danh sách…' : 'Chọn phường, xã'),
@@ -4842,14 +5232,14 @@ class Component extends DCLogic {
       templePending: s.temple >= this.TEMPLES.length, templePendingName: s.temple >= this.TEMPLES.length ? ((s.myTemples || [])[s.temple - this.TEMPLES.length] || {}).label : '', closeTemple: () => this.setState({ templeOpen: false }), templeOpen: s.templeOpen, toggleTemple: () => this.setState(st => ({ templeOpen: !st.templeOpen })), templeRot: s.templeOpen ? '180deg' : '0deg',
       templeLabel: s.temple < 0 ? 'Chọn nơi xuất gia' : [...this.TEMPLES, ...(s.myTemples || [])][s.temple].label, templeFg: s.temple < 0 ? 'rgba(34,30,25,.42)' : ink,
       templeOpts: [...this.TEMPLES, ...(s.myTemples || []).map(t => ({ ...t, sub: t.sub + ' · chờ xác minh' }))].map((o, i) => ({ label: o.label, sub: o.sub, sep: i ? 'rgba(34,30,25,.07)' : T, bg: i === s.temple ? 'rgba(184,134,47,.08)' : T, ring: i === s.temple ? '#B8862F' : 'rgba(34,30,25,.18)', dot: i === s.temple ? '#B8862F' : T, pick: () => this.setState({ temple: i, templeOpen: false }) })),
-      email: s.email, onEmail: (e) => this.setState({ email: e.target.value.trim() }), emailOk, emailErr, emailOkOp: emailOk ? 1 : 0, pwBd: s.spwd ? 'rgba(184,134,47,.55)' : 'rgba(34,30,25,.12)',
+      email: s.email, onEmail: (e) => this.setState({ email: e.target.value.trim(), sErr: { ...(s.sErr || {}), email: '' } }), emailOk, emailErr, emailOkOp: emailOk ? 1 : 0, pwBd: s.spwd ? 'rgba(184,134,47,.55)' : 'rgba(34,30,25,.12)',
       emailBd: emailErr ? '#C2857F' : 'rgba(34,30,25,.12)',
-      spwd: s.spwd, onSpwd: (e) => this.setState({ spwd: e.target.value }), pwType: s.showPwd ? 'text' : 'password', showLabel: s.showPwd ? 'Ẩn' : 'Hiện',
+      spwd: s.spwd, onSpwd: (e) => this.setState({ spwd: e.target.value, sErr: { ...(s.sErr || {}), spwd: '' } }), pwType: s.showPwd ? 'text' : 'password', showLabel: s.showPwd ? 'Ẩn' : 'Hiện',
       toggleShow: () => this.setState(st => ({ showPwd: !st.showPwd })),
       strengthSegs: [0, 1, 2].map(i => i < Math.min(3, sc) ? segC : 'rgba(34,30,25,.12)'), strengthFg: sc >= 3 ? '#4E6C59' : sc === 2 ? '#8A5A18' : '#9A5F58',
       strengthLabel: pw ? ['Tối thiểu 8 ký tự', 'Yếu', 'Trung bình', 'Khá tốt', 'Mạnh'][sc] : '',
-      toggleAgree: () => this.setState(st => ({ agree: !st.agree })), agreeBg: s.agree ? ink : '#FFFDF8', agreeBd: s.agree ? ink : 'rgba(34,30,25,.3)', agreeTickOp: s.agree ? 1 : 0,
-      ctaBg: s.agree ? ink : 'rgba(34,30,25,.12)', ctaFg: s.agree ? '#F7F2E8' : 'rgba(34,30,25,.38)', ctaSh: s.agree ? '0 8px 24px rgba(34,30,25,.16)' : 'none', ctaCursor: s.agree ? 'pointer' : 'not-allowed',
+      toggleAgree: () => this.setState(st => ({ agree: !st.agree, sErr: { ...(st.sErr || {}), agree: '' } })), agreeBg: s.agree ? ink : '#FFFDF8', agreeBd: s.agree ? ink : (s.sErr || {}).agree ? '#C2857F' : 'rgba(34,30,25,.3)', agreeTickOp: s.agree ? 1 : 0,
+      ctaBg: ink, ctaFg: '#F7F2E8', ctaSh: '0 8px 24px rgba(34,30,25,.16)', ctaCursor: s.sLoading ? 'progress' : 'pointer',
       // bell
       isBell: p === 'bell', isMala: p === 'mala',
       bSub: (s.preset >= 0 ? this.PRE[s.preset].label : MODES[s.mode]) + (s.playing ? ' · đang giữ nhịp' : s.rolling ? ' · dồn mõ' : ''),
@@ -4901,6 +5291,7 @@ class Component extends DCLogic {
     };
     return {
       ...extra,
+      ...this.zdVals(p),
       ...(() => { const st = s.inStep || 0, o = {}; for (let i = 0; i < 5; i++) o['in' + i] = st === i; return { ...o, introOn: !!s.introOn && !s.loggedIn, inZoom: String(Math.max(0.38, Math.min(1, Math.max(96, Math.min(260, (s.vh || window.innerHeight) * 0.24)) / 250))), inLast: st === 4, inNotLast: st !== 4, inPrevOp: st === 0 ? 0.3 : 1,
         inDots: [0, 1, 2, 3, 4].map(i => ({ w: i === st ? '28px' : '6px', bg: i === st ? '#F3C673' : 'rgba(242,235,221,.25)', go: e => { e.stopPropagation(); this.introGo(i); } })),
         inNext: e => { if (e && e.stopPropagation) e.stopPropagation(); if (st < 4) this.introGo(st + 1); }, inPrev: e => { e.stopPropagation(); this.introGo(st - 1); },
