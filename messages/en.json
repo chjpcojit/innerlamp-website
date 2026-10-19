@@ -1509,6 +1509,8 @@
 	"contact_faq_title": "Frequently asked questions",
 	"contact_faq_hint": "The answer may already be there",
 	"legal_tabs_label": "Legal documents",
+	"legal_modal_close": "Close",
+	"legal_modal_done": "Done reading",
 	"legal_updated": "Last updated: 1 October 2026",
 	"legal_toc": "CONTENTS",
 	"legal_question_terms": "Questions about the terms? Send them to the",
