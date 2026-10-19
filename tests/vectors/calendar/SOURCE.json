@@ -1,0 +1,9 @@
+{
+  "repo": "innerlamp-be",
+  "path": "docs/product/calendar/rules",
+  "commit": "80de1da0329f393c4fec08e4ce76276475c38ea5",
+  "files": [
+    "countdown.json",
+    "ordering.json"
+  ]
+}

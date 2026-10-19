@@ -1,182 +1,179 @@
 # Design — calendar (Sự kiện Phật giáo)
 
-Version: 1.0
-Last updated: 2026-10-15
-Status: in-progress (drift) — mirror `requirements.md`
+Version: 1.11
+Last updated: 2026-10-17
+Status: in-progress — built to this design except the tests; mirrors `requirements.md`
 
 > See `changelog.md` in this folder for the version history of this spec.
 
 ## Overview
 
-Hai route trong group `(site)`: `/events` (lịch lễ theo tháng) và `/events/[code]?date=` (chi tiết), cộng khối "Sự kiện Phật giáo" trên `/`. Dữ liệu theo data path của repo: `load` của `+page.server.ts` → `$lib/server/api/calendar.ts` `getCalendarYear` → backend `GET /v1/calendar/events?year=` với `x-api-key`, **không** token (sau backend v3.0). Một năm được cache trong bộ nhớ server theo năm, dùng chung cho mọi người, và bản tốt gần nhất được giữ lại làm "bản sao của website" khi backend lỗi (FR-CAL-007 §3.6). Tải thêm năm là lời gọi tương tác từ browser qua `src/routes/api/calendar/year/+server.ts`. Phần phụ thuộc ngày của máy (nhãn đếm ngày, BR-CAL-13) chạy trong browser sau khi mount; phần không phụ thuộc máy (ghép occurrence với event, chọn tầng của khối trang chủ BR-CAL-15) là hàm thuần chạy trên server. Gần nhất để làm mẫu: chính feature này (đã chạy) và các khối công khai của trang chủ (`getTopDeities` … — gọi không token, lỗi thì không làm vỡ trang).
+Two routes in the `(site)` group: `/events` (monthly festival list) and `/events/[code]?date=` (detail), plus the "Sự kiện Phật giáo" block on `/`. Data follows the repo's data path: `load` of `+page.server.ts` → `$lib/server/api/calendar.ts` `getCalendarYear` → backend `GET /v1/calendar/events?year=` with `x-api-key` and **no** token (the route is public since contract 2.2.0). One year is cached in server memory per year and shared by everyone, and the latest good copy is kept as the "website copy" when the backend fails (FR-CAL-007 §3.6). Loading more years is an interactive call from the browser through `src/routes/api/calendar/year/+server.ts`. What depends on the device date (countdown label, BR-CAL-13) runs in the browser after mount; what does not (joining occurrences with events, choosing the tiers of the home block, BR-CAL-15) is a pure function that runs on the server. Closest pattern to follow: this feature itself (already running) and the public home blocks (`getTopDeities` … — called without a token, an error does not break the page).
 
 ## Layers & components
 
-| Layer | File | Responsibility | Trạng thái |
-| --- | --- | --- | --- |
-| Route (UI) | `src/routes/(site)/events/+page.svelte` | Meta, `EventsHeader` (chip), `EventsNext`, `EventsGroups`, nút tải thêm năm, trạng thái lỗi/ bản sao | có — cần: bỏ nhánh `guest`, retry, chip "Lễ lớn", tải thêm qua endpoint (giữ các năm đã nối trong `$state`), lỗi/offline ở cuối, `ev_stale_note`, `today` lấy trong `onMount` |
-| Route (server) | `src/routes/(site)/events/+page.server.ts` | `load`: năm hiện tại (VN) → `getCalendarYear` → `{state, year, groups, items, stale}` | có — cần: không token, chỉ năm hiện tại (bỏ tải sẵn năm sau), 401 không còn là khách, trả `stale` |
-| Route (server) | `src/routes/api/calendar/year/+server.ts` | `GET ?year=`: kiểm năm ∈ [năm hiện tại VN, 2100], `getCalendarYear`, trả `{year, groups, items, stale}`; lỗi → status không thân dữ liệu | **chưa tạo** |
-| Route (UI) | `src/routes/(site)/events/[code]/+page.svelte` | Meta (title = tên, description = `short_description`), `EventDetail`; not-found do `+error.svelte` | có — cần: bỏ nhánh `ev_d_guest` |
-| Route (server) | `src/routes/(site)/events/[code]/+page.server.ts` | `load`: năm của `?date=` → chọn lần diễn ra → năm liền kề cho trước/sau → `CalendarEventDetail` | có — cần: không token; bỏ `days_left` tính trên server (chuyển sang browser); 401 không còn là khách; trả `stale` |
-| Section UI | `src/lib/components/sections/EventsHeader.svelte` | Tiêu đề, phụ đề năm, chip lọc có số đếm | có — cần chip `major` sau "Tất cả" |
-| Section UI | `src/lib/components/sections/EventsNext.svelte` | Thẻ "sự kiện sắp tới" | có — platform extra (xem "Deliberately stubbed"); nhãn đếm theo hàm chung |
-| Section UI | `src/lib/components/sections/EventsGroups.svelte` | Danh sách theo tháng, cuộn tới tháng hiện tại (`afterNavigate`), dòng có ngày/thứ, tên, ngày âm, nhóm, đếm ngày, làm mờ dòng đã qua | có — cần: mọi nhãn nhóm (đang `groups[0]`), dấu lễ lớn, dấu nhuận, nhãn "Ngày mai" |
-| Section UI | `src/lib/components/sections/EventDetail.svelte` | Header ảnh/gradient, nhóm, đếm ngày, nghỉ lễ, tên, ngày âm + dương; "Ý nghĩa"; "Phật tử thường làm gì"; nav trước/sau; link "Thắp đèn", "Xem ngày âm" | có — cần: ảnh mặc định, dấu lễ lớn, dấu nhuận, đếm ngày tính trong browser theo hàm chung, bỏ dấu đầu dòng, bỏ fallback `short_description` |
-| Section UI | `src/lib/components/sections/EventsRoutines.svelte` | Khối trang chủ (cột trái) + "Thời khóa" (cột phải) | có — cần viết lại cột trái: 6 thẻ tháng, ≤ 3 dòng, "+N sự kiện khác", tháng rỗng, lỗi + retry, bản sao |
-| Route (server) | `src/routes/(site)/+page.server.ts` | `load` trang chủ: thêm `homeEvents` cho mọi người | có — cần: không token, tải năm hiện tại (+ năm sau khi 6 tháng vượt năm), gọi `buildHomeBlock` |
-| Logic | `src/lib/utils/events.ts` | `parseIsoDate`, `daysBetween`, `monthShort`, `leftLabel` | có — cần: `countdown(today, solarDate) → {days, label: 'today'\|'tomorrow'\|'days_left'\|'passed'}` (BR-CAL-13, vector) + `countdownText` map sang key; bỏ `ev_d_*` riêng của chi tiết |
-| Logic | `src/lib/utils/calendar-order.ts` | `compareOccurrences(a, b)` theo `solar_date`, `sort_order`, `code` (BR-CAL-12) | **chưa tạo** — chờ `sort_order` |
-| Logic | `src/lib/utils/calendar-home.ts` | `buildHomeBlock(occurrences, startYearMonth, months = 6)` → mỗi tháng `{year, month, shown[≤3], more}`; tầng 1 `is_major`, tầng 2 còn lại, tầng 3 `recurrence === 'lunar_monthly'`; chỉ nhóm `buddhist` (BR-CAL-15) | **chưa tạo** — chờ `is_major`, `recurrence`, `sort_order` |
-| Logic | `src/lib/utils/event-content.ts` | `paragraphs(text)` / `practices(text)`: tách theo `\r?\n`, trim, bỏ rỗng; `practices` bỏ `-`/`•`/`*` đầu dòng (BR-CAL-14) | **chưa tạo** — hiện là `lines()` nội bộ của `EventDetail` |
-| API resource | `src/lib/server/api/calendar.ts` | `getCalendarYear(fetch, year)` → `{calendar, stale}`; cache theo năm; `listCalendarEntries`, `toListItems`, `listMonthItems` | có — cần: bỏ tham số `token`, bỏ xoá bản hết hạn, trả bản cũ khi lỗi (Step A-1) |
-| Types | `src/lib/types/calendar.ts` | DTO `CalendarYear`/`CalendarEvent`/`CalendarOccurrence`; view `CalendarListItem`, `CalendarEventDetail`, `CalendarNeighbour` | có — cần: `CalendarEvent` thêm `is_major`, `sort_order`, `recurrence` (chờ contract); `CalendarListItem` thêm `is_major`, `sort_order`, `recurrence`; `CalendarEventDetail` bỏ `days_left`, thêm `stale`; kiểu `HomeBlockMonth` |
-| Caller ngoài phạm vi | `src/routes/(site)/lunar/+page.server.ts`, `src/routes/api/calendar/month/+server.ts` | Feature lunar | có — chỉ đổi lời gọi `getCalendarYear` theo chữ ký mới; giữ hành vi |
-| Assets | `src/lib/components/ui/LampMark.svelte` (dùng lại) | Ảnh mặc định tạm (⚠️ requirements AC 13) | có |
-| i18n | `messages/vi.json`, `messages/en.json` | `ev_*`, `events_*` | có — thêm/sửa/bỏ ở bảng dưới |
-| Tests | `src/lib/utils/*.spec.ts`, `src/lib/server/api/calendar.spec.ts`, `tests/calendar.e2e.ts`, `tests/vectors/calendar/` | Vector + logic + E2E | **chưa có** (repo chưa cài Vitest/Playwright) |
+| Layer                | File                                                                                                                 | Responsibility                                                                                                                                                                                                                   | Status                                                                                                                                                                                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Route (UI)           | `src/routes/(site)/events/+page.svelte`                                                                              | Meta, `EventsHeader` (chips), `EventsNext`, `EventsGroups`, load-more button, error / copy states                                                                                                                                | exists — needs: drop the `guest` branch, retry, "Lễ lớn" chip, load more through the endpoint (keep the appended years in `$state`), error / offline at the end, `ev_stale_note`, `today` set in `onMount`                                                              |
+| Route (server)       | `src/routes/(site)/events/+page.server.ts`                                                                           | `load`: current year (VN) → `getCalendarYear` → `{state, year, groups, items, stale}`                                                                                                                                            | exists — needs: no token, current year only (stop pre-loading next year), 401 is no longer "guest", return `stale`                                                                                                                                                      |
+| Route (server)       | `src/routes/api/calendar/year/+server.ts`                                                                            | `GET ?year=`: check year ∈ [current VN year, 2100], `getCalendarYear`, return `{year, groups, items, stale}`; error → status without a data body                                                                                 | **not created**                                                                                                                                                                                                                                                         |
+| Route (UI)           | `src/routes/(site)/events/[code]/+page.svelte`                                                                       | Meta (title = name, description = `short_description`), `EventDetail`; not-found by `+error.svelte`                                                                                                                              | exists — needs: drop the `ev_d_guest` branch                                                                                                                                                                                                                            |
+| Route (server)       | `src/routes/(site)/events/[code]/+page.server.ts`                                                                    | `load`: year of `?date=` → pick the occurrence → adjacent year for previous/next → `CalendarEventDetail`                                                                                                                         | exists — needs: no token; drop server-computed `days_left` (moves to the browser); 401 is no longer "guest"; return `stale`                                                                                                                                             |
+| Section UI           | `src/lib/components/sections/EventsHeader.svelte`                                                                    | Title, year subtitle, filter chips with counts                                                                                                                                                                                   | exists — needs the `major` chip after "Tất cả"                                                                                                                                                                                                                          |
+| Section UI           | `src/lib/components/sections/EventsNext.svelte`                                                                      | "Upcoming event" card                                                                                                                                                                                                            | exists — platform extra (see "Deliberately stubbed"); countdown through the shared function                                                                                                                                                                             |
+| Section UI           | `src/lib/components/sections/EventsGroups.svelte`                                                                    | List by month, scroll to the current month (`afterNavigate`), row with date/weekday, name, lunar date, groups, countdown, dimmed past rows                                                                                       | exists — needs: every group label (currently `groups[0]`), major mark, leap mark, "tomorrow" label                                                                                                                                                                      |
+| Section UI           | `src/lib/components/sections/EventDetail.svelte`                                                                     | Image/gradient header, groups, countdown, holiday, name, lunar + solar date; "Ý nghĩa"; "Phật tử thường làm gì"; previous/next; "Thắp đèn", "Xem ngày âm" links                                                                  | exists — needs: default image, major mark, leap mark, countdown computed in the browser through the shared function, strip bullets, drop the `short_description` fallback                                                                                               |
+| Section UI           | `src/lib/components/sections/EventsRoutines.svelte`                                                                  | Home block (left column) + "Thời khóa" (right column)                                                                                                                                                                            | exists — needs a rewrite of the left column: 6 month cards, ≤ 3 rows, "+N other events", empty month, error + retry, copy note                                                                                                                                          |
+| Route (server)       | `src/routes/(site)/+page.server.ts`                                                                                  | Home `load`: `homeEvents: {month, stale}` for everyone                                                                                                                                                                           | exists — needs: no token, load the current year (+ next year when the 6 months cross the year), call `buildHomeBlock`                                                                                                                                                   |
+| Logic                | `src/lib/utils/events.ts`                                                                                            | `parseIsoDate`, `daysBetween`, `monthShort`, `leftLabel`                                                                                                                                                                         | exists — needs `countdown(today, solarDate) → {days, label: 'today'\|'tomorrow'\|'days_left'\|'passed'}` (BR-CAL-13, vector) + `countdownText` mapping to keys; drop the detail-only `ev_d_*`                                                                           |
+| Logic                | `src/lib/utils/calendar-order.ts`                                                                                    | `compareOccurrences(a, b)` by `solar_date`, `sort_order`, `code` (BR-CAL-12)                                                                                                                                                     | **not created**                                                                                                                                                                                                                                                         |
+| Logic                | `src/lib/utils/calendar-home.ts`                                                                                     | `buildHomeBlock(occurrences, startYearMonth, today, months = 1)` → each month `{year, month, shown[≤3], more, failed}`; shown = the 3 nearest upcoming occurrences (every group), `more` = the month's total minus shown (AC 21) | **not created**                                                                                                                                                                                                                                                         |
+| Logic                | `src/lib/utils/event-content.ts`                                                                                     | `paragraphs(text)` / `practices(text)`: split on `\r?\n`, trim, drop empties; `practices` strips a leading `-`/`•`/`*` (BR-CAL-14)                                                                                               | **not created** — today an internal `lines()` of `EventDetail`                                                                                                                                                                                                          |
+| API resource         | `src/lib/server/api/calendar.ts`                                                                                     | `getCalendarYear(fetch, year)` → `{calendar, stale}`; per-year cache; 429 back-off; `listCalendarEntries`, `toListItems`, `listMonthItems`                                                                                       | exists — needs: drop the `token` parameter, stop deleting expired entries, return the old copy on failure, honour `retry_after_seconds` (Step A-1)                                                                                                                      |
+| Types                | `src/lib/types/calendar.ts`                                                                                          | DTOs `CalendarYear`/`CalendarEvent`/`CalendarOccurrence`; views `CalendarListItem`, `CalendarEventDetail`, `CalendarNeighbour`                                                                                                   | exists — needs: `CalendarEvent` gets `is_major`, `sort_order`, `recurrence` (open union: unknown values fall to "other"); `CalendarListItem` gets `is_major`, `sort_order`, `recurrence`; `CalendarEventDetail` drops `days_left`, gains `stale`; type `HomeBlockMonth` |
+| Callers out of scope | `src/routes/(site)/lunar/+page.server.ts`, `src/routes/api/calendar/month/+server.ts`                                | Lunar feature                                                                                                                                                                                                                    | exists — only change the `getCalendarYear` call to the new signature; keep behaviour                                                                                                                                                                                    |
+| Assets               | `src/lib/components/ui/LampMark.svelte` (reuse)                                                                      | Temporary default image (⚠️ requirements AC 13)                                                                                                                                                                                  | exists                                                                                                                                                                                                                                                                  |
+| i18n                 | `messages/vi.json`, `messages/en.json`                                                                               | `ev_*`, `events_*`                                                                                                                                                                                                               | exists — add/change/remove per the table below                                                                                                                                                                                                                          |
+| Tests                | `src/lib/utils/*.spec.ts`, `src/lib/server/api/calendar.spec.ts`, `tests/calendar.e2e.ts`, `tests/vectors/calendar/` | Vectors + logic + E2E                                                                                                                                                                                                            | Vitest installed (`npm test`): `src/lib/utils/{calendar-vectors,event-content}.spec.ts`, `src/lib/server/api/calendar.spec.ts` exist; vectors pinned in `tests/vectors/calendar/` by `scripts/sync-calendar-vectors.mjs`; E2E (Playwright) **not yet**                  |
 
 ## Route & navigation flow
 
 ```
-/ ──khối "Sự kiện Phật giáo"──┬─ một dòng ──▶ /events/[code]?date=YYYY-MM-DD
-                              ├─ "+N sự kiện khác" ──▶ /events
-                              └─ "Tất cả" ──▶ /events
-/lunar (tab "Sự kiện" của CALENDAR_TABS) ──▶ /events   (nav.ts giữ tab Lịch sáng ở /events)
-/events (cuộn tới tháng hiện tại)
-  ├─ chip Tất cả / Lễ lớn / <nhóm>  (lọc trong browser)
-  ├─ một dòng ──▶ /events/[code]?date=…
-  └─ "Xem thêm năm {year}" ──▶ fetch /api/calendar/year?year= ──▶ nối vào danh sách (≤ 2100)
+/ ──"Sự kiện Phật giáo" block──┬─ a row ──▶ /events/[code]?date=YYYY-MM-DD
+                               ├─ "+N other events" ──▶ /events
+                               └─ "Tất cả" ──▶ /events
+/lunar (tab "Sự kiện" of CALENDAR_TABS) ──▶ /events   (nav.ts keeps the calendar tab at /events)
+/events (scrolls to the current month)
+  ├─ chip Tất cả / Lễ lớn / <group>  (filter in the browser)
+  ├─ a row ──▶ /events/[code]?date=…
+  └─ "Load more year {year}" ──▶ fetch /api/calendar/year?year= ──▶ appended to the list (≤ 2100)
 /events/[code]?date=…
-  ├─ ‹ sự kiện trước / sự kiện tiếp › ──▶ /events/[code']?date=…   (qua ranh giới năm)
+  ├─ ‹ previous event / next event › ──▶ /events/[code']?date=…   (across the year boundary)
   ├─ "Thắp đèn" ──▶ /practice/lamp ;  "Xem ngày âm" ──▶ /lunar/day?date=…
-  └─ không có / ngoài 1900–2100 ──▶ 404 (+error.svelte, quay lại)
+  └─ missing / outside 1900–2100 ──▶ 404 (+error.svelte, back)
 ```
 
-Mọi `href`/redirect dùng `localizeHref`.
+Every `href`/redirect uses `localizeHref`.
 
-## Cache & bản sao (FR-CAL-007 §3.6)
+## Cache & copy (FR-CAL-007 §3.6)
 
-- Map trong bộ nhớ process, khoá = năm: `{ data: CalendarYear, fetchedAt }`. Năm luôn được gửi rõ ràng (backend trả `Cache-Control: public, max-age` khi có `year`, E17).
-- **Tươi** (`now − fetchedAt < CACHE_TTL_MS`, giữ 1 giờ như hiện tại) → trả ngay, `stale: false`, không gọi backend.
-- **Hết hạn hoặc chưa có** → gọi backend. Thành công → ghi đè, `stale: false`. Thất bại (`ApiError` mạng / 5xx / 429 / 401) → có bản cũ thì trả nó với `stale: true`; không có thì ném lỗi.
-- Không xoá bản hết hạn (chính nó là bản sao). Kích thước bị chặn bởi khoảng năm 1900–2100 (≤ 201 mục).
-- Không bao giờ gửi `Authorization` (⚠️ requirements AC 1, mặc định), nên một bản dùng chung cho mọi người là đúng.
-- Lưu ý cho backend (hand-off, không phải việc ở đây): mọi request của website tới backend đi từ IP của server SvelteKit, nên giới hạn theo IP (E23) đếm cả website là một khách; cache trên giữ số lần gọi ở mức vài lần mỗi giờ mỗi năm mỗi instance.
+- In-process map, key = year: `{ data: CalendarYear, fetchedAt, retryAt? }`. The year is always sent explicitly (the backend answers `Cache-Control: public, max-age` — 24 h in dev — when `year` is given).
+- **Fresh** (`now − fetchedAt < CACHE_TTL_MS`, kept at 1 hour as today) → return at once, `stale: false`, no backend call. The 1-hour server TTL is deliberately shorter than the backend's 24-hour public max-age: the catalogue is edited by hand and an hour is enough to keep the call rate at a few per hour per year per instance.
+- **Expired or missing** → call the backend, unless `retryAt` is still in the future (429 back-off, below). Success → overwrite, `stale: false`, clear `retryAt`. Failure (`ApiError` network / 5xx / 429 / 401) → with an old copy return it with `stale: true`; without one throw.
+- **429 `RATE_LIMITED`**: set `retryAt = now + details.retry_after_seconds` (default 60 s when absent). While `retryAt` is in the future the year is not called again: an old copy is returned as stale, otherwise the error is thrown at once.
+- Never delete an expired entry (it is the copy). Size is bounded by the 1900–2100 range (≤ 201 entries).
+- `Authorization` is never sent (⚠️ requirements AC 1, default), so one copy shared by everyone is correct. `x-api-key` is always sent: the backend does not count a request with the correct key against the per-IP limit, so the whole website being one IP is not a problem in normal operation.
 
-## Step-by-step Flow — Mở lịch lễ
+## Step-by-step Flow — Open the festival list
 
 ```
-Step A-1 — Đọc năm hiện tại (this feature)
-- Trigger: mở `/events` (SSR hoặc điều hướng client)
-- Pre-condition: không (route công khai)
+Step A-1 — Read the current year (this feature)
+- Trigger: open `/events` (SSR or client navigation)
+- Pre-condition: none (public route)
 - Where: `src/routes/(site)/events/+page.server.ts` `load` → `getCalendarYear(fetch, vietnamYear())`
-- API: GET /v1/calendar/events?year=YYYY (x-api-key, không Bearer) — chờ backend v3.0 E4; trước đó code giữ nhánh token hiện tại
-    - Success / cache tươi → `{state: 'ok', year, groups, items: toListItems(listCalendarEntries(...)), stale: false}`
-    - Failure (mạng / 5xx / 429 / 401) có bản cũ → như Success với `stale: true` → `ev_stale_note`
-    - Failure không bản cũ → `{state: 'unavailable'}` → `ev_unavailable` + `ev_retry` (`invalidateAll()`)
+- API: GET /v1/calendar/events?year=YYYY (x-api-key, no Bearer)
+    - Success / fresh cache → `{state: 'ok', year, groups, items: toListItems(listCalendarEntries(...)), stale: false}`
+    - Failure (network / 5xx / 429 / 401) with an old copy → as Success with `stale: true` → `ev_stale_note`
+    - Failure without an old copy → `{state: 'unavailable'}` → `ev_unavailable` + `ev_retry` (`invalidateAll()`)
 
-Step A-2 — Đếm ngày và cuộn (browser)
-- Trigger: `+page.svelte` mount
-- Where: `today` = `$state` gán trong `onMount` (ngày local của máy); `countdown(today, item.solar_date)` trong `$derived`
-- Logic: trước mount không render nhãn đếm; `afterNavigate` của `EventsGroups` cuộn tới tháng hiện tại (đã có)
+Step A-2 — Countdown and scroll (browser)
+- Trigger: `+page.svelte` mounts
+- Where: `today` = `$state` set in `onMount` (the device's local date); `countdown(today, item.solar_date)` in `$derived`
+- Logic: before mount no countdown label is rendered; `afterNavigate` of `EventsGroups` scrolls to the current month (exists)
 ```
 
-## Step-by-step Flow — Tải thêm năm
+## Step-by-step Flow — Load more years
 
 ```
-Step B-1 — Bấm tải thêm (browser, this feature)
-- Trigger: bấm `ev_load_more` (hoặc `ev_retry` sau lỗi)
-- Pre-condition: năm cuối đã nối < 2100; không có lần tải đang chạy
+Step B-1 — Press load more (browser, this feature)
+- Trigger: press `ev_load_more` (or `ev_retry` after a failure)
+- Pre-condition: last appended year < 2100; no load in flight
 - Where: `src/routes/(site)/events/+page.svelte`
-- Logic: `fetch(localizeHref('/api/calendar/year?year=' + (last + 1)))`; ném lỗi mạng hoặc `navigator.onLine === false` → trạng thái `offline`
+- Logic: `fetch('/api/calendar/year?year=' + (last + 1))` (internal endpoint, no locale prefix, like `/api/calendar/month`); a network error or `navigator.onLine === false` → state `offline`
 
-Step B-2 — Đọc năm (server, this feature)
+Step B-2 — Read the year (server, this feature)
 - Where: `src/routes/api/calendar/year/+server.ts` `GET`
-- Pre-condition: `year` là số nguyên trong [năm hiện tại VN, 2100] (không thì 400, không gọi backend)
-- API: GET /v1/calendar/events?year=YYYY qua `getCalendarYear` (cùng cache Step A-1)
-    - Success (kể cả bản cũ) → 200 `{year, groups, items, stale}` → browser nối vào cuối, gộp nhóm mới (giữ thứ tự danh mục), chip đếm lại, filter giữ nguyên
-    - Failure không bản cũ → 502 → browser giữ danh sách, hiện `ev_load_more_failed` + `ev_retry` ở cuối
-    - Failure mạng phía browser → `ev_offline` + `ev_retry`
+- Pre-condition: `year` is an integer in [current VN year, 2100] (else 400, no backend call)
+- API: GET /v1/calendar/events?year=YYYY through `getCalendarYear` (same cache as Step A-1)
+    - Success (including an old copy) → 200 `{year, groups, items, stale}` → the browser appends it, merges new groups (keeping catalogue order), recounts chips, keeps the filter
+    - Failure without an old copy → 502 → the browser keeps the list and shows `ev_load_more_failed` + `ev_retry` at the end
+    - Network failure in the browser → `ev_offline` + `ev_retry`
 ```
 
-## Step-by-step Flow — Chi tiết sự kiện
+## Step-by-step Flow — Event detail
 
 ```
-Step C-1 — Đọc năm của lần diễn ra (this feature)
-- Trigger: mở `/events/[code]?date=YYYY-MM-DD`
+Step C-1 — Read the year of the occurrence (this feature)
+- Trigger: open `/events/[code]?date=YYYY-MM-DD`
 - Where: `src/routes/(site)/events/[code]/+page.server.ts` `load`
-- API: GET /v1/calendar/events?year=<năm của date, mặc định năm VN> qua `getCalendarYear`
-    - Success / bản cũ → Step C-2 (`stale` truyền xuống trang)
+- API: GET /v1/calendar/events?year=<year of date, default VN year> through `getCalendarYear`
+    - Success / old copy → Step C-2 (`stale` passed to the page)
     - Failure (INVALID_YEAR) → error(404)
-    - Failure khác, không bản cũ → error(502) → `+error.svelte` có thử lại
+    - Other failure, no old copy → error(502) → `+error.svelte` with retry
 
-Step C-2 — Chọn lần diễn ra (server, pure)
-- Logic: `own = entries` có `event.code === code`; rỗng → error(404);
-  chọn `own` khớp `date`, không thì lần sắp tới (so với ngày VN), không thì lần cuối
+Step C-2 — Pick the occurrence (server, pure)
+- Logic: `own` = entries whose `event.code === code`; empty → error(404);
+  pick the `own` entry matching `date`, else the upcoming one (against the VN date), else the last
 
-Step C-3 — Năm liền kề cho trước / sau (this feature)
-- Pre-condition: lần diễn ra là đầu (trước) hoặc cuối (sau) năm
-- API: GET /v1/calendar/events?year=<năm ± 1> qua `getCalendarYear`
-    - Success / bản cũ → láng giềng là phần tử cuối / đầu của năm đó
-    - Failure → láng giềng `null`, không có link phía đó (không làm hỏng trang)
+Step C-3 — Adjacent year for previous / next (this feature)
+- Pre-condition: the occurrence is the first (previous) or last (next) of its year
+- API: GET /v1/calendar/events?year=<year ± 1> through `getCalendarYear`
+    - Success / old copy → the neighbour is the last / first element of that year
+    - Failure → neighbour `null`, no link on that side (the page does not break)
 
-Step C-4 — Hiển thị (browser)
-- Where: `EventDetail.svelte`; nhãn đếm = `countdown(today, solar_date)` sau mount (bỏ `days_left` của server);
-  `paragraphs(long_description)`, `practices(guidance)`; mục rỗng ẩn; `image_url` null → ảnh mặc định
+Step C-4 — Display (browser)
+- Where: `EventDetail.svelte`; countdown label = `countdown(today, solar_date)` after mount (the server `days_left` goes away);
+  `paragraphs(long_description)`, `practices(guidance)`; empty sections hidden; `image_url` null → default image
 ```
 
-## Step-by-step Flow — Khối trang chủ
+## Step-by-step Flow — Home block
 
 ```
-Step D-1 — Đọc năm cần cho 6 tháng (this feature)
-- Trigger: `load` của `src/routes/(site)/+page.server.ts` (mọi người, không còn nhánh khách)
-- Logic: tháng bắt đầu = tháng hiện tại theo `Asia/Ho_Chi_Minh`; cửa sổ 6 tháng vượt tháng 12 → cần cả năm sau
-- API: GET /v1/calendar/events?year=Y (và ?year=Y+1 khi cần), song song, qua `getCalendarYear`
-    - Success / bản cũ → Step D-2; `stale` = bất kỳ năm nào là bản cũ
-    - Failure năm Y không bản cũ → `homeEvents: {state: 'unavailable'}` → `events_unavailable` + `ev_retry` tại chỗ thẻ
-    - Failure chỉ năm Y+1 → các tháng thuộc Y+1 hiện `events_unavailable` (thẻ vẫn có)
-  Lỗi khác ngoài `ApiError` → ném như hiện tại; mọi lỗi API không làm vỡ trang chủ
+Step D-1 — Read the year of the current month (this feature)
+- Trigger: `load` of `src/routes/(site)/+page.server.ts` (everyone, no guest branch)
+- Logic: the month = current month in `Asia/Ho_Chi_Minh` (owner decision 2026-10-18: current month only, so one year is enough; `HOME_BLOCK_MONTHS = 1`, `buildHomeBlock` stays general)
+- API: GET /v1/calendar/events?year=Y through `getCalendarYear`
+    - Success / old copy → Step D-2; `stale` = the year is an old copy
+    - Failure without an old copy → the card is marked `failed` and shows `events_unavailable` + `ev_retry` in place of its rows
+  Errors other than `ApiError` are thrown as today; no API error breaks the home page
 
-Step D-2 — Chọn dòng (server, pure)
-- Logic: `buildHomeBlock(occurrences, start, 6)` — chạy `rules/home-block.json`; map field contract → input vector:
-  `display_order` ← `sort_order`, `major` ← `is_major`, `every_lunar_month` ← `recurrence === 'lunar_monthly'`, `groups` ← `groups`
-- Kết quả `HomeBlockMonth[]` ({year, month, shown ≤ 3 dạng `CalendarListItem`, more}) xuống `EventsRoutines`
+Step D-2 — Choose the rows (server, pure)
+- Logic: `buildHomeBlock(occurrences, start, vietnamToday())` — `pickHomeRows` takes the month's occurrences of every group (no group filter), shows the 3 nearest with `solar_date >= today` in BR-CAL-12 order, and sets `more` to the month's total minus the rows shown (passed days included). No product vector applies (`home-block.json` describes the tiered rule it replaces)
+- Result `HomeBlockMonth[]` ({year, month, shown ≤ 3 as `CalendarListItem`, more}) goes down to `EventsRoutines`
 
-Step D-3 — Hiển thị (browser)
-- Where: `EventsRoutines.svelte`; nhãn đếm sau mount; `more > 0` → link `events_more_others` tới `/events`;
-  tháng không có dòng → `events_month_none`
+Step D-3 — Display (browser)
+- Where: `EventsRoutines.svelte`; no countdown label on the block (product §3.1.1); `more > 0` → `events_more_others` link to `/events`;
+  a month with no rows → `events_month_none`
 ```
 
 ## i18n keys
 
-Chữ tiếng Việt của các key có cột "Product" lấy theo đúng chữ product nêu (BR-CAL-13, §3.1.1); bản `en` theo phần giải nghĩa tiếng Anh của product. Không chép thêm chữ vào spec này.
+The Vietnamese text of keys with a "Product" column follows the product's exact wording (BR-CAL-13, §3.1.1); the `en` text follows the product's English gloss. No text is copied into this spec.
 
-| Key | Dùng cho | Product | Việc |
-| --- | --- | --- | --- |
-| `ev_tab_all`, `events_view_all` | Chip / link "Tất cả" | §3.1.1 | giữ |
-| `ev_tab_major` | Chip "Lễ lớn" | §3.1.1, FR-CAL-003 | thêm |
-| `ev_major` | Dấu lễ lớn trên dòng và chi tiết | BR-CAL-10 | thêm |
-| `ev_left_today`, `ev_left_tomorrow`, `ev_left_days`, `ev_left_past` | Nhãn đếm ngày ở mọi nơi | BR-CAL-13 | giữ 3 key (sửa chữ cho khớp "Còn n ngày" / "Đã qua"), thêm `ev_left_tomorrow` |
-| `ev_d_in_days`, `ev_d_days_ago` | Đếm ngày riêng của chi tiết | — | **bỏ** (dùng `ev_left_*`) |
-| `ev_lunar_date`, `ev_d_lunar` | Ngày âm trên dòng / chi tiết | BR-CAL-08 | sửa: thêm biến thể nhuận (`ev_lunar_date_leap`, `ev_d_lunar_leap`) |
-| `ev_d_dos` | Tiêu đề lễ nghi | §3.1.1 "Phật tử thường làm gì" | sửa chữ |
-| `ev_d_about` | Tiêu đề mô tả | — | giữ |
-| `ev_unavailable`, `events_unavailable` | Lỗi tải, không bản sao | FR-CAL-008 | giữ |
-| `ev_retry` | Nút thử lại (`/events`, tải thêm, khối trang chủ) | FR-CAL-008 | thêm |
-| `ev_load_more_failed`, `ev_offline` | Lỗi tải thêm năm; trình duyệt offline | FR-CAL-004, FR-CAL-008 | thêm |
-| `ev_stale_note` | "Có thể chưa cập nhật" khi dùng bản sao | FR-CAL-007 | thêm |
-| `events_more_others` | "+N sự kiện khác" trên thẻ tháng | §3.1.1 | thêm (thay `events_more` "+{count} sự kiện") |
-| `events_more` | — | — | **bỏ** sau khi thay |
-| `events_month_none` | Thẻ tháng không có sự kiện Phật giáo | BR-CAL-15 | thêm (hoặc dùng lại `events_month_empty` nếu chữ hợp; `events_month_empty` vẫn dùng ở `/lunar`) |
-| `events_month_title` (hoặc dùng lại `ev_month_title`) | Tiêu đề thẻ tháng | — | thêm nếu cần dạng ngắn |
-| `ev_guest`, `ev_d_guest` | Lời mời đăng nhập | — (FR-CAL-001) | **bỏ** khi gọi không token |
-| `events_guest`, `events_today`, `events_days_left`, `events_lunar_date` | Khối trang chủ cũ | — | thôi dùng ở khối trang chủ; **giữ** vì `LunarCalendar.svelte` (ngoài phạm vi) còn dùng |
-| `ev_meta_*`, `ev_subtitle`, `ev_filter_label`, `ev_next_label`, `ev_month_title`, `ev_month_count`, `ev_load_more`, `ev_empty`, `ev_d_lamp`, `ev_d_open_day`, `ev_d_prev`, `ev_d_next`, `ev_d_crumb`, `ev_d_back`, `ev_d_holiday`, `events_title`, `events_month_short` | Như hiện tại | — | giữ |
+| Key                                                                                                                                                                                                                                                                     | Used for                                        | Product                        | Work                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `ev_tab_all`, `events_view_all`                                                                                                                                                                                                                                         | "Tất cả" chip / link                            | §3.1.1                         | keep                                                                                                    |
+| `ev_tab_major`                                                                                                                                                                                                                                                          | "Lễ lớn" chip                                   | §3.1.1, FR-CAL-003             | add                                                                                                     |
+| `ev_major`                                                                                                                                                                                                                                                              | Major mark on rows and detail                   | BR-CAL-10                      | add                                                                                                     |
+| `ev_left_today`, `ev_left_tomorrow`, `ev_left_days`, `ev_left_past`                                                                                                                                                                                                     | Countdown label everywhere it is shown          | BR-CAL-13                      | keep 3 keys (fix wording to "Còn n ngày" / "Đã qua"), add `ev_left_tomorrow`                            |
+| `ev_d_in_days`, `ev_d_days_ago`                                                                                                                                                                                                                                         | Detail-only countdown                           | —                              | **remove** (use `ev_left_*`)                                                                            |
+| `ev_lunar_date`, `ev_d_lunar`                                                                                                                                                                                                                                           | Lunar date on rows / detail                     | BR-CAL-08                      | change: add leap variants (`ev_lunar_date_leap`, `ev_d_lunar_leap`)                                     |
+| `ev_d_dos`                                                                                                                                                                                                                                                              | Practices title                                 | §3.1.1 "Phật tử thường làm gì" | change wording                                                                                          |
+| `ev_d_about`                                                                                                                                                                                                                                                            | Description title                               | —                              | keep                                                                                                    |
+| `ev_unavailable`, `events_unavailable`                                                                                                                                                                                                                                  | Load failure, no copy                           | FR-CAL-008                     | keep                                                                                                    |
+| `ev_retry`                                                                                                                                                                                                                                                              | Retry button (`/events`, load more, home block) | FR-CAL-008                     | add                                                                                                     |
+| `ev_load_more_failed`, `ev_offline`                                                                                                                                                                                                                                     | Load-more failure; browser offline              | FR-CAL-004, FR-CAL-008         | add                                                                                                     |
+| `ev_stale_note`                                                                                                                                                                                                                                                         | "May be out of date" when a copy is used        | FR-CAL-007                     | add                                                                                                     |
+| `events_more_others`                                                                                                                                                                                                                                                    | "+N other events" on a month card               | §3.1.1                         | add (replaces `events_more` "+{count} sự kiện")                                                         |
+| `events_more`                                                                                                                                                                                                                                                           | —                                               | —                              | **remove** after the replacement                                                                        |
+| `events_month_none`                                                                                                                                                                                                                                                     | Month card with no Buddhist event               | BR-CAL-15                      | add (or reuse `events_month_empty` if the wording fits; `events_month_empty` is still used by `/lunar`) |
+| `events_month_title` (or reuse `ev_month_title`)                                                                                                                                                                                                                        | Month card title                                | —                              | add if a short form is needed                                                                           |
+| `ev_guest`, `ev_d_guest`                                                                                                                                                                                                                                                | Sign-in invitation                              | — (FR-CAL-001)                 | **remove** with the token-less call                                                                     |
+| `events_guest`, `events_today`, `events_days_left`, `events_lunar_date`                                                                                                                                                                                                 | Old home block                                  | —                              | stop using in the home block; **keep** because `LunarCalendar.svelte` (out of scope) still uses them    |
+| `ev_meta_*`, `ev_subtitle`, `ev_filter_label`, `ev_next_label`, `ev_month_title`, `ev_month_count`, `ev_load_more`, `ev_empty`, `ev_d_lamp`, `ev_d_open_day`, `ev_d_prev`, `ev_d_next`, `ev_d_crumb`, `ev_d_back`, `ev_d_holiday`, `events_title`, `events_month_short` | As today                                        | —                              | keep                                                                                                    |
 
 ## Deliberately stubbed for now
 
-- **Mọi thứ cần backend v3.0** (route công khai, `is_major`, `sort_order`, `recurrence`): code giữ nhánh token và lời mời đăng nhập tới khi backend triển khai Phase 18 và `openapi.yaml` có các field — `tasks.md` Phase 3 ghi "chờ backend v3.0". `buildHomeBlock` và `compareOccurrences` có thể viết và chạy vector trước (input vector không cần backend), nhưng khối trang chủ mới chỉ bật khi contract có field.
-- **Ảnh mặc định** — `LampMark` trên gradient tới khi có file (⚠️ requirements AC 13).
-- **Platform extras chưa có trong product §3.6**: thẻ "sự kiện sắp tới" (`EventsNext`) trên `/events`, link "Thắp đèn" và "Xem ngày âm" ở chi tiết, làm mờ dòng đã qua. Giữ nguyên; báo `ba-writer` để ghi vào §3.6 hoặc bỏ.
-- Code nằm ở `components/sections`, `utils`, `server/api` thay vì `src/lib/features/calendar/` (AGENTS.md §5); chuyển chỗ là tuỳ chọn, ghi ở `tasks.md` Deferred.
+- **Default image** — `LampMark` on a gradient until a file exists (⚠️ requirements AC 13).
+- **Platform extras not in product §3.6 beyond what it lists**: the "upcoming event" card (`EventsNext`) on `/events`, the "Thắp đèn" and "Xem ngày âm" links on the detail, dimming past rows — product v1.2 §3.6 now lists all of them; keep as built.
+- Code lives in `components/sections`, `utils`, `server/api` rather than `src/lib/features/calendar/` (AGENTS.md §5); moving it is optional, noted in `tasks.md` Deferred.

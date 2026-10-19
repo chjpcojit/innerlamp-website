@@ -1,22 +1,35 @@
 import { ApiError } from '$lib/server/api/client';
 import { getTopArticles } from '$lib/server/api/articles';
-import { getCalendarYear, listMonthItems } from '$lib/server/api/calendar';
+import { getCalendarYear, listCalendarEntries, toListItems } from '$lib/server/api/calendar';
 import { getTopDeities } from '$lib/server/api/deities';
 import { getTopGallery } from '$lib/server/api/gallery';
 import { getTopTemples } from '$lib/server/api/temples';
 import { getMe, profileDisplayName } from '$lib/server/api/users';
 import { TOKEN_COOKIE, setDisplayName } from '$lib/server/auth/session';
+import { vietnamToday, vietnamYearMonth } from '$lib/utils/calendar-time';
+import { buildHomeBlock } from '$lib/utils/calendar-home';
 import type { PageServerLoad } from './$types';
 
-/** Year and month (1–12) right now in Vietnam, which is how the backend defines "this year". */
-function vietnamYearMonth() {
-	const parts = new Intl.DateTimeFormat('en-CA', {
-		timeZone: 'Asia/Ho_Chi_Minh',
-		year: 'numeric',
-		month: 'numeric'
-	}).formatToParts(new Date());
-	const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
-	return { year: get('year'), month: get('month') };
+/**
+ * The current month's card of the "Sự kiện Phật giáo" block (BR-CAL-15, current month only).
+ * The calendar route is public, so everyone gets it. When the year cannot be loaded the card
+ * is marked `failed` (it shows the failure and a retry); the block never breaks the page.
+ */
+async function loadHomeEvents(fetch: typeof globalThis.fetch) {
+	const start = vietnamYearMonth();
+	try {
+		const { calendar, stale } = await getCalendarYear(fetch, start.year);
+		const [month] = buildHomeBlock(
+			toListItems(listCalendarEntries(calendar)),
+			start,
+			vietnamToday()
+		);
+		return { month, stale };
+	} catch (e) {
+		if (!(e instanceof ApiError)) throw e;
+		const [month] = buildHomeBlock([], start, vietnamToday());
+		return { month: { ...month, failed: true }, stale: false };
+	}
 }
 
 /** Cards shown in the home page library section. */
@@ -77,34 +90,26 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 	const temples = loadTopTemples(fetch);
 	const gallery = loadTopGallery(fetch);
 	const articles = loadTopArticles(fetch);
-	// The calendar API needs the user's token, so guests get no events (`null`).
+	const events = loadHomeEvents(fetch);
 	if (!locals.user || !token)
 		return {
 			user: locals.user,
-			events: null,
+			events: await events,
 			buddhas: await buddhas,
 			temples: await temples,
 			gallery: await gallery,
 			articles: await articles
 		};
 
-	const { year, month } = vietnamYearMonth();
-	const [profile, calendar] = await Promise.allSettled([
-		getMe(fetch, token),
-		getCalendarYear(fetch, token, year)
-	]);
+	const [profile] = await Promise.allSettled([getMe(fetch, token)]);
 
 	// Never break the home page over the backend: fall back to what we have.
-	for (const result of [profile, calendar]) {
-		if (result.status === 'rejected' && !(result.reason instanceof ApiError)) throw result.reason;
-	}
-
-	const events = calendar.status === 'fulfilled' ? listMonthItems(calendar.value, month) : null;
+	if (profile.status === 'rejected' && !(profile.reason instanceof ApiError)) throw profile.reason;
 
 	if (profile.status === 'rejected')
 		return {
 			user: locals.user,
-			events,
+			events: await events,
 			buddhas: await buddhas,
 			temples: await temples,
 			gallery: await gallery,
@@ -114,7 +119,7 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 	if (name !== locals.user.name) setDisplayName(cookies, name);
 	return {
 		user: { name },
-		events,
+		events: await events,
 		buddhas: await buddhas,
 		temples: await temples,
 		gallery: await gallery,

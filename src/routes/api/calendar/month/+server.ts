@@ -10,8 +10,8 @@ const MAX_YEAR = 2100;
 
 /**
  * Browser-facing proxy for the lunar calendar's month navigation: `?month=YYYY-MM` →
- * `{ items: CalendarListItem[] }`. The calendar API needs the user's token, which stays in
- * the httpOnly cookie; guests get 401.
+ * `{ items: CalendarListItem[] }`. The calendar route is public; the lunar page still limits
+ * it to signed-in visitors, so guests get 401.
  */
 export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	const match = /^(\d{4})-(\d{2})$/.exec(url.searchParams.get('month') ?? '');
@@ -24,7 +24,7 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	if (!token) return json({ error: 'UNAUTHORIZED' }, { status: 401 });
 
 	try {
-		return json({ items: listMonthItems(await getCalendarYear(fetch, token, year), month) });
+		return json({ items: listMonthItems((await getCalendarYear(fetch, year)).calendar, month) });
 	} catch (e) {
 		if (!(e instanceof ApiError)) throw e;
 		return json({ error: e.code }, { status: e.status >= 400 && e.status < 600 ? e.status : 502 });

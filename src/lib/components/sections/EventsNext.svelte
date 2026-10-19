@@ -2,14 +2,15 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import type { CalendarListItem } from '$lib/types/calendar';
-	import { leftLabel, monthShort, parseIsoDate } from '$lib/utils/events';
+	import { countdownText, lunarDateText, monthShort, parseIsoDate } from '$lib/utils/events';
+	import type { CountdownLabel } from '$lib/utils/events';
 
 	interface Props {
 		item: CalendarListItem;
-		daysLeft: number;
+		cd: { days: number; label: CountdownLabel };
 	}
 
-	let { item, daysLeft }: Props = $props();
+	let { item, cd }: Props = $props();
 
 	const date = $derived(parseIsoDate(item.solar_date));
 
@@ -34,14 +35,11 @@
 	</div>
 	<div class="relative min-w-0 flex-[1_1_280px]">
 		<p class="text-[10.5px] font-semibold tracking-[.16em] text-[#e8b061]">
-			{m.ev_next_label({ left: leftLabel(daysLeft) })}
+			{m.ev_next_label({ left: countdownText(cd) })}
 		</p>
 		<h2 class="mt-2 font-serif text-[28px]/tight font-medium text-pretty">{item.name}</h2>
 		<p class="mt-2 text-[13px] text-[#f5eee0]/70">
-			{weekdayFull.format(date)} · {m.ev_lunar_date({
-				day: item.lunar_date.day,
-				month: item.lunar_date.month
-			})}
+			{weekdayFull.format(date)} · {lunarDateText(item.lunar_date)}
 		</p>
 	</div>
 </div>
