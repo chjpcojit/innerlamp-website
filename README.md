@@ -1,57 +1,59 @@
 # InnerLamp
 
-Website cho InnerLamp — xây bằng [SvelteKit](https://svelte.dev/docs/kit) 2 + Svelte 5.
+Website for InnerLamp, built with [SvelteKit](https://svelte.dev/docs/kit) 2 + Svelte 5.
 
-## Công nghệ
+## Stack
 
-- **SvelteKit 2** / **Svelte 5** (runes, TypeScript strict)
+- **SvelteKit 2** / **Svelte 5** (runes, strict TypeScript)
 - **Tailwind CSS 4** (+ `@tailwindcss/typography`)
-- **Paraglide JS 2** (inlang) — đa ngôn ngữ `vi` (mặc định) và `en`
-- **Vite 8**, ESLint + Prettier
+- **Paraglide JS 2** (inlang): `vi` (default) and `en`
+- **Vite 8**, **Vitest** (unit tests), ESLint + Prettier
 
-## Bắt đầu
+## Getting started
 
 ```sh
 npm install
 npm run dev        # http://localhost:5173
 ```
 
-> Lần đầu nên chạy `npm run dev` hoặc `npm run build` trước khi `npm run check`,
-> vì thư mục `src/lib/paraglide` được sinh tự động lúc build.
+> On a fresh clone run `npm run dev` or `npm run build` once before `npm run check`,
+> because `src/lib/paraglide` is generated at build time.
 
 ## Scripts
 
-| Lệnh              | Mô tả                             |
-| ----------------- | --------------------------------- |
-| `npm run dev`     | Chạy dev server (HMR)             |
-| `npm run build`   | Build production                  |
-| `npm run preview` | Xem thử bản build                 |
-| `npm run check`   | Type-check + kiểm tra Svelte/a11y |
-| `npm run lint`    | Prettier check + ESLint           |
-| `npm run format`  | Tự động format                    |
+| Command             | Purpose                         |
+| ------------------- | ------------------------------- |
+| `npm run dev`       | Dev server (HMR)                |
+| `npm run build`     | Production build                |
+| `npm run preview`   | Preview the production build    |
+| `npm run check`     | Type-check + Svelte/a11y checks |
+| `npm run lint`      | Prettier check + ESLint         |
+| `npm run format`    | Auto-format                     |
+| `npm test`          | Unit tests (Vitest, single run) |
+| `npm run test:unit` | Unit tests in watch mode        |
 
-## Cấu trúc & quy ước
+## Structure & conventions
 
-Kiến trúc thư mục, quy ước code, i18n và các recipe nằm trong
-[`AGENTS.md`](./AGENTS.md). Đọc file đó trước khi thêm trang, component hay
-tính năng mới.
+Folder architecture, code conventions, i18n and recipes live in
+[`AGENTS.md`](./AGENTS.md). Read it before adding a page, component or feature.
 
-Tóm tắt nhanh:
+Quick summary:
 
-- `src/routes/` — router theo filesystem. `(site)` là khu công khai, `(app)` để
-  dành cho khu vực riêng tư sau này, `api/` cho endpoint JSON.
-- `src/lib/` — code dùng chung qua alias `$lib`:
-  - `components/{ui,layout,sections}` — UI
-  - `features/<tên>/` — module theo tính năng
-  - `server/` — code chỉ chạy server (`$lib/server`)
+- `src/routes/`: filesystem router. `(site)` is the public area, `(app)` is reserved
+  for a future private area, `api/` holds JSON endpoints.
+- `src/lib/`: shared code through the `$lib` alias:
+  - `components/{ui,layout,sections}`: UI
+  - `features/<name>/`: feature modules
+  - `server/`: server-only code (`$lib/server`)
   - `state/`, `utils/`, `config/`, `types/`, `content/`, `styles/`, `assets/`
-- `messages/` — chuỗi dịch `vi.json` / `en.json`. **Không hardcode text hiển thị.**
-- `static/` — asset phục vụ nguyên trạng.
-- `tests/` — test tích hợp/E2E.
+- `messages/`: translation strings `vi.json` / `en.json`. **Never hardcode visible text.**
+- `static/`: assets served as they are.
+- `tests/`: pinned test vectors (`tests/vectors/`) and, later, E2E tests.
+- `scripts/`: maintenance scripts (for example `sync-calendar-vectors.mjs`).
 
 ## i18n
 
-Thêm chuỗi vào **cả** `messages/vi.json` và `messages/en.json`, rồi dùng:
+Add strings to **both** `messages/vi.json` and `messages/en.json`, then use:
 
 ```svelte
 <script lang="ts">
@@ -61,12 +63,13 @@ Thêm chuỗi vào **cả** `messages/vi.json` và `messages/en.json`, rồi dù
 <h1>{m.hello_world({ name: 'InnerLamp' })}</h1>
 ```
 
-## Triển khai
+## Deployment
 
-Hiện dùng `@sveltejs/adapter-auto`. Khi biết nền tảng deploy, cài adapter tương ứng:
+Currently `@sveltejs/adapter-auto`. Once the target platform is known, install the
+matching adapter:
 
 ```sh
 npx sv add sveltekit-adapter="adapter:<node|vercel|netlify|cloudflare|static>"
 ```
 
-rồi cấu hình lại trong `vite.config.ts`.
+then reconfigure it in `vite.config.ts`.

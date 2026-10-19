@@ -33,12 +33,12 @@ silently diverge. Keep it short, current, and actionable.
 Decided by the product owner (anh Đức), 2026-10-15. Applies to every agent and human contributor, and
 **overrides any language rule in a skill, template or older doc** in this repo.
 
-| Where | Language |
-|---|---|
-| Conversation with the user, questions, reports, notes and drafts that are **not committed** | Vietnamese ("anh" for the user, "em" for the agent), technical terms kept in English |
-| Everything **committed to git**: docs, specs, ADRs, READMEs, commit messages, PR titles and bodies, identifiers | English |
-| Code comments | Bilingual: English first, then Vietnamese |
-| User-facing copy (UI strings, localisation catalogues, copy quoted in a spec) | Its own language (Vietnamese first), with an English gloss when quoted in a doc |
+| Where                                                                                                           | Language                                                                             |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Conversation with the user, questions, reports, notes and drafts that are **not committed**                     | Vietnamese ("anh" for the user, "em" for the agent), technical terms kept in English |
+| Everything **committed to git**: docs, specs, ADRs, READMEs, commit messages, PR titles and bodies, identifiers | English                                                                              |
+| Code comments                                                                                                   | Bilingual: English first, then Vietnamese                                            |
+| User-facing copy (UI strings, localisation catalogues, copy quoted in a spec)                                   | Its own language (Vietnamese first), with an English gloss when quoted in a doc      |
 
 - Existing Vietnamese docs stay as they are until they are next edited; a change that edits such a file
   rewrites it in English in the same change. Do not open translation-only PRs.
@@ -57,6 +57,7 @@ InnerLamp is a bilingual (Vietnamese-first) marketing / content website.
 | Styling     | Tailwind CSS 4 via `@tailwindcss/vite` (+ typography plugin) |
 | i18n        | Paraglide JS 2 / inlang — locales `vi` (base) and `en`       |
 | Build       | Vite 8                                                       |
+| Unit tests  | Vitest (`npm test`; files `src/**/*.{test,spec}.ts`)         |
 | Quality     | ESLint 10 (flat config) + Prettier 3                         |
 | Package mgr | **npm** only (`package-lock.json`)                           |
 | Deploy      | `@sveltejs/adapter-auto` — swap for a concrete adapter later |
@@ -69,14 +70,15 @@ Node with ESM (`"type": "module"`) is required. `.npmrc` sets `engine-strict=tru
 
 Run these from the repo root.
 
-| Command           | Purpose                                            |
-| ----------------- | -------------------------------------------------- |
-| `npm run dev`     | Start the dev server (HMR)                         |
-| `npm run build`   | Production build (also generates Paraglide output) |
-| `npm run preview` | Preview the production build                       |
-| `npm run check`   | `svelte-kit sync` + `svelte-check` (types/a11y)    |
-| `npm run lint`    | `prettier --check .` + `eslint .`                  |
-| `npm run format`  | Auto-format with Prettier                          |
+| Command           | Purpose                                              |
+| ----------------- | ---------------------------------------------------- |
+| `npm run dev`     | Start the dev server (HMR)                           |
+| `npm run build`   | Production build (also generates Paraglide output)   |
+| `npm run preview` | Preview the production build                         |
+| `npm run check`   | `svelte-kit sync` + `svelte-check` (types/a11y)      |
+| `npm run lint`    | `prettier --check .` + `eslint .`                    |
+| `npm test`        | Unit tests, single run (`npm run test:unit` = watch) |
+| `npm run format`  | Auto-format with Prettier                            |
 
 Add official integrations only through the Svelte CLI, e.g.
 `npx sv add mdsvex` or `npx sv add vitest="usages:unit,component"`.
@@ -93,7 +95,8 @@ innerlamp/
 ├─ messages/                 # i18n message catalogues — {locale}.json (vi, en)
 ├─ project.inlang/           # Paraglide/inlang project settings (baseLocale: vi)
 ├─ static/                   # assets served verbatim (robots.txt, …)
-├─ tests/                    # end-to-end / integration tests (Playwright goes here)
+├─ tests/                    # pinned test vectors (tests/vectors/, never hand-edited) and E2E tests (Playwright goes here)
+├─ scripts/                  # maintenance scripts (e.g. sync-calendar-vectors.mjs)
 ├─ src/
 │  ├─ app.html               # HTML shell; %paraglide.lang% / %paraglide.dir% injected here
 │  ├─ app.d.ts               # ambient `App.*` types (Locals, PageData, …)
