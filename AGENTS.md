@@ -96,7 +96,7 @@ innerlamp/
 ├─ project.inlang/           # Paraglide/inlang project settings (baseLocale: vi)
 ├─ static/                   # assets served verbatim (robots.txt, …)
 ├─ tests/                    # pinned test vectors (tests/vectors/, never hand-edited) and E2E tests (Playwright goes here)
-├─ scripts/                  # maintenance scripts (e.g. sync-calendar-vectors.mjs)
+├─ scripts/                  # maintenance scripts (e.g. sync-calendar-vectors.mjs, sync-lamp-vectors.mjs)
 ├─ src/
 │  ├─ app.html               # HTML shell; %paraglide.lang% / %paraglide.dir% injected here
 │  ├─ app.d.ts               # ambient `App.*` types (Locals, PageData, …)

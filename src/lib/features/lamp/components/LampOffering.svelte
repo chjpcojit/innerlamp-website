@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte';
 	import { enhance } from '$app/forms';
-	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
+	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import LampVessel from '$lib/components/ui/LampVessel.svelte';
 	import {
@@ -9,31 +9,33 @@
 		LAMP_DAYS,
 		LAMP_PURPOSES,
 		LAMP_TYPES,
-		PRAYER_MAX,
-		RECIPIENT_MAX,
 		lampPurpose,
 		lampType
 	} from '$lib/content/lamps';
 	import { lampErrorMessage } from '$lib/features/lamp/errors';
 	import type { LampError } from '$lib/features/lamp/types';
-	import { lamps } from '$lib/state/lamps.svelte';
+	import { validateLampInput } from '$lib/features/lamp/validation';
 	import type { Lamp, LampDuration } from '$lib/types/lamp';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	interface Props {
-		/** Guests can fill the form, but lighting needs an account. */
-		isGuest: boolean;
+		/** Brings the garden into view. / Cuộn tới vườn đèn. */
+		onToGarden: () => void;
 	}
 
-	let { isGuest }: Props = $props();
+	let { onToGarden }: Props = $props();
 
 	const IGNITE_MS = 2100;
 	const HERO_MOVE_MS = 950;
 	const EASE = 'cubic-bezier(.2,.8,.2,1)';
+	// End moment from the server's `end_at`, in the device time zone and locale (NFR-LMP-03).
+	// / Thời điểm tắt lấy từ `end_at` của server, theo múi giờ và ngôn ngữ của thiết bị.
 	const dateFormat = new Intl.DateTimeFormat(getLocale(), {
 		day: 'numeric',
 		month: 'numeric',
-		year: 'numeric'
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit'
 	});
 
 	let type = $state(0);
@@ -41,6 +43,8 @@
 	let name = $state('');
 	let wish = $state('');
 	let days = $state<LampDuration>(DEFAULT_LAMP_DAYS);
+	/** Kept on "light another" (privacy-safe side). / Giữ nguyên khi "Thắp thêm đèn". */
+	let hideName = $state(false);
 	let phase = $state<'form' | 'igniting' | 'lit'>('form');
 	/** True after "light another", so the form fields rise in again. */
 	let returned = $state(false);
@@ -56,14 +60,13 @@
 	const burning = $derived(phase !== 'form');
 	const canShare = $derived(typeof navigator !== 'undefined' && 'share' in navigator);
 
-	const caption = $derived(
-		current
-			? m.lamp_caption_for({
-					purpose: lampPurpose(current.intention).name(),
-					name: current.recipient
-				})
-			: m.lamp_caption_idle()
-	);
+	const caption = $derived.by(() => {
+		if (!current) return m.lamp_caption_idle();
+		const purpose = lampPurpose(current.intention).name();
+		return current.recipient
+			? m.lamp_caption_for({ purpose, name: current.recipient })
+			: m.lamp_caption_all({ purpose });
+	});
 	const until = $derived(
 		current
 			? m.lamp_until({
@@ -71,9 +74,6 @@
 					days: current.duration_days
 				})
 			: ''
-	);
-	const templeHref = $derived(
-		localizeHref(`/offer?purpose=lamp&wish=${encodeURIComponent(current?.prayer || caption)}`)
 	);
 
 	/**
@@ -100,8 +100,21 @@
 	/** The ignition animation always plays in full, however fast the backend answers. */
 	const ignition = () => new Promise<void>((resolve) => (timer = setTimeout(resolve, IGNITE_MS)));
 
-	const light: SubmitFunction = ({ cancel }) => {
+	const light: SubmitFunction = ({ cancel, formData }) => {
 		if (phase !== 'form') return cancel();
+		// Same rules as the server; invalid input never starts the ignition or a request.
+		// / Cùng luật với server; dữ liệu sai thì không đốt đèn và không gửi request.
+		const checked = validateLampInput({
+			lamp_type: String(formData.get('lamp_type') ?? ''),
+			intention: String(formData.get('intention') ?? ''),
+			recipient: String(formData.get('recipient') ?? ''),
+			prayer: String(formData.get('prayer') ?? ''),
+			duration_days: Number(formData.get('duration_days'))
+		});
+		if (!checked.valid) {
+			error = 'invalid';
+			return cancel();
+		}
 		phase = 'igniting';
 		error = null;
 		const ignited = ignition();
@@ -116,7 +129,6 @@
 				return;
 			}
 			const lamp = result.data.lamp as Lamp;
-			lamps.add(lamp.id, lamp.end_at);
 			await moveHero(() => {
 				current = lamp;
 				phase = 'lit';
@@ -245,10 +257,13 @@
 						id="lamp-name"
 						name="recipient"
 						bind:value={name}
-						maxlength={RECIPIENT_MAX}
+						aria-describedby="lamp-name-notice"
 						placeholder={m.lamp_field_for_placeholder()}
 						class={field}
 					/>
+					<p id="lamp-name-notice" class="mt-2 text-xs text-[#f2ebdd]/50">
+						{m.lamp_recipient_notice()}
+					</p>
 				</div>
 
 				<div class="il-motion" style:animation={formRise(4)}>
@@ -257,7 +272,6 @@
 						id="lamp-wish"
 						name="prayer"
 						bind:value={wish}
-						maxlength={PRAYER_MAX}
 						rows="3"
 						placeholder={m.lamp_field_wish_placeholder()}
 						class="{field} resize-none leading-relaxed"></textarea>
@@ -283,30 +297,48 @@
 					</div>
 				</fieldset>
 
+				<label
+					class="il-motion flex cursor-pointer items-center justify-between gap-4 self-stretch"
+					style:animation={formRise(6)}
+				>
+					<span class="text-sm text-[#f2ebdd]/85">{m.lamp_field_hide_name()}</span>
+					<input
+						type="checkbox"
+						role="switch"
+						name="is_anonymous"
+						value="true"
+						bind:checked={hideName}
+						class="peer sr-only"
+					/>
+					<span
+						aria-hidden="true"
+						class="relative h-6 w-11 flex-none rounded-full border border-[#f2ebdd]/20 bg-[#f2ebdd]/10 transition-colors peer-checked:border-amber-light peer-checked:bg-amber-light peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-amber-light after:absolute after:top-0.5 after:left-0.5 after:size-[18px] after:rounded-full after:bg-[#f5eee0] after:transition-transform peer-checked:after:translate-x-5 peer-checked:after:bg-[#1a1611]"
+					></span>
+				</label>
+
 				{#if error}
 					<p class="text-[13px] text-[#f0a49e]" role="alert">{lampErrorMessage(error)}</p>
 				{/if}
 
-				{#if isGuest}
-					<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
-					<a
-						href={localizeHref('/login')}
-						style:animation={formRise(6)}
-						class="il-motion self-start rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] hover:bg-[#e6a94e]"
-					>
-						{m.lamp_login()}
-					</a>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
-				{:else}
+				<div
+					class="il-motion flex flex-wrap items-center gap-x-6 gap-y-3"
+					style:animation={formRise(7)}
+				>
 					<button
 						type="submit"
 						disabled={phase === 'igniting'}
-						style:animation={formRise(6)}
-						class="il-motion cursor-pointer self-start rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] transition-opacity hover:bg-[#e6a94e] disabled:opacity-60"
+						class="cursor-pointer rounded-full bg-amber px-[34px] py-[15px] text-[15px] font-medium whitespace-nowrap text-[#1a1611] transition-opacity hover:bg-[#e6a94e] disabled:opacity-60"
 					>
 						{phase === 'igniting' ? m.lamp_lighting() : m.lamp_light()}
 					</button>
-				{/if}
+					<button
+						type="button"
+						onclick={onToGarden}
+						class="cursor-pointer text-[13px] font-medium text-[#e8b061] underline-offset-4 hover:underline"
+					>
+						{m.lamp_to_garden()}
+					</button>
+				</div>
 			</form>
 		{:else}
 			<div class="flex flex-col items-center gap-4">
@@ -324,6 +356,13 @@
 					>
 						{m.lamp_again()}
 					</button>
+					<button
+						type="button"
+						onclick={onToGarden}
+						class="cursor-pointer rounded-full border border-[#f2ebdd]/20 px-6 py-[13px] text-sm font-medium whitespace-nowrap hover:bg-[#f2ebdd]/6"
+					>
+						{m.lamp_to_garden()}
+					</button>
 					{#if canShare}
 						<button
 							type="button"
@@ -334,23 +373,6 @@
 						</button>
 					{/if}
 				</div>
-				<aside
-					class="il-motion mt-1.5 flex max-w-[460px] flex-wrap items-center gap-4 rounded-[20px] border border-amber-light/30 bg-amber-light/8 px-5 py-[18px] text-start"
-					style:animation={doneRise(5)}
-				>
-					<div class="min-w-[200px] flex-1">
-						<h2 class="text-sm font-medium text-amber-light">{m.lamp_temple_title()}</h2>
-						<p class="mt-1 text-xs/[1.55] text-[#f2ebdd]/65">{m.lamp_temple_desc()}</p>
-					</div>
-					<!-- eslint-disable svelte/no-navigation-without-resolve -- locale-aware internal link -->
-					<a
-						href={templeHref}
-						class="rounded-full bg-amber-light px-[18px] py-[11px] text-[13px] font-medium whitespace-nowrap text-[#1a1611] hover:bg-[#f7d38f]"
-					>
-						{m.lamp_temple_cta()}
-					</a>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
-				</aside>
 			</div>
 		{/if}
 	</div>
@@ -375,6 +397,13 @@
 					? `il-rise1 .7s ${EASE} .2s both`
 					: undefined}
 		>
+			{#if current}
+				<p
+					class="mb-2.5 inline-block rounded-full bg-amber-light/12 px-[11px] py-1 text-[11px] font-semibold tracking-[.06em] text-[#e8b061]"
+				>
+					{lampType(current.lamp_type).name()}
+				</p>
+			{/if}
 			<p class="font-serif text-[22px] font-medium">{caption}</p>
 			{#if current}
 				<p class="mt-2 text-[13px] text-[#e8b061]">{until}</p>

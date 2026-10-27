@@ -3,6 +3,24 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v1.1 (2026-10-27)
+
+Code brought to the 2026-10-16 product decisions against contract innerlamp-be `docs/specs/api/openapi.yaml`
+3.0.0 (backend PR #60: optional `recipient`, `recipient: null`, `is_mine`).
+
+- `requirements.md`: `Contract:` 3.0.0; the contract `⚠️` block and the "planned 3.0.0" notes in Data & API
+  are closed; AC 14 names the caption keys (`lamp_caption_for` / `lamp_caption_all`) instead of
+  `lamp_recipient_all`; the Error → UI row for validation is now ✓; Pending lists only E2E, the manual
+  check, the `login` gap and the English copy; the hide-name-on-relight item records the default the code
+  applies (kept).
+- `design.md`: layer statuses for 2026-10-27 (feature module, `LampCard`, `LampGuestIntro`, `GardenState`,
+  `validation.ts`, `remaining.ts`, tests; `state/lamps.svelte.ts` deleted); `lamp_caption_all` added and
+  `lamp_recipient_all` removed in the i18n table; Known gaps G1–G14, G17, G19 closed, G20 left for E2E;
+  "Deliberately stubbed" keeps only the share action.
+- `tasks.md`: Phases 1–3 done, Phase 4 done except E2E, Phase 5 quality line records the failures that
+  exist on `main` already, Phase 6 assumptions cleanup done.
+- Reason: contract 3.0.0 shipped (2026-10-27), which unblocked the Phase 3 tasks.
+
 ## v1.0 (initial — 2026-10-17)
 
 Spec written retroactively for the part that exists in the code (route `/practice/lamp`, form,

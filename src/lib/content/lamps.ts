@@ -55,7 +55,7 @@ export const LAMP_PURPOSES: LampPurpose[] = [
 ];
 
 export const LAMP_DAYS: readonly LampDuration[] = [1, 7, 21, 49];
-export const DEFAULT_LAMP_DAYS: LampDuration = 1;
+export const DEFAULT_LAMP_DAYS: LampDuration = 7;
 
 /** Backend limits, counted in characters after trimming. */
 export const RECIPIENT_MAX = 100;

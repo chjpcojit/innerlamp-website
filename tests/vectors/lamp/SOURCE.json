@@ -1,0 +1,10 @@
+{
+  "repo": "innerlamp-be",
+  "path": "docs/product/lamp/rules",
+  "commit": "29db728aceda0553bb99c096aaeda3cf129716ae",
+  "files": [
+    "lamp-input-validation.json",
+    "lamp-remaining-label.json",
+    "lamp-lifetime.json"
+  ]
+}
