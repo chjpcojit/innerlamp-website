@@ -49,7 +49,7 @@ Quick summary:
 - `messages/`: translation strings `vi.json` / `en.json`. **Never hardcode visible text.**
 - `static/`: assets served as they are.
 - `tests/`: pinned test vectors (`tests/vectors/`) and, later, E2E tests.
-- `scripts/`: maintenance scripts (for example `sync-calendar-vectors.mjs`).
+- `scripts/`: maintenance scripts (for example `sync-calendar-vectors.mjs`, `sync-lamp-vectors.mjs`).
 
 ## i18n
 

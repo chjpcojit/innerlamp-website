@@ -12,5 +12,5 @@ bun.lockb
 /project.inlang/.meta.json
 /project.inlang/README.md
 
-# Pinned copies of innerlamp-be test vectors (scripts/sync-calendar-vectors.mjs); never reformatted
+# Pinned copies of innerlamp-be test vectors (scripts/sync-*-vectors.mjs); never reformatted
 /tests/vectors/

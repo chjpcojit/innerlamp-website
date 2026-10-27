@@ -1,16 +1,16 @@
 # Requirements — lamp (Thắp đèn và Vườn đèn)
 
-Version: 1.0
-Last updated: 2026-10-17
-Status: in-progress (drift) — the v1 flow is built and wired to the backend: form, ignition, confirmation, garden with filter chips, counts and "load more", and the limit / validation errors. The product decisions of 2026-10-16 are **not built**: guest view, hide-name switch, recipient notice, optional recipient, own-lamp mark from the backend, the remaining-time label, the empty state, the confirmation actions, removal of the temple card and the `/offer` link, and the shared-vector tests (`tasks.md` Phases 1–4). Part of it is blocked by the contract (`openapi.yaml` 3.0.0).
+Version: 1.1
+Last updated: 2026-10-27
+Status: in-progress — the product decisions of 2026-10-16 are built against contract 3.0.0: guest view, hide-name switch, recipient notice, optional recipient, own-lamp mark from `is_mine`, the remaining-time label, the empty state, the confirmation actions, removal of the temple card and the `/offer` link, and the shared-vector unit tests. Still open: the E2E suite (no Playwright in the repo yet), the manual light / dark check, session ended on POST and `/api/*` (owned by `login`) and the product's `⚠️` items below (`tasks.md`).
 Feature folder: `src/lib/features/lamp/`, `src/routes/(site)/practice/lamp/`, `src/routes/api/lamps/`
 Product spec: innerlamp-be `docs/product/lamp/product.md` @ v1.0
-Contract: innerlamp-be `docs/specs/api/openapi.yaml` @ 2.1.1
+Contract: innerlamp-be `docs/specs/api/openapi.yaml` @ 3.0.0
 Implements: BR-LMP-01, BR-LMP-02, BR-LMP-04, BR-LMP-05, BR-LMP-06, BR-LMP-07, BR-LMP-08, BR-LMP-09, BR-LMP-10, BR-LMP-11, BR-LMP-12, BR-LMP-13, BR-LMP-14, FR-LMP-001..014, NFR-LMP-03
 
 > See `changelog.md` in this folder for the version history of this spec.
 
-> ⚠️ Not confirmed: the v3.0.0 contract fields are not in `openapi.yaml` yet — `recipient` optional in the request and `recipient: null` in `Lamp` / garden items, and `is_mine` on garden items (planned for 3.0.0, backend spec `docs/specs/features/lamp/requirements.md` v2.0, AC 6, 25, 26) — blocks AC 8, 20, 22 and the Phase 3 tasks they trace to. This is a dependency on the backend, not a shape the website assumes.
+Contract 3.0.0 (innerlamp-be PR #60, merged 2026-10-27) has the fields this spec waited for: `recipient` optional in `POST /v1/lamps` (absent, `null`, empty or blank all mean "all beings" and are stored and returned as `null`), `recipient: null` in `Lamp` and `GardenLamp`, and `is_mine` on every garden item.
 
 This spec was written retroactively from the running code for the part that exists and prospectively for the 2026-10-16 changes (mixed mode), against product spec v1.0. Route: `/practice/lamp` (`/en/practice/lamp`), group `(site)`. The business rules (closed sets, durations, the limit, the recipient and prayer rules, the double-submission window, the lighter's name, what others see, order and counts, the remaining-time label, final lamps, sign-in) live in the product spec and are not restated here; this file says how the website applies them. Mobile-app entry points (center navigation button) and NFR-LMP-01/02 are not website work.
 
@@ -48,7 +48,7 @@ As a signed-in user, I want to light a lamp for someone with a lamp type, an int
 11. WHILE a lamp is being lit, THE SYSTEM SHALL ignore further submissions and disable the button. (FR-LMP-003, BR-LMP-08)
 12. WHEN the backend answers `200` with the earlier identical lamp instead of `201` (a double submission), THE SYSTEM SHALL show that lamp as lit exactly like a new one. (FR-LMP-005, BR-LMP-08)
 13. WHEN the backend refuses with `LAMP_LIMIT_REACHED`, THE SYSTEM SHALL add no lamp, show `lamp_err_limit` and keep every value. (FR-LMP-004, BR-LMP-05)
-14. WHEN a lamp has been lit, THE SYSTEM SHALL show a confirmation with the lit artwork, the lamp type, the intention, the number of days, the recipient (or `lamp_recipient_all` when none), the prayer when there is one, and the end moment from the server's `end_at` as a date and time in the device time zone and locale; the website SHALL NOT compute the end moment from its own clock. The intention and the prayer are shown only here. (FR-LMP-003, FR-LMP-006, BR-LMP-10, NFR-LMP-03)
+14. WHEN a lamp has been lit, THE SYSTEM SHALL show a confirmation with the lit artwork, the lamp type, the intention and the recipient in one caption (`lamp_caption_for`, or `lamp_caption_all` when there is no recipient), the number of days, the prayer when there is one, and the end moment from the server's `end_at` as a date and time in the device time zone and locale; the website SHALL NOT compute the end moment from its own clock. The intention and the prayer are shown only here. (FR-LMP-003, FR-LMP-006, BR-LMP-10, NFR-LMP-03)
 15. WHEN the confirmation is shown, THE SYSTEM SHALL offer exactly two actions, `lamp_again` and `lamp_to_garden`, and no temple-lamp, donation or payment control, and no link to `/offer`. (FR-LMP-003, FR-LMP-014)
 16. WHEN the visitor chooses `lamp_again`, THE SYSTEM SHALL show an empty form with an unlit lamp, keeping the previous lamp type, intention and burn duration selected and clearing the recipient and the prayer. (FR-LMP-003)
 17. WHEN the visitor chooses `lamp_to_garden`, THE SYSTEM SHALL bring the garden section into view on the same page. The form SHALL carry a way to reach the garden, and the garden a way back to the form (`lamp_to_form`). (FR-LMP-003, platform)
@@ -79,31 +79,31 @@ As a signed-in user, I want to light a lamp for someone with a lamp type, an int
 
 Every call sends `x-api-key` (`API_KEY`) and `Authorization: Bearer <il_token>`; see `login` for the session. Operations are cited, not copied: shapes are in innerlamp-be `docs/specs/api/openapi.yaml` (tag `Lamps`).
 
-| Action                    | Operation (openapi)                          | Called from                                                  | Notes                                                                                                                                                                                                                  |
-| ------------------------- | -------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Light a lamp              | `POST /v1/lamps`                             | `+page.server.ts` action `light`                             | `201` new lamp or `200` the earlier identical lamp (5 s window). Sends `is_anonymous`. Blank recipient omitted — ⚠️ Not confirmed: not in openapi.yaml yet (planned 3.0.0, be spec v2.0); today the backend rejects it |
-| Open the garden           | `GET /v1/lamps`                              | `+page.server.ts` `load` (signed-in only)                    | First page, unfiltered; items, total, per-type counts, `has_more`, `next_cursor`                                                                                                                                       |
-| Filter / load more        | `GET /v1/lamps?lamp_type=&cursor=`           | browser → `GET /api/lamps` (`+server.ts`) → `listLampGarden` | Interactive call, so it goes through the website's own endpoint; the token stays in the cookie                                                                                                                         |
-| Mark own lamps            | `is_mine` on each garden item                | same calls as above                                          | ⚠️ Not confirmed: not in openapi.yaml yet (planned 3.0.0, be spec v2.0) — dependency on the backend                                                                                                                    |
-| Absent recipient in reads | `recipient: null` in `Lamp` and garden items | same calls as above                                          | ⚠️ Not confirmed: not in openapi.yaml yet (planned 3.0.0, be spec v2.0) — dependency on the backend                                                                                                                    |
+| Action                    | Operation (openapi)                          | Called from                                                  | Notes                                                                                                                  |
+| ------------------------- | -------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Light a lamp              | `POST /v1/lamps`                             | `+page.server.ts` action `light`                             | `201` new lamp or `200` the earlier identical lamp (5 s window). Sends `is_anonymous`. Blank recipient omitted (3.0.0) |
+| Open the garden           | `GET /v1/lamps`                              | `+page.server.ts` `load` (signed-in only)                    | First page, unfiltered; items, total, per-type counts, `has_more`, `next_cursor`                                       |
+| Filter / load more        | `GET /v1/lamps?lamp_type=&cursor=`           | browser → `GET /api/lamps` (`+server.ts`) → `listLampGarden` | Interactive call, so it goes through the website's own endpoint; the token stays in the cookie                         |
+| Mark own lamps            | `is_mine` on each garden item                | same calls as above                                          | 3.0.0                                                                                                                  |
+| Absent recipient in reads | `recipient: null` in `Lamp` and garden items | same calls as above                                          | 3.0.0                                                                                                                  |
 
 ## Error → UI mapping
 
-"Code status" is the state of `src/` on 2026-10-17.
+"Code status" is the state of `src/` on 2026-10-27.
 
-| Operation                     | Failure case                                                      | Visitor sees                                                                     | Code status                                                                                        |
-| ----------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `light` action (no call)      | no session / no `il_token`                                        | `lamp_err_auth`, form kept                                                       | ✓                                                                                                  |
-| `light` action (no call)      | client or server validation fails (AC 7)                          | `lamp_err_invalid`, form kept, no ignition                                       | differs — server only, counts code points without NFC, ignition plays first (design.md Known gaps) |
-| `POST /v1/lamps`              | 400 `VALIDATION_ERROR` (any `details.field`)                      | `lamp_err_invalid`, form kept                                                    | ✓                                                                                                  |
-| `POST /v1/lamps`              | 401 `UNAUTHORIZED` (after the hook's refresh attempt)             | `lamp_err_auth`; page navigations follow `login` AC 9                            | ✓ for the message; session-ended redirect on POST is the login gap                                 |
-| `POST /v1/lamps`              | 409 `LAMP_LIMIT_REACHED`                                          | `lamp_err_limit`, form kept                                                      | ✓                                                                                                  |
-| `POST /v1/lamps`              | `200` earlier identical lamp                                      | the lamp as lit (not an error)                                                   | ✓ (the response is treated like `201`)                                                             |
-| `POST /v1/lamps`              | 429 `RATE_LIMITED`, 503, 5xx, network error                       | `lamp_err_failed`, form kept                                                     | ✓                                                                                                  |
-| `GET /v1/lamps` in `load`     | any `ApiError` (network, 5xx, 400/401 not turned into a redirect) | `lamp_wall_error` in the garden section; the form stays usable                   | ✓                                                                                                  |
-| `GET /api/lamps` (chip, more) | any failure                                                       | the lamps already shown stay; `lamp_wall_error` under the list                   | ✓                                                                                                  |
-| `GET /api/lamps`              | 401 (no cookie, or the backend refused)                           | `lamp_wall_error` today; session-ended behavior once `login` covers `/api/*`     | differs (login gap)                                                                                |
-| `GET /api/lamps`              | 400 `INVALID_FILTER` (unknown `lamp_type`)                        | `lamp_wall_error` (the website never sends an unknown type; a programming error) | ✓                                                                                                  |
+| Operation                     | Failure case                                                      | Visitor sees                                                                     | Code status                                                        |
+| ----------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `light` action (no call)      | no session / no `il_token`                                        | `lamp_err_auth`, form kept                                                       | ✓                                                                  |
+| `light` action (no call)      | client or server validation fails (AC 7)                          | `lamp_err_invalid`, form kept, no ignition                                       | ✓ (`validateLampInput` in the form and in the action)              |
+| `POST /v1/lamps`              | 400 `VALIDATION_ERROR` (any `details.field`)                      | `lamp_err_invalid`, form kept                                                    | ✓                                                                  |
+| `POST /v1/lamps`              | 401 `UNAUTHORIZED` (after the hook's refresh attempt)             | `lamp_err_auth`; page navigations follow `login` AC 9                            | ✓ for the message; session-ended redirect on POST is the login gap |
+| `POST /v1/lamps`              | 409 `LAMP_LIMIT_REACHED`                                          | `lamp_err_limit`, form kept                                                      | ✓                                                                  |
+| `POST /v1/lamps`              | `200` earlier identical lamp                                      | the lamp as lit (not an error)                                                   | ✓ (the response is treated like `201`)                             |
+| `POST /v1/lamps`              | 429 `RATE_LIMITED`, 503, 5xx, network error                       | `lamp_err_failed`, form kept                                                     | ✓                                                                  |
+| `GET /v1/lamps` in `load`     | any `ApiError` (network, 5xx, 400/401 not turned into a redirect) | `lamp_wall_error` in the garden section; the form stays usable                   | ✓                                                                  |
+| `GET /api/lamps` (chip, more) | any failure                                                       | the lamps already shown stay; `lamp_wall_error` under the list                   | ✓                                                                  |
+| `GET /api/lamps`              | 401 (no cookie, or the backend refused)                           | `lamp_wall_error` today; session-ended behavior once `login` covers `/api/*`     | differs (login gap)                                                |
+| `GET /api/lamps`              | 400 `INVALID_FILTER` (unknown `lamp_type`)                        | `lamp_wall_error` (the website never sends an unknown type; a programming error) | ✓                                                                  |
 
 ## Out of scope
 
@@ -116,20 +116,18 @@ Every call sends `x-api-key` (`API_KEY`) and `Authorization: Bearer <il_token>`;
 
 ## Pending (not yet implemented)
 
-- Guest view, form changes (7-day default, hide-name switch, recipient notice, optional recipient, shared validation), confirmation changes (actions, date and time, no temple card) — `tasks.md` Phases 1–2.
-- Garden changes (own-lamp mark from `is_mine`, remaining-time label, null recipient, counts from the latest response, empty state) — Phases 1–3; the `is_mine` and null-recipient parts wait for contract 3.0.0 (Phase 3).
-- Removal of the browser-stored lamp ids (`state/lamps.svelte.ts`, key `il-lamps`) — Phase 2.
-- Moving the lamp components and the garden logic into `src/lib/features/lamp/` — Phases 1–2.
-- Vitest, the pinned vector copies and the unit and E2E tests — Phase 4.
-- English copy for the new and changed keys — Phase 1, pending product (Appendix A).
+- E2E tests (Playwright is not installed in the repo) — `tasks.md` Phase 4.
+- Manual check in light and dark, narrow width, both locales — Phase 5.
+- Session ended on the `light` action and `/api/lamps` — owned by `login` (AC 4).
+- English copy for the new and changed keys — pending product (Appendix A).
 
 > ⚠️ Not confirmed (product): whether a lit lamp can be shared — product Appendix A leaves the "Chia sẻ" action open. The code shows `lamp_share` on the confirmation when `navigator.share` exists and shares the caption and the prayer text. No criterion above decides it; the button stays as shipped until the product decides — blocks nothing else; hand back to ba-writer in innerlamp-be. Note the shared text can contain the prayer, which BR-LMP-10 keeps private from the garden.
 
 > ⚠️ Not confirmed (product): English copy for every message of product §3.1.1 and the English name of the anonymous label — the existing English values in `messages/en.json` and every new English value of `design.md` are the website's proposal, not confirmed; blocks the English locale; hand back to ba-writer.
 
-> ⚠️ Not confirmed (product): whether "Ẩn tên tôi" keeps its position or returns to off when the visitor chooses "Thắp thêm đèn" — FR-LMP-003 lists only type, intention and duration as kept; blocks the last clause of AC 16. Suggested default: it keeps the visitor's choice (the privacy-safe side).
+> ⚠️ Not confirmed (product): whether "Ẩn tên tôi" keeps its position or returns to off when the visitor chooses "Thắp thêm đèn" — FR-LMP-003 lists only type, intention and duration as kept; blocks the last clause of AC 16. The code applies the suggested default: it keeps the visitor's choice (the privacy-safe side).
 
-> ⚠️ Not confirmed (product): the form of "Tất cả chúng sanh" inside running text — the product shows it capitalized, while the cards and the caption read "cho {name}" / "{intention} cho {name}"; the website proposes `lamp_to_all` ("cho tất cả chúng sanh") for those lines and `lamp_recipient_all` ("Tất cả chúng sanh") where it stands alone — blocks AC 14 and 21 wording; hand back to ba-writer.
+> ⚠️ Not confirmed (product): the form of "Tất cả chúng sanh" inside running text — the product shows it capitalized, while the cards and the caption read "cho {name}" / "{intention} cho {name}"; the website uses `lamp_to_all` ("cho tất cả chúng sanh") on the cards and `lamp_caption_all` ("{intention} cho tất cả chúng sanh") in the confirmation caption; the all-beings text never stands alone on the website, so `lamp_recipient_all` was removed — blocks AC 14 and 21 wording; hand back to ba-writer.
 
 > ⚠️ Not confirmed (product): the limit message of §3.1.1 contains the number 20, while BR-LMP-05 says 20 is a service setting that clients do not embed — blocks the exact text of `lamp_err_limit`; the website keeps the product text; hand back to ba-writer.
 
