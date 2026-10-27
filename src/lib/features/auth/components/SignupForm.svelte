@@ -10,6 +10,8 @@
 	import { checkPassword } from '../validation';
 	import PhoneField from './PhoneField.svelte';
 	import SignupOtp from './SignupOtp.svelte';
+	import LegalModal from '$lib/components/sections/LegalModal.svelte';
+	import type { LegalKind } from '$lib/content/legal';
 	import AddTempleForm from './AddTempleForm.svelte';
 	import TempleSelect from '$lib/components/ui/TempleSelect.svelte';
 	import type { PendingTemple, TempleOption, TempleSuggestionRequest } from '$lib/types/temple';
@@ -76,6 +78,14 @@
 		nameIdx = (nameIdx + 1) % DHARMA_NAMES.length;
 		name = DHARMA_NAMES[nameIdx]();
 		diceRot += 180;
+	}
+
+	/** Terms/privacy popup, so the sign-up form is never left. / Popup điều khoản, không rời form đăng ký. */
+	let legal = $state<LegalKind | null>(null);
+	function openLegal(e: MouseEvent, kind: LegalKind) {
+		// Keep the label from toggling the checkbox; href stays as the no-JS fallback. / Không để label tick checkbox; href giữ cho no-JS.
+		e.preventDefault();
+		legal = kind;
 	}
 
 	const href = (path: string) => resolve(localizeHref(path) as Pathname);
@@ -303,9 +313,13 @@
 			</span>
 			<span class="text-xs/[1.6] text-pretty text-ink/60">
 				{m.signup_agree_prefix()}
-				<a href={href('/terms')} class="underline">{m.signup_terms_link()}</a>
+				<a href={href('/terms')} onclick={(e) => openLegal(e, 'terms')} class="underline"
+					>{m.signup_terms_link()}</a
+				>
 				{m.signup_agree_and()}
-				<a href={href('/privacy')} class="underline">{m.signup_privacy_link()}</a>
+				<a href={href('/privacy')} onclick={(e) => openLegal(e, 'privacy')} class="underline"
+					>{m.signup_privacy_link()}</a
+				>
 				{m.signup_agree_suffix()}
 			</span>
 		</label>
@@ -342,4 +356,5 @@
 			>
 		</div>
 	</form>
+	<LegalModal bind:kind={legal} />
 {/if}
