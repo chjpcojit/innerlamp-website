@@ -50,7 +50,7 @@ export const actions: Actions = {
 		const fullName = text(form, 'full_name');
 		const email = text(form, 'email');
 		const password = String(form.get('password') ?? '');
-		if (!phone || !phoneCountry || fullName.length < 2 || !email || !password)
+		if (!phone || !phoneCountry || !fullName || !email || !password)
 			return fail(400, { error: 'VALIDATION_ERROR' });
 
 		try {
@@ -94,6 +94,8 @@ export const actions: Actions = {
 				suggestion
 			};
 		} catch (e) {
+			// The pending registration is gone: only a new code request can continue.
+			if (e instanceof ApiError && e.code === 'PENDING_REGISTRATION_EXPIRED') return authFail(e);
 			return authFail(e, { step: 'otp' as const, email, suggestion });
 		}
 	},
@@ -112,7 +114,10 @@ export const actions: Actions = {
 		} catch (e) {
 			// No account exists yet: a number or temple that went stale while the code was pending
 			// sends the visitor back to step 1 with every field kept (AC21).
-			if (e instanceof ApiError && ['PHONE_TAKEN', 'INVALID_TEMPLE'].includes(e.code))
+			if (
+				e instanceof ApiError &&
+				['PHONE_TAKEN', 'INVALID_TEMPLE', 'PENDING_REGISTRATION_EXPIRED'].includes(e.code)
+			)
 				return authFail(e);
 			return authFail(e, { step: 'otp' as const, email, suggestion });
 		}

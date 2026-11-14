@@ -112,3 +112,16 @@ export interface CalendarEventDetail {
 	prev: CalendarNeighbour | null;
 	next: CalendarNeighbour | null;
 }
+
+/** Response of `GET /v1/calendar/image?date=`: the Buddha image of one day. */
+export interface CalendarDayImage {
+	/** `YYYY-MM-DD`, the day the backend used. */
+	date: string;
+	id: string;
+	image_url: string;
+	/** Credit to show for CC BY / CC BY-SA images. */
+	author: string;
+	license: string;
+	license_url: string;
+	source_url: string;
+}

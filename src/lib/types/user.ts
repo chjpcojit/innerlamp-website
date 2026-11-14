@@ -6,7 +6,7 @@ export interface SessionUser {
 /** `GET /v1/users/me`. Optional keys are absent (never null / "") when unset. */
 export interface UserProfile {
 	email: string;
-	/** Always false for now: the backend has no email verification flow yet. */
+	/** True for accounts registered with an email OTP. */
 	email_verified: boolean;
 	/** Full number; backend may return national ("090…") or E.164 ("+84…"). */
 	phone_number: string;

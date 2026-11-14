@@ -5,6 +5,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { LUNAR_MONTHS } from '$lib/content/home';
 	import type { CalendarListItem } from '$lib/types/calendar';
+	import DayImage from '$lib/components/sections/DayImage.svelte';
 	import { daysBetween, parseIsoDate } from '$lib/utils/events';
 	import {
 		branchHours,
@@ -274,6 +275,7 @@
 				<div
 					class="pointer-events-none absolute -top-[60px] -right-[60px] size-[220px] rounded-full bg-[radial-gradient(circle,rgba(217,150,60,.3),transparent_66%)]"
 				></div>
+				<DayImage date={isoDate(selected)} class="relative mb-5 aspect-[4/3] rounded-2xl" />
 				<div class="relative flex items-start gap-4">
 					<p class="font-serif text-[clamp(50px,12.6vw,67px)]/none text-amber-light">
 						{String(sel.lunar.day).padStart(2, '0')}

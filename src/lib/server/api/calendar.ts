@@ -1,5 +1,10 @@
 import { ApiError, apiCall } from './client';
-import type { CalendarEntry, CalendarListItem, CalendarYear } from '$lib/types/calendar';
+import type {
+	CalendarDayImage,
+	CalendarEntry,
+	CalendarListItem,
+	CalendarYear
+} from '$lib/types/calendar';
 
 type Fetch = typeof globalThis.fetch;
 
@@ -101,4 +106,25 @@ export function listMonthItems(
 	return toListItems(
 		listCalendarEntries(calendar, group).filter((entry) => entry.solar_date.startsWith(prefix))
 	);
+}
+
+// The image of a day never changes (the backend answers a 24h max-age), so keep it per day.
+const IMAGE_CACHE_MAX = 400;
+const imageCache = new Map<string, CalendarDayImage>();
+
+/**
+ * The Buddha image of one solar day (`date` is `YYYY-MM-DD`, always explicit so the backend
+ * answers `Cache-Control: public`). Public route: only `x-api-key`. Throws `ApiError` with
+ * `INVALID_DATE` (valid 1900–2100), `INVALID_API_KEY` or `INTERNAL_ERROR`.
+ */
+export async function getCalendarImage(fetch: Fetch, date: string): Promise<CalendarDayImage> {
+	const hit = imageCache.get(date);
+	if (hit) return hit;
+	const data = await apiCall<CalendarDayImage>(
+		fetch,
+		`/v1/calendar/image?date=${encodeURIComponent(date)}`
+	);
+	if (imageCache.size >= IMAGE_CACHE_MAX) imageCache.delete(imageCache.keys().next().value!);
+	imageCache.set(date, data);
+	return data;
 }

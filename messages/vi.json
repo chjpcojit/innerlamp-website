@@ -426,6 +426,8 @@
 	"lunar_bad_day": "Ngày hắc đạo",
 	"lunar_month_events": "Sự kiện trong tháng",
 	"lunar_disclaimer": "Tính theo giờ Việt Nam (GMT+7). Ngày và giờ hoàng đạo chỉ mang tính tham khảo.",
+	"lunar_image_alt": "Ảnh Phật của ngày",
+	"lunar_image_credit": "Ảnh: {author}",
 	"sg_meta_title": "Đạo tràng của tôi",
 	"sg_meta_description": "Sinh hoạt đạo tràng: sự kiện sắp tới, thời khóa tu tập, thông báo từ chùa và chia sẻ của đạo hữu.",
 	"sg_guest_title": "Đăng nhập để vào đạo tràng của bạn",

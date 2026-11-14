@@ -6,7 +6,7 @@ import { getTopGallery } from '$lib/server/api/gallery';
 import { getTopTemples } from '$lib/server/api/temples';
 import { getMe, profileDisplayName } from '$lib/server/api/users';
 import { TOKEN_COOKIE, setDisplayName } from '$lib/server/auth/session';
-import { vietnamToday, vietnamYearMonth } from '$lib/utils/calendar-time';
+import { vietnamYearMonth } from '$lib/utils/calendar-time';
 import { buildHomeBlock } from '$lib/utils/calendar-home';
 import type { PageServerLoad } from './$types';
 
@@ -19,15 +19,11 @@ async function loadHomeEvents(fetch: typeof globalThis.fetch) {
 	const start = vietnamYearMonth();
 	try {
 		const { calendar, stale } = await getCalendarYear(fetch, start.year);
-		const [month] = buildHomeBlock(
-			toListItems(listCalendarEntries(calendar)),
-			start,
-			vietnamToday()
-		);
+		const [month] = buildHomeBlock(toListItems(listCalendarEntries(calendar)), start);
 		return { month, stale };
 	} catch (e) {
 		if (!(e instanceof ApiError)) throw e;
-		const [month] = buildHomeBlock([], start, vietnamToday());
+		const [month] = buildHomeBlock([], start);
 		return { month: { ...month, failed: true }, stale: false };
 	}
 }
