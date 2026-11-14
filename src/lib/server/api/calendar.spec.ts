@@ -124,3 +124,31 @@ describe('getCalendarYear', () => {
 		expect((await get(2027)).calendar.year).toBe(2027);
 	});
 });
+
+describe('getCalendarImage', () => {
+	const image = {
+		date: '2026-10-07',
+		id: 'buddha_034',
+		image_url: 'http://backend.test/static/buddha_034.jpg',
+		author: 'Judgefloro',
+		license: 'Public domain',
+		license_url: 'https://example.test/license',
+		source_url: 'https://example.test/source'
+	};
+
+	it('asks the backend with the explicit date and keeps the answer per day', async () => {
+		vi.resetModules();
+		const fetch = vi.fn(
+			async () => new Response(JSON.stringify({ success: true, data: image }), { status: 200 })
+		);
+		const { getCalendarImage } = await import('./calendar');
+		const get = () => getCalendarImage(fetch as unknown as typeof globalThis.fetch, '2026-10-07');
+
+		expect(await get()).toEqual(image);
+		expect(await get()).toEqual(image);
+		expect(fetch).toHaveBeenCalledTimes(1);
+		expect(String(fetch.mock.calls[0]).split(',')[0]).toBe(
+			'http://backend.test/v1/calendar/image?date=2026-10-07'
+		);
+	});
+});

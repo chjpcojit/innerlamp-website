@@ -2,6 +2,7 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import { canChiYear, solarToLunar, isAuspiciousDay } from '$lib/utils/lunar';
+	import DayImage from '$lib/components/sections/DayImage.svelte';
 
 	interface Props {
 		date: Date;
@@ -12,6 +13,7 @@
 	const locale = getLocale();
 	const weekdayLong = new Intl.DateTimeFormat(locale, { weekday: 'long' });
 	const p2 = (n: number) => String(n).padStart(2, '0');
+	const iso = $derived(`${date.getFullYear()}-${p2(date.getMonth() + 1)}-${p2(date.getDate())}`);
 
 	const view = $derived.by(() => {
 		const lunar = solarToLunar(date);
@@ -42,6 +44,7 @@
 	aria-labelledby="day-title"
 	class="relative h-[340px] overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,#efe6d5_0%,#e2d4bb_55%,#f7f2e8_100%)]"
 >
+	<DayImage date={iso} class="absolute inset-0" captionClass="text-end" />
 	<div
 		class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(247,242,232,.94)_0%,rgba(247,242,232,.82)_38%,rgba(247,242,232,.1)_75%)]"
 	></div>

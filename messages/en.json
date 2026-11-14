@@ -426,6 +426,8 @@
 	"lunar_bad_day": "Inauspicious day",
 	"lunar_month_events": "Events this month",
 	"lunar_disclaimer": "Calculated in Vietnam time (GMT+7). Auspicious days and hours are for reference only.",
+	"lunar_image_alt": "Buddha image of the day",
+	"lunar_image_credit": "Photo: {author}",
 	"sg_meta_title": "My sangha",
 	"sg_meta_description": "Your temple community: upcoming events, practice schedule, temple announcements and posts from fellow practitioners.",
 	"sg_guest_title": "Sign in to enter your sangha",
