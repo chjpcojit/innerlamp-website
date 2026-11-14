@@ -36,8 +36,7 @@ export async function updateProfile({ request, cookies, fetch, locals }: Request
 		const current = await getMe(fetch, token);
 		const body: UserProfileUpdate = {};
 		if (values.full_name !== (current.full_name ?? '')) body.full_name = values.full_name;
-		// Assumption: the backend clears the dharma name on "" (only `full_name` is documented
-		// as non-clearable).
+		// The backend clears the dharma name on "" (only `full_name` is non-clearable).
 		if (values.dharma_name !== (current.dharma_name ?? '')) body.dharma_name = values.dharma_name;
 		if (templeId !== (current.ordination_temple?.id ?? null)) body.ordination_temple_id = templeId;
 

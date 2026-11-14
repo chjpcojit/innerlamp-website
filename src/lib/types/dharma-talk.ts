@@ -28,7 +28,8 @@ export interface DharmaTalkChapter {
 export interface DharmaTalkFollowUp {
 	title: string;
 	minutes: number;
-	meditation_id: string;
+	/** `null` until the talk is linked to a meditation. */
+	meditation_id: string | null;
 }
 
 export interface DharmaTalkDetail extends DharmaTalkSummary {
