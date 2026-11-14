@@ -58,7 +58,7 @@
 	// 8–64 characters after NFC (BR-ONB-06).
 	const passwordOk = $derived(checkPassword(password) === 'ok');
 	const canSubmit = $derived(
-		fullName.trim().length >= 2 && agree && phoneOk && emailOk && passwordOk && !busy
+		fullName.trim().length > 0 && agree && phoneOk && emailOk && passwordOk && !busy
 	);
 	const strengthLabels = [
 		() => m.signup_strength_min(),
