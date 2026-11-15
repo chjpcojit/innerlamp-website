@@ -21,10 +21,13 @@
 	let currentTime = $state(0);
 	let mediaDuration = $state(0);
 	let playbackRate = $state<number>(RATES[0]);
+	/** True when the file cannot be loaded; the page keeps its text and source. */
+	let audioFailed = $state(false);
 	/** YouTube start offset (s), set by a chapter click; `null` until then (no autoplay). */
 	let videoStart = $state<number | null>(null);
 
-	const hasAudio = $derived(talk.media_type === 'audio' && !!talk.audio_url);
+	const audioURL = $derived(talk.audio_url ?? '');
+	const hasAudio = $derived(talk.media_type === 'audio' && audioURL !== '');
 	const hasVideo = $derived(talk.media_type === 'youtube' && !!talk.youtube_id);
 	const meta = $derived(talkMeta(talk));
 	/** Real length once the file is loaded, the catalogue estimate before that. */
@@ -121,83 +124,99 @@
 					bind:currentTime
 					bind:duration={mediaDuration}
 					bind:playbackRate
-					src={talk.audio_url}
+					src={audioURL}
 					preload="metadata"
+					onerror={() => (audioFailed = true)}
+					onloadedmetadata={() => (audioFailed = false)}
 				></audio>
-				<div role="group" aria-label={m.talk_d_player()} class="mt-7">
-					<div class="relative flex h-[18px] items-center">
-						<div class="relative h-1 flex-1 rounded-sm bg-cream/16">
-							<div
-								class="absolute inset-y-0 left-0 rounded-sm bg-[#d9963c]"
-								style:width="{percent}%"
-							></div>
-							<div
-								class="absolute top-1/2 -mt-1.5 -ml-1.5 size-3 rounded-full bg-[#f3c673]"
-								style:left="{percent}%"
-								aria-hidden="true"
-							></div>
-						</div>
-						<input
-							type="range"
-							min="0"
-							max={Math.max(duration, 1)}
-							step="1"
-							value={currentTime}
-							oninput={(e) => seek(e.currentTarget.valueAsNumber)}
-							aria-label={m.talk_d_seek()}
-							aria-valuetext={`${formatClock(currentTime)} / ${formatClock(duration)}`}
-							class="absolute inset-0 w-full cursor-pointer opacity-0"
-						/>
-					</div>
-					<div class="mt-1 flex justify-between text-xs text-cream/55">
-						<span>{formatClock(currentTime)}</span>
-						<span>{formatClock(duration)}</span>
-					</div>
-					<div class="mt-4 flex items-center gap-3.5">
-						<button
-							type="button"
-							class={ghost}
-							aria-label={m.talk_d_back({ seconds: SKIP_SECONDS })}
-							onclick={() => seek(currentTime - SKIP_SECONDS)}
+				{#if audioFailed}
+					<div class="mt-7 rounded-[16px] border border-cream/18 bg-cream/6 p-4">
+						<p class="text-sm text-cream/75">{m.talk_d_audio_unavailable()}</p>
+						<a
+							href={audioURL}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="mt-3 inline-flex text-sm font-medium text-[#e8b061] underline underline-offset-4"
 						>
-							−{SKIP_SECONDS}s
-						</button>
-						<button
-							type="button"
-							aria-label={paused ? m.talk_d_play() : m.talk_d_pause()}
-							onclick={() => (paused ? audio?.play() : audio?.pause())}
-							class="flex size-15 flex-none cursor-pointer items-center justify-center rounded-full bg-[#d9963c] transition-opacity hover:opacity-90"
-						>
-							{#if paused}
-								<span
-									class="ml-1 size-0 border-y-[11px] border-l-[18px] border-y-transparent border-l-[#1a1611]"
+							{m.talk_d_audio_open()}
+						</a>
+					</div>
+				{:else}
+					<div role="group" aria-label={m.talk_d_player()} class="mt-7">
+						<div class="relative flex h-[18px] items-center">
+							<div class="relative h-1 flex-1 rounded-sm bg-cream/16">
+								<div
+									class="absolute inset-y-0 left-0 rounded-sm bg-[#d9963c]"
+									style:width="{percent}%"
+								></div>
+								<div
+									class="absolute top-1/2 -mt-1.5 -ml-1.5 size-3 rounded-full bg-[#f3c673]"
+									style:left="{percent}%"
 									aria-hidden="true"
-								></span>
-							{:else}
-								<span class="flex gap-[5px]" aria-hidden="true">
-									<span class="h-5 w-[5px] rounded-sm bg-[#1a1611]"></span>
-									<span class="h-5 w-[5px] rounded-sm bg-[#1a1611]"></span>
-								</span>
-							{/if}
-						</button>
-						<button
-							type="button"
-							class={ghost}
-							aria-label={m.talk_d_forward({ seconds: SKIP_SECONDS })}
-							onclick={() => seek(currentTime + SKIP_SECONDS)}
-						>
-							+{SKIP_SECONDS}s
-						</button>
-						<button
-							type="button"
-							class="{ghost} ml-auto min-w-13 justify-center"
-							aria-label={m.talk_d_rate({ rate: `${playbackRate}×` })}
-							onclick={nextRate}
-						>
-							{playbackRate}×
-						</button>
+								></div>
+							</div>
+							<input
+								type="range"
+								min="0"
+								max={Math.max(duration, 1)}
+								step="1"
+								value={currentTime}
+								oninput={(e) => seek(e.currentTarget.valueAsNumber)}
+								aria-label={m.talk_d_seek()}
+								aria-valuetext={`${formatClock(currentTime)} / ${formatClock(duration)}`}
+								class="absolute inset-0 w-full cursor-pointer opacity-0"
+							/>
+						</div>
+						<div class="mt-1 flex justify-between text-xs text-cream/55">
+							<span>{formatClock(currentTime)}</span>
+							<span>{formatClock(duration)}</span>
+						</div>
+						<div class="mt-4 flex items-center gap-3.5">
+							<button
+								type="button"
+								class={ghost}
+								aria-label={m.talk_d_back({ seconds: SKIP_SECONDS })}
+								onclick={() => seek(currentTime - SKIP_SECONDS)}
+							>
+								−{SKIP_SECONDS}s
+							</button>
+							<button
+								type="button"
+								aria-label={paused ? m.talk_d_play() : m.talk_d_pause()}
+								onclick={() => (paused ? audio?.play() : audio?.pause())}
+								class="flex size-15 flex-none cursor-pointer items-center justify-center rounded-full bg-[#d9963c] transition-opacity hover:opacity-90"
+							>
+								{#if paused}
+									<span
+										class="ml-1 size-0 border-y-[11px] border-l-[18px] border-y-transparent border-l-[#1a1611]"
+										aria-hidden="true"
+									></span>
+								{:else}
+									<span class="flex gap-[5px]" aria-hidden="true">
+										<span class="h-5 w-[5px] rounded-sm bg-[#1a1611]"></span>
+										<span class="h-5 w-[5px] rounded-sm bg-[#1a1611]"></span>
+									</span>
+								{/if}
+							</button>
+							<button
+								type="button"
+								class={ghost}
+								aria-label={m.talk_d_forward({ seconds: SKIP_SECONDS })}
+								onclick={() => seek(currentTime + SKIP_SECONDS)}
+							>
+								+{SKIP_SECONDS}s
+							</button>
+							<button
+								type="button"
+								class="{ghost} ml-auto min-w-13 justify-center"
+								aria-label={m.talk_d_rate({ rate: `${playbackRate}×` })}
+								onclick={nextRate}
+							>
+								{playbackRate}×
+							</button>
+						</div>
 					</div>
-				</div>
+				{/if}
 			{:else if talk.duration_minutes}
 				<p class="mt-5 text-xs font-medium text-cream/55">
 					{m.lib_dur_minutes({ count: talk.duration_minutes })}

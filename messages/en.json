@@ -1329,6 +1329,8 @@
 	"talk_d_kicker": "Dharma talk",
 	"talk_d_meta_description": "{title} — a Dharma talk by {speaker} on InnerLamp.",
 	"talk_d_video": "Dharma talk video: {title}",
+	"talk_d_audio_unavailable": "Audio can't be played right now.",
+	"talk_d_audio_open": "Open the audio file",
 	"talk_d_player": "Dharma talk player",
 	"talk_d_seek": "Playback position",
 	"talk_d_play": "Play",

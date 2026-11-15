@@ -40,7 +40,7 @@ export interface DharmaTalkDetail extends DharmaTalkSummary {
 	language: string;
 	/** 11-char video id, only when `media_type` is `youtube`. */
 	youtube_id: string | null;
-	/** Only when `media_type` is `audio`. */
+	/** Absolute http(s) URL the player can open; only when `media_type` is `audio`. Never prefix a host. */
 	audio_url: string | null;
 	/** Never `null`; empty when the talk has no chapters. */
 	chapters: DharmaTalkChapter[];
