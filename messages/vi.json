@@ -1329,6 +1329,8 @@
 	"talk_d_kicker": "Pháp thoại",
 	"talk_d_meta_description": "{title} — pháp thoại của {speaker} trên InnerLamp.",
 	"talk_d_video": "Video pháp thoại: {title}",
+	"talk_d_audio_unavailable": "Hiện chưa phát được audio.",
+	"talk_d_audio_open": "Mở file audio",
 	"talk_d_player": "Trình phát pháp thoại",
 	"talk_d_seek": "Vị trí đang nghe",
 	"talk_d_play": "Nghe",
