@@ -17,6 +17,17 @@ files share one changelog since they change together as one spec unit. Newest ve
 - Playwright: `package.json` không có dependency, không có `playwright.config.*` hay
   `tests/*.e2e.ts` — vẫn `[NOT RUN]`.
 
+## v3.5 (2026-11-19)
+
+- Photos enabled on the web after the backend hardening (BE main `fe64576`): the switch is on by
+  default, `MEMORIAL_PHOTO_ENABLED=false` is the kill switch; `.env.example` now shows `true`.
+- Real dev smoke (test account, cleaned up): `PUT /v1/memorials/{id}/photo` 200 → `GET` has
+  `photo_url` → signed GCS 200 JPEG; 413/415/404 return the contract codes. Web action upload 200,
+  proxy `GET /memorial/{id}/photo` 200 JPEG with no signed URL in HTML, `?/photoDelete` 303 and the
+  proxy then 404.
+- `photo` action maps 404 to `mem_flash_gone` + list redirect rather than a generic photo error.
+- Tests: 217 passing.
+
 ## v3.3 (2026-11-17)
 
 - QA P7 rework:
