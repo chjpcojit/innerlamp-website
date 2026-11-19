@@ -1,13 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { PROFILE_ROWS } from '$lib/content/profile';
 	import Icon from '$lib/components/ui/Icon.svelte';
-	import { memorial } from '$lib/state/memorial.svelte';
-
-	onMount(() => memorial.init());
 </script>
 
 <aside class="flex min-w-0 flex-[1_1_340px] flex-col gap-3.5">

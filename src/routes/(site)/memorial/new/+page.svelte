@@ -3,8 +3,9 @@
 	import { m } from '$lib/paraglide/messages';
 	import GuestPrompt from '$lib/components/ui/GuestPrompt.svelte';
 	import MemorialForm from '$lib/components/sections/MemorialForm.svelte';
+	import type { MemorialActionErrors } from '$lib/types/memorial';
 
-	let { data }: PageProps = $props();
+	let { data, form }: PageProps = $props();
 </script>
 
 <svelte:head>
@@ -12,7 +13,12 @@
 </svelte:head>
 
 {#if data.user}
-	<MemorialForm />
+	<MemorialForm
+		isNew
+		entry={null}
+		values={form?.values}
+		formErrors={form?.errors as MemorialActionErrors | undefined}
+	/>
 {:else}
 	<GuestPrompt title={m.mem_guest_title()} desc={m.mem_guest_desc()} />
 {/if}

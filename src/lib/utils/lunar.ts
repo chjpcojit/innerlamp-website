@@ -240,3 +240,31 @@ export function lunarToSolar(day: number, month: number, year: number): Date | n
 	}
 	return null;
 }
+
+/**
+ * Exact Gregorian date of a lunar date, including a leap month. Unlike `lunarToSolar` it never
+ * falls back to day 29 and returns `null` when the date does not exist (a 30th in a short month,
+ * or a leap month the year does not have). / Quy đổi chính xác, có tháng nhuận; `null` khi ngày
+ * không tồn tại — dùng cho ngày mất, không đổi hành vi `lunarToSolar` của lịch.
+ */
+export function lunarToSolarExact(
+	day: number,
+	month: number,
+	year: number,
+	leap = false
+): Date | null {
+	if (!Number.isInteger(day) || !Number.isInteger(month) || !Number.isInteger(year)) return null;
+	if (month < 1 || month > 12 || day < 1 || day > 30) return null;
+
+	// Start of the regular month, then scan a window that also holds its leap twin.
+	const start = lunarToSolar(1, month, year);
+	if (!start) return null;
+	for (let offset = 0; offset <= 62; offset++) {
+		const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + offset);
+		const lunar = solarToLunar(date);
+		if (lunar.day === day && lunar.month === month && lunar.year === year && lunar.leap === leap) {
+			return date;
+		}
+	}
+	return null;
+}

@@ -1,0 +1,22 @@
+# Spec workflow config — InnerLamp website (SvelteKit).
+# Quy ước v1.5/v1.6: lệnh gate ở đây là lệnh thật, dùng khi review.
+spec_root: docs/specs/features
+folder_case: kebab
+language: vi
+architecture_rules: AGENTS.md
+platforms:
+  - { path: ./, profile: web }
+verify:
+  web:
+    A: make check
+    B: npm test
+    C: make dev
+    E: 'npx playwright test tests/memorial.e2e.ts' # chỉ sau khi cài Playwright (P5, cần duyệt)
+    security: npm audit --omit=dev
+    pre_push: make verify && npm test
+implement:
+  base_branch: main
+  max_rounds: 2
+  sensitive_paths: [src/lib/server/api/, src/lib/server/auth/, src/hooks.server.ts]
+upstream:
+  contract: docs/specs/features/memorial/client-contract.md

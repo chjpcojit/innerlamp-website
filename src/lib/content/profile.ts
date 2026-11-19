@@ -1,6 +1,5 @@
 import { m } from '$lib/paraglide/messages';
 import type { IconKind } from '$lib/components/ui/icon-shapes';
-import { memorial } from '$lib/state/memorial.svelte';
 
 /** Placeholder profile data (copied from the design mock) until the backend serves it. */
 
@@ -60,7 +59,7 @@ export const PROFILE_ROWS: ProfileRow[] = [
 	{
 		icon: 'calendar',
 		title: () => m.pf_row_memorial(),
-		value: () => m.pf_row_memorial_value({ count: memorial.entries.length }),
+		value: () => '',
 		href: '/memorial'
 	},
 	{ icon: 'bell', title: () => m.pf_row_bell(), value: () => m.pf_row_bell_value() },

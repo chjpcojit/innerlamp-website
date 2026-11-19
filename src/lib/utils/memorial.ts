@@ -30,3 +30,40 @@ export function nextAnniversary(
 		nth: entry.year ? year - entry.year : null
 	};
 }
+
+/** Sort by days left, then name (Vietnamese), then id; stable across clients (A-5). */
+export function sortMemorialEntries<
+	T extends { entry: { id: number; name: string }; next: { days: number } }
+>(items: T[]): T[] {
+	return [...items].sort(
+		(a, b) =>
+			a.next.days - b.next.days ||
+			a.entry.name.localeCompare(b.entry.name, 'vi') ||
+			a.entry.id - b.entry.id
+	);
+}
+
+/** A portrait is shown only when the feature flag is on and the entry has one (W1). */
+export function showMemorialPhoto(photoEnabled: boolean, hasPhoto: boolean): boolean {
+	return photoEnabled && hasPhoto;
+}
+
+/** The product limit for one account (contract §6.1). */
+export const MEMORIAL_LIMIT = 100;
+
+export type MemorialCountView =
+	| { kind: 'none' }
+	| { kind: 'count'; total: number }
+	| { kind: 'partial'; shown: number; total: number };
+
+/**
+ * Header count from the response, not just the rendered rows: when `total` and `items.length`
+ * disagree the UI says `shown/total` instead of hiding the difference. / Đếm theo `total`.
+ */
+export function memorialCountView(shown: number, total: number): MemorialCountView {
+	if (total <= 0) return { kind: 'none' };
+	if (shown !== total) return { kind: 'partial', shown, total };
+	return { kind: 'count', total };
+}
+
+export const isMemorialFull = (total: number): boolean => total >= MEMORIAL_LIMIT;

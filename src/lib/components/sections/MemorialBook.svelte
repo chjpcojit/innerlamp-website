@@ -3,34 +3,70 @@
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { memorial } from '$lib/state/memorial.svelte';
-	import { nextAnniversary } from '$lib/utils/memorial';
+	import {
+		isMemorialFull,
+		memorialCountView,
+		nextAnniversary,
+		showMemorialPhoto,
+		sortMemorialEntries
+	} from '$lib/utils/memorial';
 	import {
 		daysLabel,
 		deathDateLabel,
+		initials,
 		longDate,
 		nthLabel,
 		relationLabel,
 		remindLabel
 	} from '$lib/utils/memorial-format';
+	import type { MemorialEntry, MemorialFlashData } from '$lib/types/memorial';
 
-	onMount(() => memorial.init());
+	interface Props {
+		entries: MemorialEntry[] | null;
+		total: number;
+		loadError: boolean;
+		flash: MemorialFlashData | null;
+		photoEnabled: boolean;
+	}
+
+	let { entries, total, loadError, flash, photoEnabled }: Props = $props();
+
+	/** The device's date; never the server's (BR-MEM-08). Null during SSR and before mount. */
+	let today = $state<Date | null>(null);
+
+	onMount(() => {
+		today = new Date();
+	});
 
 	const items = $derived(
-		memorial.entries
-			.map((entry) => ({ entry, next: nextAnniversary(entry) }))
-			.sort((a, b) => a.next.days - b.next.days)
+		today && entries
+			? sortMemorialEntries(
+					entries.map((entry) => ({ entry, next: nextAnniversary(entry, today ?? new Date()) }))
+				)
+			: []
 	);
-	const top = $derived(items[0]);
+	const top = $derived(today ? items[0] : undefined);
+	const full = $derived(isMemorialFull(total));
 
-	const href = (id: string) => resolve(localizeHref(`/memorial/${id}`) as '/memorial/[id]');
+	const countText = $derived.by(() => {
+		if (!entries) return '';
+		const view = memorialCountView(entries.length, total);
+		if (view.kind === 'none') return m.mem_none();
+		if (view.kind === 'partial')
+			return m.mem_count_partial({ shown: view.shown, total: view.total });
+		return m.mem_count({ count: view.total });
+	});
+
+	const href = (id: number) => resolve(localizeHref(`/memorial/${id}`) as '/memorial/[id]');
+	const photoSrc = (id: number) =>
+		resolve(localizeHref(`/memorial/${id}/photo`) as '/memorial/[id]/photo');
 
 	const flashText = $derived(
-		memorial.flash
-			? memorial.flash.kind === 'deleted'
-				? m.mem_flash_deleted({ name: memorial.flash.name })
-				: memorial.flash.kind === 'saved_reminder'
-					? m.mem_flash_saved_reminder()
+		flash
+			? flash.kind === 'gone'
+				? m.mem_flash_gone()
+				: flash.kind === 'deleted'
+					? m.mem_flash_deleted()
 					: m.mem_flash_saved()
 			: ''
 	);
@@ -46,17 +82,28 @@
 	<header class="flex flex-wrap items-end justify-between gap-5">
 		<div>
 			<h1 class="font-serif text-[clamp(32px,6.4vw,40px)]/[1.12] font-medium">{m.mem_title()}</h1>
-			<p class="mt-2 text-sm text-ink/55">
-				{items.length ? m.mem_count({ count: items.length }) : m.mem_none()}
-			</p>
+			<p class="mt-2 text-sm text-ink/55">{countText}</p>
 		</div>
-		<a
-			href={resolve(localizeHref('/memorial/new') as '/memorial/new')}
-			data-keep-dark
-			class="rounded-full bg-ink px-[22px] py-3 text-[13px] font-medium text-cream shadow-[0_8px_24px_rgba(34,30,25,.16)] transition-colors hover:bg-[#3a342c]"
-		>
-			{m.mem_add()}
-		</a>
+		{#if full}
+			<div class="flex flex-col items-end gap-1.5">
+				<button
+					type="button"
+					disabled
+					class="cursor-not-allowed rounded-full bg-ink/35 px-[22px] py-3 text-[13px] font-medium text-cream"
+				>
+					{m.mem_add()}
+				</button>
+				<p role="status" class="text-xs text-[#a7443f]">{m.mem_err_full()}</p>
+			</div>
+		{:else}
+			<a
+				href={resolve(localizeHref('/memorial/new') as '/memorial/new')}
+				data-keep-dark
+				class="rounded-full bg-ink px-[22px] py-3 text-[13px] font-medium text-cream shadow-[0_8px_24px_rgba(34,30,25,.16)] transition-colors hover:bg-[#3a342c]"
+			>
+				{m.mem_add()}
+			</a>
+		{/if}
 	</header>
 
 	{#if flashText}
@@ -72,7 +119,17 @@
 		</p>
 	{/if}
 
-	{#if top}
+	{#if loadError}
+		<div class="flex flex-col items-center px-2 pt-5 text-center">
+			<h2 class="font-serif text-[28px]/[1.3] font-medium">{m.mem_err_load()}</h2>
+			<a
+				href={resolve(localizeHref('/memorial') as '/memorial')}
+				class="mt-4 rounded-full border border-ink/20 px-5 py-2.5 text-[13.5px] font-medium hover:bg-sand/60"
+			>
+				{m.mem_retry()}
+			</a>
+		</div>
+	{:else if top}
 		<div class="flex flex-wrap items-start gap-6">
 			<a
 				href={href(top.entry.id)}
@@ -86,12 +143,21 @@
 							: m.mem_top_upcoming({ count: top.next.days })}
 				</p>
 				<div class="mt-4 flex items-center gap-4">
-					<span
-						class="flex size-[76px] flex-none items-center justify-center rounded-full bg-amber/20 font-serif text-3xl text-gold-deep"
-						aria-hidden="true"
-					>
-						{top.entry.name.trim().charAt(0).toUpperCase()}
-					</span>
+					{#if showMemorialPhoto(photoEnabled, top.entry.hasPhoto)}
+						<img
+							src={photoSrc(top.entry.id)}
+							alt={top.entry.name}
+							referrerpolicy="no-referrer"
+							class="size-[76px] flex-none rounded-full object-cover"
+						/>
+					{:else}
+						<span
+							class="flex size-[76px] flex-none items-center justify-center rounded-full bg-amber/20 font-serif text-3xl text-gold-deep"
+							aria-hidden="true"
+						>
+							{initials(top.entry.name)}
+						</span>
+					{/if}
 					<div class="min-w-0">
 						<h2 class="font-serif text-[28px]/[1.25] font-medium">{top.entry.name}</h2>
 						<p class="mt-1 text-[13px] text-ink/60">
@@ -124,12 +190,21 @@
 								href={href(entry.id)}
 								class="flex items-center gap-3.5 rounded-[18px] border border-ink/8 bg-paper px-[18px] py-3 transition-colors hover:bg-white"
 							>
-								<span
-									class="flex size-12 flex-none items-center justify-center rounded-full bg-gold/14 font-serif text-xl text-gold-deep"
-									aria-hidden="true"
-								>
-									{entry.name.trim().charAt(0).toUpperCase()}
-								</span>
+								{#if showMemorialPhoto(photoEnabled, entry.hasPhoto)}
+									<img
+										src={photoSrc(entry.id)}
+										alt={entry.name}
+										referrerpolicy="no-referrer"
+										class="size-12 flex-none rounded-full object-cover"
+									/>
+								{:else}
+									<span
+										class="flex size-12 flex-none items-center justify-center rounded-full bg-gold/14 font-serif text-xl text-gold-deep"
+										aria-hidden="true"
+									>
+										{initials(entry.name)}
+									</span>
+								{/if}
 								<span class="min-w-0 flex-1">
 									<span class="block truncate text-sm font-medium">{entry.name}</span>
 									<span class="mt-0.5 block text-xs text-ink/50">
@@ -144,7 +219,7 @@
 									>
 										{daysLabel(next.days)}
 									</span>
-									{#if entry.remind}
+									{#if entry.reminder}
 										<span class="text-xs text-ink/42">{m.mem_has_reminder()}</span>
 									{/if}
 								</span>
@@ -154,7 +229,7 @@
 				</ul>
 			</section>
 		</div>
-	{:else if memorial.ready}
+	{:else if entries && !total}
 		<div class="flex flex-col items-center px-2 pt-5 text-center">
 			<h2 class="font-serif text-[28px]/[1.3] font-medium">{m.mem_empty_title()}</h2>
 			<p class="mt-2 max-w-[360px] text-sm/[1.65] text-pretty text-ink/52">{m.mem_empty_desc()}</p>

@@ -1,0 +1,8 @@
+{
+  "repo": "innerlamp-memorial",
+  "path": "docs/product/memorial/rules",
+  "commit": "e5d4c9c",
+  "product_spec_version": "2.1",
+  "files": ["next-anniversary.json", "anniversary-ordinal.json", "death-date-conversion.json"],
+  "note": "Copied 2026-11-16; reminder-moment.json is backend-only and is not used by the website."
+}

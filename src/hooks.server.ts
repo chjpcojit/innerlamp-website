@@ -5,6 +5,7 @@ import { TOKEN_COOKIE, endSession, getSessionUser } from '$lib/server/auth/sessi
 import { refreshSession } from '$lib/server/auth/refresh';
 import { deLocalizeHref, getTextDirection, localizeHref } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import { applySecurityHeaders } from '$lib/server/security-headers';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -72,7 +73,19 @@ const handleSessionEnded: Handle = async ({ event, resolve }) => {
 	return new Response(null, { status: 303, headers });
 };
 
-export const handle: Handle = sequence(handleAuth, handleParaglide, handleSessionEnded);
+/** CSP, frame protection and MIME sniffing on every response (W3). */
+const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+	applySecurityHeaders(response.headers);
+	return response;
+};
+
+export const handle: Handle = sequence(
+	handleSecurityHeaders,
+	handleAuth,
+	handleParaglide,
+	handleSessionEnded
+);
 
 /**
  * Forward the visitor's IP so the backend's per-IP rate limits apply to the visitor, not to
