@@ -3,7 +3,6 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import type { Pathname } from '$app/types';
 	import { m } from '$lib/paraglide/messages';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
@@ -21,7 +20,7 @@
 
 	function goBack() {
 		if (history.length > 1) history.back();
-		else void goto(resolve(localizeHref('/') as Pathname));
+		else void goto(resolve(localizeHref('/') as '/'));
 	}
 
 	function retry() {

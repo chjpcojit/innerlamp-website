@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
@@ -14,7 +13,7 @@
 		data-keep-dark
 		class="box-border flex min-h-[min(100vh,760px)] flex-[1_1_420px] flex-col justify-between gap-10 bg-[radial-gradient(circle_at_50%_44%,#2A241C,#100E0B_74%)] px-[clamp(20px,5vw,44px)] py-[clamp(24px,5vw,36px)] text-[#F5EEE0]"
 	>
-		<a href={resolve(localizeHref('/') as Pathname)} class="flex items-center gap-[11px]">
+		<a href={resolve(localizeHref('/') as '/')} class="flex items-center gap-[11px]">
 			<LampMark onDark />
 			<span class="text-[13px] font-semibold tracking-[.2em]">{m.auth_brand()}</span>
 		</a>

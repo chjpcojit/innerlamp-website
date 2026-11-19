@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount, untrack } from 'svelte';
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
+	import { onMount, untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
@@ -45,7 +44,7 @@
 	const canReset = $derived(
 		!busy && code.length === LENGTH && checkPassword(password) === 'ok' && !timers.expired
 	);
-	const href = (path: string) => resolve(localizeHref(path) as Pathname);
+	const href = (path: string) => resolve(localizeHref(path) as '/');
 
 	function onCodeInput() {
 		code = code.replace(/\D/g, '').slice(0, LENGTH);

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
@@ -37,20 +36,20 @@
 				</nav>
 				<nav class="flex min-w-[140px] flex-col gap-2.5" aria-labelledby="footer-account">
 					<h2 id="footer-account" class={headClass}>{m.footer_account()}</h2>
-					<a href={resolve(localizeHref('/settings') as Pathname)} class={linkClass}>
+					<a href={resolve(localizeHref('/settings') as '/settings')} class={linkClass}>
 						{m.set_title()}
 					</a>
-					<a href={resolve(localizeHref('/login') as Pathname)} class={linkClass}>
+					<a href={resolve(localizeHref('/login') as '/login')} class={linkClass}>
 						{m.header_login()}
 					</a>
-					<a href={resolve(localizeHref('/signup') as Pathname)} class={linkClass}>
+					<a href={resolve(localizeHref('/signup') as '/signup')} class={linkClass}>
 						{m.header_signup()}
 					</a>
 				</nav>
 				<nav class="flex min-w-[140px] flex-col gap-2.5" aria-labelledby="footer-support">
 					<h2 id="footer-support" class={headClass}>{m.footer_support()}</h2>
 					<a href="#help" class={linkClass}>{m.footer_help()}</a>
-					<a href={resolve(localizeHref('/support') as Pathname)} class={linkClass}>
+					<a href={resolve(localizeHref('/support') as '/support')} class={linkClass}>
 						{m.footer_donate()}
 					</a>
 					<a href="#contact" class={linkClass}>{m.footer_contact()}</a>
@@ -63,13 +62,13 @@
 			<p>{m.footer_copyright()}</p>
 			<div class="flex gap-5">
 				<a
-					href={resolve(localizeHref('/terms') as Pathname)}
+					href={resolve(localizeHref('/terms') as '/terms')}
 					class="text-ink/55 transition-colors hover:text-gold-deep"
 				>
 					{m.footer_terms()}
 				</a>
 				<a
-					href={resolve(localizeHref('/privacy') as Pathname)}
+					href={resolve(localizeHref('/privacy') as '/privacy')}
 					class="text-ink/55 transition-colors hover:text-gold-deep"
 				>
 					{m.footer_privacy()}

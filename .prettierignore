@@ -14,3 +14,24 @@ bun.lockb
 
 # Pinned copies of innerlamp-be test vectors (scripts/sync-*-vectors.mjs); never reformatted
 /tests/vectors/
+
+# Imported design prototypes and agent skill references (not app source)
+/Docs/innerlamp-web-adaptation/
+/.claude/
+
+# Pre-existing feature specs kept as-is (they predate the shared Prettier config).
+/Docs/specs/features/article/design.md
+/Docs/specs/features/article/requirements.md
+/Docs/specs/features/deity/design.md
+/Docs/specs/features/deity/requirements.md
+/Docs/specs/features/gallery/design.md
+/Docs/specs/features/gallery/requirements.md
+/Docs/specs/features/support/SRS.md
+/Docs/specs/features/support/design.md
+/Docs/specs/features/support/requirements.md
+/Docs/specs/features/support/tasks.md
+/Docs/specs/features/sutra/design.md
+/Docs/specs/features/sutra/requirements.md
+/Docs/specs/features/temple/design.md
+/Docs/specs/features/temple/requirements.md
+/Docs/specs/features/temple/tasks.md
