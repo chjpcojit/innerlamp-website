@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
-	import { onNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { clearLegacyMemorial } from '$lib/utils/legacy-storage';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { CUSTOM_TRANSITION_ROUTES } from '$lib/config/transitions';
@@ -37,6 +38,8 @@
 			});
 		});
 	});
+
+	onMount(() => clearLegacyMemorial());
 </script>
 
 <svelte:head>
@@ -50,6 +53,6 @@
 
 <div style="display:none">
 	{#each locales as locale (locale)}
-		<a href={resolve(localizeHref(page.url.pathname, { locale }) as Pathname)}>{locale}</a>
+		<a href={resolve(localizeHref(page.url.pathname, { locale }) as '/')}>{locale}</a>
 	{/each}
 </div>

@@ -13,7 +13,13 @@
 </svelte:head>
 
 {#if data.user}
-	<MemorialBook />
+	<MemorialBook
+		entries={data.entries}
+		total={data.total}
+		loadError={data.loadError}
+		flash={data.flash}
+		photoEnabled={data.photoEnabled}
+	/>
 {:else}
 	<GuestPrompt title={m.mem_guest_title()} desc={m.mem_guest_desc()} />
 {/if}

@@ -15,11 +15,26 @@ export function lunarMonthLabel(month: number): string {
 	return LUNAR_MONTH_LABELS[month - 1]();
 }
 
-/** Date of death as the family writes it: "23 tháng Tám âm lịch" or "14/12 dương lịch". */
-export function deathDateLabel(e: Pick<MemorialEntry, 'calendar' | 'day' | 'month'>): string {
-	return e.calendar === 'lunar'
-		? m.mem_date_lunar({ day: e.day, month: lunarMonthLabel(e.month) })
-		: m.mem_date_solar({ date: `${pad(e.day)}/${pad(e.month)}` });
+/** Date of death as the family writes it: "23 tháng Tám (nhuận) âm lịch, năm 2020". */
+export function deathDateLabel(
+	e: Pick<MemorialEntry, 'calendar' | 'day' | 'month' | 'year' | 'leap'>
+): string {
+	const base =
+		e.calendar === 'lunar'
+			? e.leap
+				? m.mem_date_lunar_leap({ day: e.day, month: lunarMonthLabel(e.month) })
+				: m.mem_date_lunar({ day: e.day, month: lunarMonthLabel(e.month) })
+			: m.mem_date_solar({ date: `${pad(e.day)}/${pad(e.month)}` });
+	return e.year ? m.mem_date_with_year({ date: base, year: e.year }) : base;
+}
+
+/** Avatar fallback (A-6): first letters of the first and last word, original diacritics. */
+export function initials(name: string): string {
+	const words = name.trim().split(/\s+/).filter(Boolean);
+	if (!words.length) return '?';
+	const first = words[0].charAt(0);
+	const last = words.length > 1 ? words[words.length - 1].charAt(0) : '';
+	return (first + last).toLocaleUpperCase('vi');
 }
 
 export function daysLabel(days: number): string {
@@ -36,12 +51,12 @@ export function nthLabel(nth: number | null): string {
 	return m.mem_nth_other({ n: nth });
 }
 
-export function remindLabel(e: MemorialEntry): string {
-	if (!e.remind) return m.mem_remind_off();
-	const when = e.lead ? m.mem_remind_before({ count: e.lead }) : m.mem_remind_on_day();
-	return [when + ' · ' + e.time, e.sync ? m.mem_remind_in_calendar() : '']
-		.filter(Boolean)
-		.join(' · ');
+export function remindLabel(e: Pick<MemorialEntry, 'reminder'>): string {
+	if (!e.reminder) return m.mem_remind_off();
+	const when = e.reminder.lead
+		? m.mem_remind_before({ count: e.reminder.lead })
+		: m.mem_remind_on_day();
+	return `${when} · ${e.reminder.time}`;
 }
 
 export function relationLabel(e: Pick<MemorialEntry, 'relation'>): string {

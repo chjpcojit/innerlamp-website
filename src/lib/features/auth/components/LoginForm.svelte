@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
@@ -22,7 +21,7 @@
 	let busy = $state(false);
 
 	const canSubmit = $derived(!busy && email.trim() !== '' && password !== '');
-	const href = (path: string) => resolve(localizeHref(path) as Pathname);
+	const href = (path: string) => resolve(localizeHref(path) as '/');
 </script>
 
 <form

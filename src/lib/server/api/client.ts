@@ -44,14 +44,16 @@ export async function apiCall<T>(
 	if (env.API_KEY) headers['x-api-key'] = env.API_KEY;
 	// Identifies the end user; only present after login.
 	if (token) headers['Authorization'] = `Bearer ${token}`;
-	if (body !== undefined) headers['Content-Type'] = 'application/json';
+	// `FormData` must keep the browser/undici boundary: never set Content-Type for it.
+	const isForm = body instanceof FormData;
+	if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
 
 	let response: Response;
 	try {
 		response = await fetch(`${env.API_BASE_URL}${path}`, {
 			method,
 			headers,
-			body: body === undefined ? undefined : JSON.stringify(body),
+			body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
 			signal: signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS)
 		});
 	} catch (cause) {

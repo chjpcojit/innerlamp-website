@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
@@ -88,7 +87,7 @@
 		legal = kind;
 	}
 
-	const href = (path: string) => resolve(localizeHref(path) as Pathname);
+	const href = (path: string) => resolve(localizeHref(path) as '/');
 
 	const field = 'rounded-2xl border bg-paper px-4 py-3';
 	const label = 'text-xs text-ink/45';

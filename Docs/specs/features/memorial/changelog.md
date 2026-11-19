@@ -3,6 +3,87 @@
 Tracks version history for `requirements.md`, `design.md`, and `tasks.md` in this folder. All three
 files share one changelog since they change together as one spec unit. Newest version first.
 
+## v3.4 (2026-11-17)
+
+- Audit "code done thì tick" cho `tasks.md` v3.3: đối chiếu 54 `[x]` với code + test thật —
+  **54/54 đúng, không bỏ tick nào**; 2 `[ ]` vẫn mở đúng lý do.
+- Gate chạy lại: `make verify` exit 0 (svelte-check 0 error, 1 warning ở `SutraDetail.svelte`
+  không liên quan memorial; prettier + eslint pass; build pass) và `npm test` 217/217 pass.
+- Sửa mô tả cho khớp code, không đổi tick: `nextAnniversary` **không** nhận `leap`
+  (`utils/memorial.ts:7`); flash cookie chỉ `{kind}` (`types/memorial.ts:89`,
+  `memorial-flash.ts:28`); key `il-memorial` xoá ở root `+layout.svelte:42`.
+- G1: `impact.md` (Android/InnerLamp-memorial) có `reviewed_by: ""` ở cả ba repo — thiếu **cả**
+  Thiên Cơ (BA) và Hộ Pháp (Security), không phải chỉ Hộ Pháp.
+- Playwright: `package.json` không có dependency, không có `playwright.config.*` hay
+  `tests/*.e2e.ts` — vẫn `[NOT RUN]`.
+
+## v3.5 (2026-11-19)
+
+- Photos enabled on the web after the backend hardening (BE main `fe64576`): the switch is on by
+  default, `MEMORIAL_PHOTO_ENABLED=false` is the kill switch; `.env.example` now shows `true`.
+- Real dev smoke (test account, cleaned up): `PUT /v1/memorials/{id}/photo` 200 → `GET` has
+  `photo_url` → signed GCS 200 JPEG; 413/415/404 return the contract codes. Web action upload 200,
+  proxy `GET /memorial/{id}/photo` 200 JPEG with no signed URL in HTML, `?/photoDelete` 303 and the
+  proxy then 404.
+- `photo` action maps 404 to `mem_flash_gone` + list redirect rather than a generic photo error.
+- Tests: 217 passing.
+
+## v3.3 (2026-11-17)
+
+- QA P7 rework:
+  - single-submit gate (`canStartMemorialSubmit`, `submitting`) disables the save button and blocks
+    a second POST while the first is in flight;
+  - the add link is not rendered at `total >= 100`; a disabled button plus `mem_err_full` is shown;
+  - action 401 keeps the form and draft, ends the cookie session and shows `mem_err_session` with a
+    sign-in link instead of redirecting (Q-4=A);
+  - the header count uses `total`, showing `shown/total` when `items.length` disagrees, and the
+    add/full decision uses `total`.
+- Deferred: photo picking on the create form (flag off, Q-2).
+- Tests: 217 passing.
+
+## v3.2 (2026-11-17)
+
+- P6 rework after Tech Lead review:
+  - `MemorialBook` renders a portrait only when both `photoEnabled` and `hasPhoto` are true; the list
+    loader now returns `photoEnabled`, so a disabled flag never produces a broken `/photo` image.
+  - The portrait proxy no longer caches signed URLs: every request reads the current URL, so a
+    replaced or deleted portrait is visible immediately (no invalidation hook needed).
+  - The note validation code is `note_long` (was `long`, which rendered the name-too-long copy);
+    contract limit stays 1000 characters.
+- Tests: 209 passing (photo flag helper, no-cache lookup, note mapping).
+
+## v3.1 (2026-11-17)
+
+- G1 security review (Hộ Pháp, 2026-11-16) applied to the web feature:
+  `Cache-Control: private, no-store` + `Referrer-Policy: no-referrer` on memorial pages; portrait
+  signed URL removed from the view model and proxied same-origin at `/memorial/{id}/photo`
+  (`hasPhoto` boolean, no server URL cache, one refresh on 403); fail-closed guard before every
+  memorial API call (401 in the resource layer); global CSP with `frame-ancestors 'none'`,
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`; flash cookie reduced to `{kind}`
+  (no name/date); legacy `localStorage['il-memorial']` cleared once and never written; photo flag
+  stays `false` even though the backend deployed both routes on 2026-11-17 (401 without a token).
+  Tests: 202 passing.
+- `requirements.md` v3.1 adds SEC-01…06; `design.md` v3.1 and `flow.md` v1.1 reflect the proxy and
+  headers; `tasks.md` v3.1 adds Phase 10.
+
+## v3.0 (2026-11-16)
+
+- P4 web integration. `requirements.md`: header contract đổi sang bản pin `client-contract.md`
+  (OpenAPI 3.1.0, `e5d4c9c`, 7 route), AC 1–25/30–31 giữ số và sửa theo contract; AC 26–29 dời
+  Phase 8–10; thêm AC mới giữ ID xuyên nền tảng `MEM-API-01…16`, `MEM-IMG-01…11`, `MEM-WEB-01…02`
+  từ `ac-memorial-clients-v1.md` v1.0. Bỏ phạm vi báo múi giờ + danh sách thông báo khỏi v1.
+- `design.md`: bỏ `state/memorial.svelte.ts`; thêm `server/api/memorials.ts`, `memorial-map.ts`,
+  `memorial-flash.ts`, `memorial-config.ts`, `utils/memorial-validate.ts`,
+  `utils/memorial-reminder.ts`, `lunarToSolarExact`; ảnh sau cờ `MEMORIAL_PHOTO_ENABLED` (mặc định
+  false); i18n thêm key lỗi/xác nhận/ảnh, bỏ key `sync`.
+- `flow.md` (mới): F1 mở sổ, F2 thêm, F3 sửa, F4 xoá, F5 ảnh sau cờ, F6 hết phiên, F7 bảng lỗi.
+- `tasks.md`: Phase 0 P2 + W1–W8, mỗi task gắn `[ui-first]`/`[integration]`.
+- `client-contract.md` (mới): bản pin 2026-11-16, không sửa nội dung hợp đồng.
+- Tech-debt: `TD-MEM-CLIENT-01…05` trong `Docs/Tech-Debt/Memorial/`.
+- Vector: `tests/vectors/memorial/{next-anniversary,anniversary-ordinal,death-date-conversion}.json`
+  - `SOURCE.json` (product rules @ `e5d4c9c`).
+- Reason: P2 cho P4-W theo `task-breakdown-p4.md`; contract chốt 7 route, 2 route ảnh chưa deploy.
+
 ## v2.1 (2026-10-14)
 
 - `requirements.md`: hai `⚠️ Not confirmed (product)` đã có câu trả lời ở product v2.1 — AC 17 lấy luật "lựa chọn gần nhất" của FR-MEM-007 (cách đều thì chọn nhắc sớm hơn / giờ sớm hơn); AC 22 lấy chữ "Chưa xóa được. Vui lòng thử lại." của §3.1.1. `design.md`/`tasks.md` chỉ đổi version (task nearest-choice và i18n giữ nguyên, nay đã có giá trị cụ thể).

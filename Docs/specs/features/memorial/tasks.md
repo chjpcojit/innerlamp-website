@@ -1,102 +1,137 @@
-# Tasks — memorial (Sổ giỗ chạp)
+# Tasks — memorial (Sổ giỗ chạp) — website
 
-Version: 2.1
-Last updated: 2026-10-14
-Status: in-progress (drift) — UI, khối nhắc và logic tính kỳ giỗ có; lưu trữ còn `localStorage`, chưa gọi backend; báo múi giờ và lời nhắc trong danh sách thông báo chờ contract; chưa có test
+Version: 3.5
+Last updated: 2026-11-19
+Status: P4 code done — 56/56 `[x]` đã kiểm code + test; ảnh đã bật và smoke dev 2026-11-19; 2 mở: G1 chưa ký, Playwright chưa cài.
 
-> See `changelog.md` in this folder for the version history of this spec.
+> See `changelog.md`. `[x]` chỉ khi đã kiểm trong code **và** gate thật đã chạy; code xong + gate
+> xanh thì tick ngay, không để nợ. Task gắn
+> `[ui-first]` (UI + mock/không API) hoặc `[integration]` (nối BE) theo quy tắc v1.5.
 
-`[x]` chỉ khi đã kiểm tra tồn tại trong code ngày 2026-10-14 **và** đúng như product spec v2.1 yêu cầu. Mỗi mục trỏ về một dòng của bảng Layers & components hoặc một Step trong `design.md`; số `AC n` là tiêu chí trong `requirements.md`.
+## Phase 0 — P2 (spec, trước code)
 
-## Phase 1 — UI (`il-ui`)
+- [x] `docs/spec.config.yaml` đúng mẫu §0.1 (verify A/B/C/E + security + pre_push, sensitive_paths)
+- [x] Pin contract: `docs/specs/features/memorial/client-contract.md` (2026-11-16, OpenAPI 3.1.0 `e5d4c9c`)
+- [x] `requirements.md` v3.0 — AC cũ giữ số + AC mới `MEM-API-*`, `MEM-IMG-*`, `MEM-WEB-*`
+- [x] `design.md` v3.0 — layers, model, mapping, cờ ảnh, i18n
+- [x] `flow.md` — F1…F7
+- [x] `tasks.md` v3.0 (file này)
+- [x] 5 tech-debt `TD-MEM-CLIENT-01…05` trong `Docs/Tech-Debt/Memorial/`
+- [x] Vector pin `tests/vectors/memorial/*.json` + `SOURCE.json` (e5d4c9c)
+- [ ] G1: BA + Security ký `impact.md` (ngoài repo này — Chưởng Môn/Đạo Sư) `[DEFERRED]` **cả hai chưa ký** — `reviewed_by` trống ở cả ba repo, thiếu Thiên Cơ (BA) và Hộ Pháp (Security) (impact.md:8,36)
 
-- [x] Route `/memorial`, `/memorial/new`, `/memorial/[id]` + `<svelte:head>` (title; meta description ở trang sổ)
-- [x] Khách thấy `GuestPrompt` ở cả ba route, không có mục nào (AC 1)
-- [x] Lối vào từ dòng "Sổ giỗ chạp" ở `/profile` và breadcrumb tab "Tôi" (AC 3, §3.6)
-- [x] `MemorialBook`: đếm người thân, thẻ nổi bật mục gần nhất (quan hệ, lần giỗ, ngày dương kèm thứ, tóm tắt nhắc), danh sách sắp theo số ngày còn lại, nhãn Hôm nay / Ngày mai / còn N ngày, nhấn mạnh ≤ 7 ngày, dấu "Có nhắc" (AC 4)
-- [x] Trạng thái sổ trống `mem_empty_*` + nút thêm, không có "Lấy từ gia phả" (AC 7)
-- [x] Chữ cái đầu thay ảnh (AC 8)
-- [ ] Ngày mất hiển thị kèm năm (khi biết) và dấu nhuận (AC 6) — `deathDateLabel` hiện chỉ có ngày/tháng
-- [ ] `MemorialBook` nhận `data.entries` từ `load`; `today` lấy trong `onMount`, SSR không render số ngày (AC 5, Step A-3)
-- [ ] Trạng thái `loadError` → `mem_err_load` + `mem_retry` (AC 2)
-- [ ] Bỏ phần "có trong lịch nhắc" khỏi tóm tắt nhắc và flash `saved_reminder` (FR-MEM-009 đã bỏ)
-- [x] Form mặc định ông nội, âm lịch, ngày 1 tháng 1, không rõ năm, nhắc bật trước 1 ngày 07:00 (AC 9)
-- [x] Khối nhắc: bật/tắt, lead đúng ngày/1/3/7, giờ 06:00/07:00/12:00/19:00, ẩn lựa chọn khi tắt (AC 16)
-- [ ] Bỏ công tắc "Thêm vào lịch nhắc" (`sync`) khỏi `MemorialForm` (AC 16, FR-MEM-009 đã bỏ)
-- [ ] Form sửa hiện lựa chọn gần nhất cho giá trị nhắc cũ (AC 17) *(chờ ⚠️ AC 17)*
-- [x] Mười chip quan hệ, chọn một, không nhãn tự do (AC 10)
-- [ ] Năm 1900 → năm hiện tại (đang 97 năm gần nhất) (AC 11)
-- [ ] Số ngày theo lịch + tháng (+ năm) đã chọn; lỗi `mem_f_date_invalid` / `mem_f_date_not_exist` / `mem_f_date_future` / `mem_f_year_min` (AC 11)
-- [ ] Lựa chọn tháng nhuận, chỉ hiện khi âm lịch (AC 11, BR-MEM-04)
-- [x] Preview kỳ giỗ cập nhật ngay khi đổi ngày/tháng/năm/lịch (AC 12)
-- [ ] Preview hiển thị ngày âm đúng khi đã có lựa chọn nhuận (kỳ giỗ vẫn tháng thường) (AC 12)
-- [x] Tên rỗng sau trim → `mem_f_name_err`, xoá khi sửa (AC 13 — phần rỗng)
-- [ ] Tên > 100 ký tự → `mem_f_name_too_long`; ghi chú > 1000 → `mem_f_note_too_long` (AC 13, AC 14)
-- [x] Nút Hủy về sổ, không lưu (AC 21)
-- [x] Trang không tìm thấy `mem_not_found` + `mem_back` (AC 19 — phần UI)
-- [x] Flash `mem_flash_saved` / `mem_flash_deleted` có `role="status"` (AC 18, AC 22 — phần hiển thị)
-- [ ] Chuyển `MemorialForm` sang `<form method="POST">` + `use:enhance` với field thật/ẩn cho chip, lịch, nhuận, nhắc (Step B-1, D-1)
-- [ ] Lỗi theo field trả về từ action (`form.errors`) và `mem_err_full` / `mem_err_save` / `mem_err_delete` (bảng Error → UI)
-- [ ] Hộp xác nhận xoá `<dialog>` + fallback `?confirm=delete` không JS (AC 22, BR-MEM-12) — code hiện xoá ngay
-- [ ] i18n theo bảng "i18n keys" của `design.md`, đủ cả `vi.json` và `en.json` (AC 31):
-  - [ ] thêm key có dòng product §3.1.1 (vi đúng nghĩa dòng đó, en theo phần giải nghĩa): `mem_confirm_delete_*`, `mem_err_full`, `mem_f_name_too_long`, `mem_f_note_too_long`, `mem_f_date_invalid`, `mem_f_date_not_exist`, `mem_f_year_min`, `mem_f_date_future`, `mem_err_save`, `mem_err_load` + `mem_retry`, `mem_flash_gone`, `mem_f_leap`, `mem_date_lunar_leap`
-  - [ ] sửa `mem_not_found` theo dòng "Entry no longer exists"
-  - [ ] thêm `mem_date_with_year`; `mem_err_delete` *(chữ chờ ⚠️ AC 22)*
-  - [ ] bỏ `mem_flash_saved_reminder`, `mem_remind_in_calendar`, `mem_sync_title`, `mem_sync_desc`
-  - [ ] `mem_notif_*` / `mem_rel_lc_*` chỉ khi contract để website tự dựng chữ lời nhắc *(chờ ⚠️ AC 27)*
+## Phase 1 — W1 DTO / view model / mapper `[integration]`
 
-## Phase 2 — State & logic (`il-state`)
+- [x] `src/lib/types/memorial.ts`: DTO `Memorial`/`MemorialRequest` (snake_case), view model
+      `MemorialEntry` (`id: number`, `leap`, `reminder`, `photoUrl`, bỏ `remind/lead/time/sync`)
+- [x] `src/lib/server/api/memorial-map.ts`: enum 2 chiều 10 giá trị; DTO → VM (ngày âm + nhuận,
+      `nearestReminderChoice`); VM/form → request (một dạng ngày, `note` null, `reminder` tối thiểu)
 
-- [x] `nextAnniversary` (`utils/memorial.ts`) hiện thực BR-MEM-05, 06, 07, 08, 09 (ordinal) với `today` truyền vào — chạy thử một lần ngoài repo 17/17 case `next-anniversary.json` đạt ngày 2026-10-14; test trong repo ở Phase 4
-- [x] `nthLabel` / `daysLabel` (`utils/memorial-format.ts`) theo BR-MEM-08, BR-MEM-09 (label)
-- [x] `solarToLunar` (`utils/lunar.ts`) trả cờ nhuận, UTC+7 (BR-MEM-10) — chạy thử một lần 5/5 case dương → âm của `death-date-conversion.json` đạt
-- [x] `REMIND_LEADS` / `REMIND_TIMES` (`content/memorial.ts`) đúng lựa chọn của BR-MEM-11
-- [ ] `lunarToSolarExact(day, month, year, leap)` trong `utils/lunar.ts`: không lùi ngày 30, hỗ trợ tháng nhuận, `null` khi không tồn tại (BR-MEM-03, BR-MEM-04, BR-MEM-10)
-- [ ] `validateMemorialForm` (`utils/memorial-validate.ts`), dùng chung browser và action: tên, ghi chú, ngày mất (tồn tại, 1900→nay, không sau hôm nay theo `Asia/Ho_Chi_Minh` — mỗi lỗi một mã), nhuận, lead/giờ thuộc lựa chọn (AC 11, 13, 14, 15, 16)
-- [ ] `nearestReminderChoice` (`utils/memorial-reminder.ts`) (AC 17) *(chờ ⚠️ AC 17 cho luật hoà)*
-- [ ] `browserTimeZone` / `isIanaTimeZone` (`utils/timezone.ts`) (AC 26)
-- [ ] View model `MemorialEntry` mới (`id` số, `leap`, `reminder: {lead, time} | null`, bỏ `sync`) + DTO `Memorial` / `MemorialRequest` trong `src/lib/types/memorial.ts`
-- [ ] Mapper DTO ↔ view model (enum quan hệ; `death_date` → âm + nhuận cho mục âm; `reminder` → lựa chọn gần nhất; form → request chỉ với field của product) (AC 6, AC 17, AC 18)
-- [ ] Gỡ store `localStorage` trong `state/memorial.svelte.ts` và xoá key `il-memorial` một lần (product §2.7 — không migrate)
-- [ ] Dòng "Sổ giỗ chạp" ở `/profile`: lấy số từ `GET /v1/memorials` trong `load` của profile, hoặc bỏ số (đang đọc store `localStorage`)
+## Phase 2 — W2 API resource + FormData `[integration]`
 
-## Phase 3 — Server data (contract-gated)
+- [x] `src/lib/server/api/memorials.ts`: `listMemorials`, `getMemorial`, `createMemorial`,
+      `updateMemorial`, `deleteMemorial`, `uploadMemorialPhoto`, `deleteMemorialPhoto`
+- [x] `client.ts`: nhánh `FormData` — bỏ `Content-Type: application/json`, không `JSON.stringify`;
+      call JSON cũ giữ nguyên
+- [x] `client.spec.ts`: chứng minh JSON vẫn `application/json`; FormData không có header JSON
 
-- [x] Năm operation Memorials có trong innerlamp-be `docs/specs/api/openapi.yaml` @ bf23f8b (không đổi từ 5f4ca56) — chỉ trích dẫn, không chép schema
-- [ ] `src/lib/server/api/memorials.ts`: `listMemorials`, `getMemorial`, `createMemorial`, `updateMemorial`, `deleteMemorial` qua `apiCall`, nhận `event.fetch` + token (AC 23)
-- [ ] `memorial/+page.server.ts` `load` (Step A-2): khách không gọi BE; 401 → `endSession` + `/login`; mạng/5xx → `loadError`; đọc + xoá flash
-- [ ] `memorial/new/+page.server.ts` action `default` (Step B-2, B-3): validate lại, quy đổi ngày, `reminder` từ form, `POST`, map lỗi → `fail()` theo bảng Error → UI
-- [ ] `memorial/[id]/+page.server.ts` `load` (Step C-1) và action `save` (Step C-3 `PUT` với `reminder` từ form)
-- [ ] `memorial/[id]/+page.server.ts` action `delete` (Step D-2)
-- [ ] Cookie flash `il_mem_flash` (`src/lib/server/memorial-flash.ts`) — httpOnly, 60 s, không đưa tên lên URL (AC 24)
-- [ ] Không log tên/ghi chú ở mọi nhánh lỗi (chỉ method + path có id + mã lỗi, như `client.ts`) (AC 24, NFR-MEM-02)
-- [ ] Báo múi giờ: `reportAccountTimeZone` trong `users.ts`, `src/routes/api/account-timezone/+server.ts`, cookie `il_tz_reported` (+ xoá trong `endSession`), `reportedTz` trong `(site)/+layout.server.ts`, gọi từ `onMount` của `(site)/+layout.svelte` (Step E-1, E-2, AC 26) *(chờ ⚠️ AC 26 — contract)*
-- [ ] Lời nhắc giỗ trong `/notifications` mở `/memorial/[id]` (AC 27, 28) — làm trong spec/feature `notifications` khi contract có danh sách thông báo *(chờ ⚠️ AC 27 — contract)*
+## Phase 3 — W5 validate / nearest / lunar `[ui-first]`
 
-## Phase 4 — Tests (`il-testing`)
+- [x] `utils/memorial-validate.ts`: tên 1–100, ghi chú ≤ 1000, ngày tồn tại, 1900→nay, không sau
+      hôm nay theo `Asia/Ho_Chi_Minh`, nhuận có thật, lead/giờ thuộc lựa chọn — mỗi lỗi một mã
+- [x] `utils/memorial-reminder.ts`: `nearestReminderChoice` (hoà → sớm hơn; ngoài biên kẹp)
+- [x] `utils/lunar.ts`: **thêm** `lunarToSolarExact(day, month, year, leap)` trả `null` khi không
+      tồn tại; **không** đổi `lunarToSolar`/`solarToLunar`
+- [x] `utils/memorial.ts`: `nextAnniversary` không nhận `leap` — kỳ giỗ luôn tháng thường, không
+      chọn tháng nhuận (BR-MEM-05)
 
-- [ ] Cài Vitest qua `npx sv add vitest` (repo chưa có test runner)
-- [ ] Script `scripts/sync-memorial-vectors.*` chép `rules/*.json` từ innerlamp-be (mặc định `../innerlamp-be`) vào bản pin (vd `tests/vectors/memorial/`) kèm commit nguồn; test đọc bản pin, **không sửa tay**; khi có checkout innerlamp-be thì test so bản pin với nguồn và báo lệch (chỉ ba file của client — `reminder-moment.json` là của backend, product §4.3)
-- [ ] Chạy mọi case của innerlamp-be `docs/product/memorial/rules/next-anniversary.json` với `nextAnniversary` (BR-MEM-05, 06, 07, 08, 09)
-- [ ] Chạy mọi case của `docs/product/memorial/rules/anniversary-ordinal.json` với `nthLabel` (BR-MEM-09) — so chuỗi tiếng Việt với locale `vi`
-- [ ] Chạy mọi case của `docs/product/memorial/rules/death-date-conversion.json` với `solarToLunar` và `lunarToSolarExact` (BR-MEM-03, 04, 10)
-- [ ] Unit: `validateMemorialForm` (các ví dụ của BR-MEM-02/03/04/11), `nearestReminderChoice`, `isIanaTimeZone`, mapper DTO ↔ view model, `deathDateLabel` có năm/nhuận
-- [ ] Unit: `memorials.ts` + actions + `api/account-timezone` với `fetch` giả — mỗi dòng của bảng Error → UI
-- [ ] E2E (Playwright, backend thật hoặc giả): khách thấy lời mời; thêm âm/dương/nhuận; nhắc mặc định; đổi nhắc 7 ngày 06:00 rồi đọc lại; sổ đầy; sửa/xoá mục đã bị xoá nơi khác (`mem_flash_gone`); xoá có xác nhận / huỷ; server lỗi → `mem_err_load`
-- [ ] Đo NFR-MEM-01: sổ 100 mục hiện trong 2 s với throttle 4G
+## Phase 4 — W3 server load / actions / flash `[integration]`
 
-## Phase 5 — Quality (`il-quality`)
+- [x] `src/lib/server/memorial-flash.ts`: cookie `il_mem_flash` httpOnly 60 s, chỉ `{kind}` (SEC-04)
+- [x] `memorial/+page.server.ts`: khách không gọi BE; list + map + flash; 401 → login; lỗi → `loadError`
+- [x] `memorial/new/+page.server.ts`: action `default` validate + POST + map 400/409/413/401/5xx
+- [x] `memorial/[id]/+page.server.ts`: `load` GET; actions `save` (PUT), `delete` (DELETE, 404 = xong),
+      `photo`/`photoDelete` sau cờ
+- [x] `[id]` route param: `Number(params.id)`, id không hợp lệ → not found (không gọi BE)
 
-- [ ] `npm run check && npm run lint && npm run build` pass
+## Phase 5 — W4 nối UI `[ui-first]`
 
-## Phase 6 — Documentation
+- [x] `MemorialBook`: nhận `data.entries`, tính kỳ giỗ sau `onMount`, sort hoà theo tên + id, empty
+      chỉ khi `total = 0`, `loadError`, flash từ `data`, bỏ `saved_reminder`
+- [x] `MemorialForm`: `<form method="POST" use:enhance>`, hidden input cho chip/lịch/nhuận/nhắc,
+      năm 1900→nay, ngày theo tháng, lỗi theo field, preview, khối nhắc không `sync`, confirm xoá
+- [x] 3 `+page.svelte`: truyền `data`/`form` xuống; guest giữ nguyên
+- [x] `deathDateLabel`: năm + dấu nhuận; chữ viết tắt A-6
 
-- [ ] Báo trạng thái cột Website của innerlamp-be `docs/product/memorial/product.md` §4.2 cho `ba-writer` (skill này không sửa repo backend)
-- [ ] Spec `Docs/specs/features/notifications/` cho danh sách thông báo (ADR-0001) qua spec-writer — phụ thuộc của AC 27, 28
-- [ ] Gỡ mục "Memorial book" lỗi thời trong `.assumptions.md` (bước dọn tài liệu cũ, làm riêng)
-- [ ] OKF concept qua `il-okf-writer` khi feature đã kiểm chứng end-to-end
+## Phase 6 — W6 gỡ localStorage + profile `[integration]`
 
-## Deferred (not blocking memorial)
+- [x] Xoá `src/lib/state/memorial.svelte.ts`; key `il-memorial` xoá một lần khi app mount (root `+layout.svelte`)
+- [x] `content/profile.ts`: bỏ import store + số đếm; `ProfileLinks.svelte` bỏ `memorial.init()`
 
-- Ảnh chân dung (FR-MEM-011 — `later`, chờ backend `TD-001`).
-- Chuyển code sang `src/lib/features/memorial/` theo AGENTS.md §5 (tuỳ chọn).
+## Phase 7 — W7 test + vector `[integration]`
+
+- [x] `memorial.spec.ts` chạy `next-anniversary.json` (17 case)
+- [x] `lunar-memorial.spec.ts` chạy `death-date-conversion.json` (9 case) + `anniversary-ordinal.json`
+- [x] Unit: mapper, validate, nearest, `memorials.ts` (5 route + 400/401/404/409/413/415/5xx), flash
+- [x] `npm test` pass
+
+## Phase 8 — W8 ảnh sau cờ `[integration]`
+
+- [x] `memorial-config.ts`: `MEMORIAL_PHOTO_ENABLED` bật mặc định, `false` là kill switch
+- [x] `memorials.ts` upload/delete multipart (`photo`)
+- [x] `MemorialForm` khối ảnh + `MemorialBook` avatar ảnh, chỉ khi cờ bật
+- [x] Unit mock 200/413/415; smoke dev thật 2026-11-19 (upload → GET → proxy → delete); E2E Playwright chưa cài
+
+## Phase 9 — Gate & hand-off
+
+- [x] `make verify` (check + lint + build) pass — dán output thật
+- [x] `npm test` pass — dán output thật
+- [ ] E2E Playwright: **chưa cài**, P5 cần duyệt (không chặn P4) `[NOT RUN]` chưa cài Playwright (package.json không có)
+- [x] Báo Chưởng Môn: file, gate, phần mở; **không commit/push/PR**
+
+## Phase 10 — G1 security (Hộ Pháp, 2026-11-16)
+
+- [x] SEC-01: `Cache-Control: private, no-store` + `Referrer-Policy: no-referrer` cho 3 trang sổ giỗ;
+      proxy ảnh cùng origin, signed URL không vào HTML/JS (`memorial-headers.ts`, `[id]/photo/+server.ts`)
+- [x] SEC-02: guard trước mọi `apiCall`; `api/memorials.ts` ném 401 trước khi gọi mạng khi thiếu token
+      (`memorial-guard.ts`)
+- [x] SEC-03: CSP + `frame-ancestors 'none'`, `X-Frame-Options: DENY`, `nosniff` (`security-headers.ts`,
+      `hooks.server.ts`)
+- [x] SEC-04: flash chỉ `{kind}`, không tên/ngày (`memorial-flash.ts`)
+- [x] SEC-05: xoá key `il-memorial` khi mở trang, không ghi PII xuống localStorage (`legacy-storage.ts`, root `+layout.svelte`)
+- [x] SEC-06: cờ ảnh bật mặc định, `false` là kill switch (`memorial-config.ts`)
+- [x] P6.1: `MemorialBook` chỉ render `<img>` khi `photoEnabled && hasPhoto`; list load trả cờ, edit
+      load đã có (`MemorialBook.svelte`, `memorial/+page.server.ts`, `memorial/+page.svelte`)
+- [x] P6.2: proxy ảnh **không cache** signed URL — thay/xoá ảnh thấy ngay (`[id]/photo/+server.ts`,
+      `memorial-photo.ts`)
+- [x] P6.3: lỗi ghi chú trả `note_long`, không còn hiện nhầm lỗi tên (`memorial-action.ts`,
+      `memorial-validate.ts`, `types/memorial.ts`)
+- [x] Test: security headers, memorial headers, guard, legacy storage, flag, API fail-closed, photo
+      flag, no-cache lookup, note mapping (209 test)
+
+## Phase 11 — QA P7 (2026-11-17)
+
+- [x] P7.1: gate `canStartMemorialSubmit` + `submitting` disable nút, chặn POST lần hai
+      (`memorial-submit.ts`, `MemorialForm.svelte`)
+- [x] P7.2: `total >= 100` ẩn link thêm, nút disabled + `mem_err_full` (`MemorialBook.svelte`)
+- [x] P7.3: action 401 giữ form + draft, `mem_err_session` + link đăng nhập
+      (`memorial-action.ts`, 2 route action, `MemorialForm.svelte`)
+- [x] P7.4: `memorialCountView` dùng `total`, hiện `shown/total` khi lệch; `isMemorialFull(total)`
+      (`memorial.ts`, `MemorialBook.svelte`)
+- [x] Test: submit gate, 100 limit/count mismatch, 401 values+auth code, SSR header render, form draft/auth message (217 test)
+
+## Phase 12 — Ảnh live dev (2026-11-19)
+
+- [x] Bật `MEMORIAL_PHOTO_ENABLED=true` cho dev; `.env.example` bật mặc định, `false` là kill switch
+- [x] Smoke BE dev: tạo mục → `PUT photo` 200 → `GET` có `photo_url` → GCS 200 JPEG; 413/415/404 đúng mã
+- [x] Smoke web dev: action `?/photo` 200 → proxy `GET /memorial/{id}/photo` 200 JPEG, HTML không có signed URL; `?/photoDelete` 303 → proxy 404
+- [x] Dọn dữ liệu test: xoá ảnh + xoá mục; tài khoản test dev còn lại (không xoá được qua API)
+
+## Deferred
+
+- Chọn ảnh ở form **thêm** (Q-2): giữ luồng hai bước — tạo mục rồi thêm ảnh ở form sửa.
+
+- Nhắc local web / Web Push (D2, `TD-MEM-CLIENT-02`), notification list (Phase 8–10).
+- Báo múi giờ tài khoản (contract chưa có operation).
+- ETag/chống sửa đồng thời (`TD-MEM-CLIENT-05`).
+- E2E ảnh sau khi BE deploy (F1–F4 của `task-breakdown-p4.md`).

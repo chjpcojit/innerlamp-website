@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { deLocalizeHref, localizeHref } from '$lib/paraglide/runtime';
@@ -85,7 +84,7 @@
 			<span class="h-[1.5px] w-4 bg-ink"></span>
 		</button>
 		<a
-			href={resolve(localizeHref('/') as Pathname)}
+			href={resolve(localizeHref('/') as '/')}
 			class="flex flex-none items-center gap-[11px]"
 			aria-label={m.header_home_aria()}
 		>
@@ -130,7 +129,7 @@
 			<ThemeToggle />
 			{#if user}
 				<a
-					href={resolve(localizeHref('/notifications') as Pathname)}
+					href={resolve(localizeHref('/notifications') as '/notifications')}
 					aria-label={m.header_notifications_aria()}
 					aria-current={path === '/notifications' ? 'page' : undefined}
 					class="relative flex size-10 flex-none items-center justify-center rounded-full border border-ink/12 transition-colors hover:bg-sand/60 {path ===
@@ -148,7 +147,7 @@
 				</a>
 			{/if}
 			<a
-				href={resolve(localizeHref('/practice/lamp') as Pathname)}
+				href={resolve(localizeHref('/practice/lamp') as '/practice/lamp')}
 				data-keep-dark
 				class="flex flex-none items-center gap-[9px] rounded-full bg-ink px-3.5 py-[11px] text-[13.5px] font-medium whitespace-nowrap text-cream transition-colors hover:bg-[#3a342c] lg:px-[18px]"
 			>
@@ -160,7 +159,7 @@
 			</a>
 			{#if user}
 				<a
-					href={resolve(localizeHref('/profile') as Pathname)}
+					href={resolve(localizeHref('/profile') as '/profile')}
 					aria-label={m.header_account_aria()}
 					class="flex size-10 items-center justify-center rounded-full bg-sand font-serif text-[13px] text-gold-deep transition-colors hover:bg-sand-deep"
 				>

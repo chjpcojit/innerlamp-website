@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
+	import type { Snippet } from 'svelte';
 	import { localizeHref } from '$lib/paraglide/runtime';
 
 	interface Props {
@@ -20,7 +20,7 @@
 </script>
 
 <a
-	href={resolve(localizeHref(href) as Pathname)}
+	href={resolve(localizeHref(href) as '/')}
 	class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[13.5px] font-medium whitespace-nowrap transition-colors {styles[
 		variant
 	]}"
