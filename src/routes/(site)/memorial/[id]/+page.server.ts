@@ -94,6 +94,10 @@ export const actions: Actions = {
 			if (!(e instanceof ApiError)) throw e;
 			// Keep the draft (Q-4=A); the form shows the sign-in message.
 			if (e.status === 401) endSession(cookies);
+			if (e.status === 404) {
+				setMemorialFlash(cookies, { kind: 'gone' });
+				redirect(303, localizeHref('/memorial'));
+			}
 			return memorialFail(e, values, 'save', checked.draft.name);
 		}
 

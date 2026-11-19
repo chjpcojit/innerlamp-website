@@ -10,17 +10,19 @@ afterEach(() => {
 });
 
 describe('memorialPhotoEnabled', () => {
-	it('is off by default', () => {
+	it('is on when the environment does not set the switch', () => {
+		expect(memorialPhotoEnabled()).toBe(true);
+	});
+
+	it('keeps an explicit false as the kill switch', () => {
+		state.env.MEMORIAL_PHOTO_ENABLED = 'false';
 		expect(memorialPhotoEnabled()).toBe(false);
 	});
 
-	it('is off for any value other than the exact string true', () => {
-		state.env.MEMORIAL_PHOTO_ENABLED = '1';
-		expect(memorialPhotoEnabled()).toBe(false);
-	});
-
-	it('is on only when explicitly true', () => {
+	it('is on only for the exact string true when set', () => {
 		state.env.MEMORIAL_PHOTO_ENABLED = 'true';
 		expect(memorialPhotoEnabled()).toBe(true);
+		state.env.MEMORIAL_PHOTO_ENABLED = '1';
+		expect(memorialPhotoEnabled()).toBe(false);
 	});
 });
